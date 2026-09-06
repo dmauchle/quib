@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <Import Project="..\Quib.Shared\Quib.Shared.projitems" Label="Shared" />
+
+	<PropertyGroup>
+		<DefineConstants>POSTGRES</DefineConstants>
+	</PropertyGroup>
+	
+</Project>

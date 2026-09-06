@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>5fc1ec96-1889-4771-9740-af64957dddbf</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Quib</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\DbInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\DbType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\PrimaryKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\TableInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IWriterMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\ParameterBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\QueryParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dml\InsertQueryBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectionClause.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\FromClause.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\IQueryPart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\ITableOrSubquery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\QueryWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IReaderMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)schema\DbColumn.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\IQueryExpression.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectedMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ProjectedValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQueryBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\TableReference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\TableAlias.cs" />
+    <Compile Include="..\Quib.Shared\Schema\DbColumnForUpdate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\DbTable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\IDbTable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectedQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectionBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InsertQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SelectQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\DbText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\IDbType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Installer\" />
+    <Folder Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\" />
+    <Folder Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\" />
+  </ItemGroup>
+</Project>

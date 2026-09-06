@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/build/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Folder Name="/docs/">
+	<File Path="docs/Architecture.md" />
+	<File Path="docs/CodingGuidelines.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Quib.MySql/Quib.MySql.csproj" />
+    <Project Path="src/Quib.Postgres/Quib.Postgres.csproj" />
+    <Project Path="src/Quib.Shared/Quib.Shared.shproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Quib.MySql.UnitTests/Quib.MySql.UnitTests.csproj" Id="7a7441a4-76e5-4fdb-8ae3-30a3d95323e0" />
+    <Project Path="test/Quib.Postgres.UnitTests/Quib.Postgres.UnitTests.csproj" Id="392fa3e7-58a1-411e-bd53-8f91a48b1bae" />
+    <Project Path="test/Quib.Shared.UnitTests/Quib.Shared.UnitTests.shproj" Id="75d75e26-b3da-4d55-a943-279ae3a558d7" />
+  </Folder>
+</Solution>

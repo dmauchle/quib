@@ -13,10 +13,25 @@ namespace Quib.Postgres18;
 public static class UpdateQueryExtensions
 {
 
+    public static void SetNull<TQuery, TDbType>(this TQuery query, DbColumn<TDbType> column)
+        where TQuery : IUpdateQueryBuilder
+        where TDbType : struct, INullableExpressionType
+    {
+        query.Set(column, SQL.Null<TDbType>());
+    }
+
     public static void Set<TQuery>(this TQuery query, DbColumn<DbText> column, string value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, query.Parameters.Create(value));
     }
+
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbTextNullable> column, string? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, query.Parameters.CreateNullable(value));
+    }
+
+    
 
 }

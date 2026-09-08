@@ -22,7 +22,7 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         var name = "ti_exists";
         using (var install = new DbInstaller(DB.Connection))
         {
-            install.Table(name).CreateWithPrimaryKey("id", DbType.VarChar(32, false));
+            install.Table(name).CreateWithPrimaryKey("id", ColumnType.VarChar(32));
             Assert.True(install.Table(name).Exists());
 
             Assert.False(install.Table("ti_does_not_exist").Exists());
@@ -35,7 +35,7 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         var name = "ti_cpk_str";
         using (var install = new DbInstaller(DB.Connection))
         {
-            install.Table(name).CreateWithPrimaryKey("id", DbType.VarChar(32, false));
+            install.Table(name).CreateWithPrimaryKey("id", ColumnType.VarChar(32));
 
             var colCnt = await ScalarLong(
 #if MYSQL
@@ -64,8 +64,8 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             var pk = new PrimaryKey()
-                .AddColumn("id", DbType.VarChar(32, false))
-                .AddColumn("id2", DbType.VarChar(32, false));
+                .AddColumn("id", ColumnType.VarChar(32))
+                .AddColumn("id2", ColumnType.VarChar(32));
 
             install.Table(name).CreateWithPrimaryKey(pk);
 
@@ -120,12 +120,22 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
+    public async Task CreateTable_WithNullablePrimaryKey_Works()
+    {
+        var name = "ti_cpk_str";
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table(name).CreateWithPrimaryKey("id", ColumnType.VarChar(32));
+        }
+    }
+
+    [Fact]
     public async Task Drop_Works()
     {
         var name = "ti_drop";
         using (var install = new DbInstaller(DB.Connection))
         {
-            install.Table(name).CreateWithPrimaryKey("id", DbType.VarChar(32, false));
+            install.Table(name).CreateWithPrimaryKey("id", ColumnType.VarChar(32));
             var before = await ScalarLong(
 #if MYSQL
                 $"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = '{name}'"
@@ -155,7 +165,7 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         var to = "ti_rename_to";
         using (var install = new DbInstaller(DB.Connection))
         {
-            install.Table(from).CreateWithPrimaryKey("id", DbType.VarChar(32, false));
+            install.Table(from).CreateWithPrimaryKey("id", ColumnType.VarChar(32));
 
             install.Table(from).RenameTo(to);
 
@@ -189,9 +199,11 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
 
         using (var install = new DbInstaller(DB.Connection))
         {
-            install.Table(parent).CreateWithPrimaryKey("pid", DbType.VarChar(32, false));
-            install.Table(child).CreateWithPrimaryKey("cid", DbType.VarChar(32, false));
-            install.Table(child).Column("pid").CreateWithType(DbType.VarChar(32, false));
+            install.Table(parent)
+                .CreateWithPrimaryKey("pid", ColumnType.VarChar(32));
+            install.Table(child)
+                .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
+                .AddColumn("pid", ColumnType.VarChar(32).NotNull());
 
             // empty local columns
             Assert.Throws<ArgumentException>(() => install.Table(child).CreateForeignKey("bad", [], parent, []));
@@ -212,11 +224,13 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             // create parent with PK pid
-            install.Table(parent).CreateWithPrimaryKey("pid", DbType.VarChar(32, false));
+            install.Table(parent)
+                .CreateWithPrimaryKey("pid", ColumnType.VarChar(32));
 
             // create child with PK cid and a pid column
-            install.Table(child).CreateWithPrimaryKey("cid", DbType.VarChar(32, false));
-            install.Table(child).Column("pid").CreateWithType(DbType.VarChar(32, false));
+            install.Table(child)
+                .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
+                .AddColumn("pid", ColumnType.VarChar(32).NotNull());
             // create fk
             install.Table(child).CreateForeignKey(fkname, ["pid"], parent, ["pid"]);
 
@@ -241,15 +255,16 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             var pk = new PrimaryKey()
-                .AddColumn("pid1", DbType.VarChar(32, false))
-                .AddColumn("pid2", DbType.VarChar(32, false));
+                .AddColumn("pid1", ColumnType.VarChar(32))
+                .AddColumn("pid2", ColumnType.VarChar(32));
 
             install.Table(parent).CreateWithPrimaryKey(pk);
 
             // create child with its own PK and the two fk columns
-            install.Table(child).CreateWithPrimaryKey("cid", DbType.VarChar(32, false));
-            install.Table(child).Column("pid1").CreateWithType(DbType.VarChar(32, false));
-            install.Table(child).Column("pid2").CreateWithType(DbType.VarChar(32, false));
+            install.Table(child)
+                .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
+                .AddColumn("pid1", ColumnType.VarChar(32).NotNull())
+                .AddColumn("pid2", ColumnType.VarChar(32).NotNull());
 
             // create fk spanning two columns
             install.Table(child).CreateForeignKey(fkname, ["pid1", "pid2"], parent, ["pid1", "pid2"]);
@@ -313,11 +328,12 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             // create parent with PK pid
-            install.Table(parent).CreateWithPrimaryKey("pid", DbType.VarChar(32, false));
+            install.Table(parent).CreateWithPrimaryKey("pid", ColumnType.VarChar(32));
 
             // create child with PK cid and a pid column
-            install.Table(child).CreateWithPrimaryKey("cid", DbType.VarChar(32, false));
-            install.Table(child).Column("pid").CreateWithType(DbType.VarChar(32, false));
+            install.Table(child)
+                .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
+                .AddColumn("pid", ColumnType.VarChar(32).NotNull());
 
             // create fk
             install.Table(child).CreateForeignKey(fkname, ["pid"], parent, ["pid"]);
@@ -354,9 +370,9 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             var table = install.Table(name)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false))
-                .AddColumn("c1", DbType.VarChar(32, false))
-                .AddColumn("c2", DbType.VarChar(32, false));
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
+                .AddColumn("c1", ColumnType.VarChar(32).NotNull())
+                .AddColumn("c2", ColumnType.VarChar(32).NotNull());
 
             Assert.Throws<ArgumentNullException>(() => install.Table(name).CreateIndex("bad", []));
 
@@ -382,9 +398,9 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             var table = install.Table(name)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false))
-                .AddColumn("c1", DbType.VarChar(32, false))
-                .AddColumn("c2", DbType.VarChar(32, false));
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
+                .AddColumn("c1", ColumnType.VarChar(32).NotNull())
+                .AddColumn("c2", ColumnType.VarChar(32).NotNull());
 
             install.Table(name).CreateIndex(idx, "c1", "c2");
 
@@ -422,12 +438,12 @@ public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
         {
             // create parent (companies) with PK id
             var companies = install.Table(companiesTN)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false));
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32));
 
             // create child (users) with PK uid and company_id column
             var users = install.Table(usersTN)
-                .CreateWithPrimaryKey("uid", DbType.VarChar(32, false))
-                .AddColumn("company_id", DbType.VarChar(32, false))
+                .CreateWithPrimaryKey("uid", ColumnType.VarChar(32))
+                .AddColumn("company_id", ColumnType.VarChar(32).NotNull())
                 .CreateForeignKey(fkname, ["company_id"], companiesTN, ["id"]);  // create fk from users.company_id -> companies.id
 
             // verify fk exists before rename

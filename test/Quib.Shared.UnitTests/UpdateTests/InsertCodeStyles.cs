@@ -10,7 +10,7 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
     {
         using (var install = new DbInstaller(DB.Connection))
         {
-            install.Table("users").CreateWithPrimaryKey("name", DbType.VarChar(64, nullable: false));
+            install.Table("users").CreateWithPrimaryKey("name", ColumnType.VarChar(64));
         }
     }
 
@@ -99,7 +99,7 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
 
         private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
 
-        public User Map(ResultRow rs)
+        public User Map(ResultReader rs)
         {
             return new User
             {

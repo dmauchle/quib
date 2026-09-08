@@ -27,7 +27,7 @@ public sealed class ProjectionBuilder
     /// <param name="value"></param>
     /// <returns></returns>
     public ProjectedValue<T> Get<T>(IQueryExpression<T> value)
-        where T : struct, IDbType
+        where T : struct, IExpressionType
     {
         var fieldIndex = _projections.Count;
         var alias = new ProjectedValue<T>(fieldIndex);

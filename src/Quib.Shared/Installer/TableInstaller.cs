@@ -54,7 +54,7 @@ public sealed class TableInstaller
     /// Execute DDL statement to create table
     /// </summary>
     /// <param name="primaryKey"></param>
-    public TableInstaller CreateWithPrimaryKey(string columnname, DbType type)
+    public TableInstaller CreateWithPrimaryKey(string columnname, ColumnType type)
     {
         CreateWithPrimaryKey(new PrimaryKey().AddColumn(columnname, type));
         return this;
@@ -102,7 +102,7 @@ public sealed class TableInstaller
         _db.ExecuteNonQuery(sql);
     }
 
-    public TableInstaller AddColumn(string columnname, DbType type)
+    public TableInstaller AddColumn(string columnname, IColumnType type)
     {
         this.Column(columnname).CreateWithType(type);
         return this;

@@ -22,7 +22,7 @@ public sealed class ProjectedMap<TQuery, TObj>
 
     public IAsyncEnumerable<TObj> FetchStreamAsync()
     {
-        return _projection.FetchStreamAsync((rs, x) => x.Map(rs));
+        return _projection.FetchStream((rs, x) => x.Map(rs));
     }
 
     public Task<TObj[]> FetchArrayAsync()

@@ -22,8 +22,8 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             install.Table(name)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false))
-                .AddColumn("age", DbType.VarChar(32, false));
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
+                .AddColumn("age", ColumnType.VarChar(32).NotNull());
 
             var colCnt = await ScalarLong(
 #if MYSQL
@@ -43,8 +43,8 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             install.Table(name)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false))
-                .AddColumn("age", DbType.VarChar(32, false));
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
+                .AddColumn("age", ColumnType.VarChar(32).NotNull());
 
             var before = await ScalarLong(
 #if MYSQL
@@ -87,8 +87,8 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             var table = install.Table(name)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false))
-                .AddColumn("c1", DbType.VarChar(32, false));
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
+                .AddColumn("c1", ColumnType.VarChar(32).NotNull());
 
             table.Column("c1").RenameTo("c2");
 
@@ -130,12 +130,12 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
         {
             // create parent table
             var companies = install.Table(companiesTableName);
-            companies.CreateWithPrimaryKey("id", DbType.VarChar(32, false));
+            companies.CreateWithPrimaryKey("id", ColumnType.VarChar(32));
 
             // create child table with company column
             var users = install.Table(usersTableName)
-                .CreateWithPrimaryKey("id", DbType.VarChar(32, false))
-                .AddColumn("company", DbType.VarChar(32, false))
+                .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
+                .AddColumn("company", ColumnType.VarChar(32).NotNull())
                 .CreateForeignKey(fkname, ["company"], companiesTableName, ["id"]);  // create foreign key from users.company -> companies.id
 
             // rename the company column

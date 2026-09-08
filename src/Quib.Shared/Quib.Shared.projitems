@@ -9,12 +9,16 @@
     <Import_RootNamespace>Quib</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\DbNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnTypeFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\DbInstaller.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)installer\DbType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\PrimaryKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\TableInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IWriterMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQL.cs" />
+    <Compile Include="..\Quib.Shared\ormapper\SingleQueryResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\ParameterBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\QueryParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IUpdateQueryBuilder.cs" />
@@ -43,9 +47,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\InsertQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\DbText.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Schema\IDbType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\IExpressionType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Installer\" />

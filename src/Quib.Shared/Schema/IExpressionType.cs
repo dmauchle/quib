@@ -11,7 +11,15 @@ namespace Quib.Postgres18.Schema;
 #endif
 
 
-public interface IDbType
+public interface IExpressionType
 {
 
+}
+
+public interface INotNullExpressionType : IExpressionType
+{
+}
+
+public interface INullableExpressionType : IExpressionType
+{
 }

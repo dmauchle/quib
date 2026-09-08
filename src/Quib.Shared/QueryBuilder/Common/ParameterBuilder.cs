@@ -23,6 +23,14 @@ public sealed class ParameterBuilder
         return parameter;
     }
 
+    public IQueryExpression<DbTextNullable> CreateNullable(string? value)
+    {
+        var index = _parameters.Count + 1;
+        var parameter = new QueryParameter<DbTextNullable>(index, value);
+        _parameters.Add(parameter);
+        return parameter;
+    }
+
     internal IEnumerable<IQueryParameter> Build()
     {
         return _parameters;

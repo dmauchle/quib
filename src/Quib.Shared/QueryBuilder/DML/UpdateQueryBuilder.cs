@@ -25,7 +25,7 @@ public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
     public ParameterBuilder Parameters => _parameters;
 
     public void Set<T>(DbColumn<T> column, IQueryExpression<T> value)
-        where T : struct, IDbType
+        where T : struct, IExpressionType
     {
         var updateColumn = column.ForUpdate();
         _values.Add((updateColumn, value));

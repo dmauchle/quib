@@ -18,7 +18,7 @@ internal interface IQueryParameter : IQueryPart
 }
 
 internal sealed class QueryParameter<T>(int index, object? value) : IQueryParameter, IQueryExpression<T>
-    where T : struct, IDbType
+    where T : struct, IExpressionType
 {
 
     public string Name => $"p{index}";

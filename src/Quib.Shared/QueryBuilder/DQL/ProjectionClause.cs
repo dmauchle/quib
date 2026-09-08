@@ -16,7 +16,7 @@ internal interface IProjectionClause : IQueryPart
 }
 
 internal sealed class ProjectionClause<T>(IQueryExpression<T> value, ProjectedValue<T> alias) : IProjectionClause, IQueryPart
-    where T : struct, IDbType
+    where T : struct, IExpressionType
 {
     void IQueryPart.ToSql(QueryWriter query)
     {

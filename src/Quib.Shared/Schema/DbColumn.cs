@@ -16,7 +16,7 @@ namespace Quib.Postgres18.Schema;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public sealed class DbColumn<T> : IQueryExpression<T>
-    where T : struct, IDbType
+    where T : struct, IExpressionType
 {
 
     private readonly TableAlias _table;

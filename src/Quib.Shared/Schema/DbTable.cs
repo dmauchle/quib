@@ -21,7 +21,7 @@ public readonly struct DbTable
     }
 
     public DbColumn<T> Column<T>(string fieldName)
-        where T : struct, IDbType
+        where T : struct, IExpressionType
     {
         return new DbColumn<T>(_alias, fieldName);
     }

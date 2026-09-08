@@ -19,5 +19,5 @@ public interface IReaderMappingFactory<TQuery, TObj> : IReaderMapping<TQuery, TO
 
 public interface IReaderMapping<TQuery, TObj>
 {
-    public TObj Map(ResultRow rs);
+    public TObj Map(ResultReader rs);
 }

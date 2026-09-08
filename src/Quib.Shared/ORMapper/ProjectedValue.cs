@@ -20,7 +20,7 @@ internal interface IProjectedValue
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class ProjectedValue<T> : IProjectedValue, IQueryExpression<T>
-    where T : struct, IDbType
+    where T : struct, IExpressionType
 {
 
     private readonly int _fieldIndex;

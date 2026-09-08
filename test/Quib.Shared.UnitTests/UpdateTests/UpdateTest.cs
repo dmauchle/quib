@@ -11,9 +11,9 @@ public class UpdateTest(DatabaseFixture env) : DbTestBase(env)
         using (var install = new DbInstaller(DB.Connection))
         {
             install.Table("users")
-                .CreateWithPrimaryKey("username", DbType.VarChar(64, nullable: false))
-                .AddColumn("firstname", DbType.VarChar(64, nullable: false))
-                .AddColumn("lastname", DbType.VarChar(64, nullable: false));
+                .CreateWithPrimaryKey("username", ColumnType.VarChar(64))
+                .AddColumn("firstname", ColumnType.VarChar(64).NotNull())
+                .AddColumn("lastname", ColumnType.VarChar(64).NotNull());
 
             await DB.InsertInto<UsersTable>()
                .AddRow((query, table) =>
@@ -120,7 +120,7 @@ public class UpdateTest(DatabaseFixture env) : DbTestBase(env)
         private readonly ProjectedValue<DbText> _firstname = query.Get(user.Firstname);
         private readonly ProjectedValue<DbText> _lastname = query.Get(user.Lastname);
 
-        public User Map(ResultRow rs)
+        public User Map(ResultReader rs)
         {
             return new User
             {

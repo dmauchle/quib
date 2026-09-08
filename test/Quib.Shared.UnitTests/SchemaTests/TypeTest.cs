@@ -1,0 +1,33 @@
+﻿using Quib.UnitTests.Infrastructure;
+
+namespace Quib.UnitTests.SchemaTests;
+
+[Collection(TestCollections.DATABASE)]
+public class TypeTest(DatabaseFixture env) : DbTestBase(env)
+{
+
+    [Fact]
+    public async Task Varchar_Value_Works()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("users").CreateWithPrimaryKey("name", ColumnType.VarChar(64));
+        }
+
+        var inserted = await DB.InsertInto("users")
+            .AddRow((query, table) =>
+            {
+                query.Set(table.Column<DbText>("name"), "Alice");
+            })
+            .Execute();
+
+        Assert.Equal(1, inserted);
+
+        var rs = await DB.SelectFromTable("users")
+            .Project((q, x) => q.Get(x.Column<DbText>("name")))
+            .FetchOne((rs, x) => rs.Get(x));
+
+        Assert.Equal("Alice", rs.Result);
+    }
+
+}

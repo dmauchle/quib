@@ -29,7 +29,7 @@ public sealed class ColumnInstaller
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public ColumnInstaller CreateWithType(DbType type)
+    public ColumnInstaller CreateWithType(IColumnType type)
     {
         string sql;
 #if MYSQL
@@ -62,7 +62,7 @@ public sealed class ColumnInstaller
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public ColumnInstaller ChangeType(DbType type)
+    public ColumnInstaller ChangeType(IColumnType type)
     {
         string sql;
 #if MYSQL
@@ -77,7 +77,7 @@ public sealed class ColumnInstaller
 #if !MYSQL56 && !MYSQL57
     /// <summary>
     /// Execute DDL statement to rename column. Requires MySQL version 8+. For older versions, 
-    /// use <see cref="ChangeTo(string, DbType)"/> instead.
+    /// use <see cref="ChangeTo(string, ColumnType)"/> instead.
     /// </summary>
     /// <param name="newColumnName"></param>
     /// <returns></returns>
@@ -100,7 +100,7 @@ public sealed class ColumnInstaller
     /// <param name="newColumnname"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public ColumnInstaller ChangeTo(string newColumnname, DbType type)
+    public ColumnInstaller ChangeTo(string newColumnname, IColumnType type)
     {
 #if MYSQL
         var sql = $"ALTER TABLE `{_tablename}` CHANGE `{_columnname}` `{newColumnname}` {type.ToSql()};";

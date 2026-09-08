@@ -28,7 +28,7 @@ public class ProjectedQuery<TProj> : IQueryPart
         _projection = projection;
     }
 
-    public async IAsyncEnumerable<TObj> FetchStreamAsync<TObj>(Func<ResultRow, TProj, TObj> map, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<TObj> FetchStream<TObj>(Func<ResultReader, TProj, TObj> map, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var sql = this.ToSql();
         using (var cmd = _db.Connection.CreateCommand())
@@ -39,7 +39,7 @@ public class ProjectedQuery<TProj> : IQueryPart
             {
                 while (await reader.ReadAsync(cancellationToken))
                 {
-                    var row = new ResultRow(reader);
+                    var row = new ResultReader(reader);
                     var obj = map(row, _accessor);
                     yield return obj;
                 }
@@ -47,25 +47,16 @@ public class ProjectedQuery<TProj> : IQueryPart
         }
     }
 
-    public async Task<TObj[]> FetchArray<TObj>(Func<ResultRow, TProj, TObj> map, CancellationToken cancellationToken = default)
+    public async Task<SingleQueryResult<TObj>> FetchOne<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
     {
-        var sql = this.ToSql();
-        using (var cmd = _db.Connection.CreateCommand())
-        {
-            cmd.CommandText = sql;
+        return await this.FetchStream(map, cancellationToken)
+            .Select(x => new SingleQueryResult<TObj>(x))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
-            using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
-            {
-                var results = new List<TObj>();
-                while (await reader.ReadAsync(cancellationToken))
-                {
-                    var row = new ResultRow(reader);
-                    var obj = map(row, _accessor);
-                    results.Add(obj);
-                }
-                return results.ToArray();
-            }
-        }
+    public async Task<TObj[]> FetchArray<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
+    {
+        return await FetchStream(map, cancellationToken).ToArrayAsync(cancellationToken);
     }
 
     internal string ToSql()

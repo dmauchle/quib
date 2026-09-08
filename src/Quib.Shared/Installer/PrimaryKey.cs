@@ -13,7 +13,7 @@ namespace Quib.Postgres18.Installer;
 public sealed class PrimaryKey
 {
 
-    private record Column(string ColumnName, DbType Type);
+    private record Column(string ColumnName, NotNullColumnType Type);
 
     private readonly List<Column> _columns = new List<Column>();
 
@@ -22,9 +22,9 @@ public sealed class PrimaryKey
 
     }
 
-    public PrimaryKey AddColumn(string columnName, DbType type)
+    public PrimaryKey AddColumn(string columnName, ColumnType type)
     {
-        _columns.Add(new Column(columnName, type));
+        _columns.Add(new Column(columnName, type.NotNull()));
         return this;
     }
 

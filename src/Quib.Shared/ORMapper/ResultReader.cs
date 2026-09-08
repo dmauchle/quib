@@ -12,12 +12,12 @@ namespace Quib.MySql84.ORMapper;
 namespace Quib.Postgres18.ORMapper;
 #endif
 
-public sealed class ResultRow
+public sealed class ResultReader
 {
 
     private readonly IDataReader _reader;
 
-    internal ResultRow(IDataReader reader)
+    internal ResultReader(IDataReader reader)
     {
         _reader = reader;
     }
@@ -25,6 +25,14 @@ public sealed class ResultRow
     public string Get(ProjectedValue<DbText> field)
     {
         return _reader.GetString(field.Index);
+    }
+
+    public string? Get(ProjectedValue<DbTextNullable> field)
+    {
+        if (_reader.IsDBNull(field.Index))
+            return null;
+        else
+            return _reader.GetString(field.Index);
     }
 
 }

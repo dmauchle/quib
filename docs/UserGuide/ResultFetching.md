@@ -12,7 +12,7 @@ e.g. inside the for loop.
 ```csharp
 public async Task Demo(QueryFactory db)
 {
-    var users = await db.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
+    var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
     foreach (var user in users) 
     {
         Console.WriteLine(user.Username);
@@ -21,14 +21,14 @@ public async Task Demo(QueryFactory db)
 ```
 
 
-## FetchOne — Retreive a single result row (or none)
+## FetchOne — Retrieve a single result row (or none)
 
 Use `FetchOne` when you expect at most one result row from your query. It returns a `SingleQueryResult<T>` that indicates whether a result exists.
 
 ```csharp
 public async Task FetchSingleRow(QueryFactory db)
 {
-    var user = await db.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchOne();
+    var user = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchOne();
 
     if (user.HasResult)
     {
@@ -50,8 +50,8 @@ result set. So you can't run another query at the same time.
 ```csharp
 public async Task Demo(QueryFactory db)
 {
-    var users = db.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchStream();
-    
+    var users = db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchStream();
+
     await foreach (var user in users)
     {
         Console.WriteLine(user.Username);

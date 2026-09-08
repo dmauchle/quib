@@ -1,6 +1,6 @@
 # Result Mapping — Dynamic API
 
-Retreiving results of SELECT queries consists of three steps: 
+Retrieving results of SELECT queries consists of three steps:
 
 - You need to build the projection for the query (SELECT clause)
 - Quib will fetch the result set from the database

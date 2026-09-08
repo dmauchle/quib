@@ -66,7 +66,7 @@ public class User
 }
 ```
 
-We need to delare a writer mapping from the class to the database table:
+We need to declare a writer mapping from the class to the database table:
 
 ```csharp
 public class UserWriter : IWriterMapping<UsersTable, User>
@@ -135,7 +135,7 @@ using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionStrin
     var db = new QueryFactory(connection);
 
     // A simple query would look like this:
-    var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArrayAsync();
+    var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
 }
 ```
 

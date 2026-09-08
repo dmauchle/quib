@@ -1,6 +1,6 @@
 # Result Mapping — Strongly Typed API
 
-Retreiving results of SELECT queries consists of three steps: 
+Retrieving results of SELECT queries consists of three steps:
 
 - You need to build the projection for the query (SELECT clause)
 - Quib will fetch the result set from the database
@@ -38,10 +38,10 @@ public class User
 }
 
 // The mapping from table schema to domain model, consists of two parts
-public class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
+public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
 {
     // 1. Projection (builds the SELECT clause)
-    public static IReaderMapping<UsersTable, User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+    public static IReaderMapping<UsersTable, User> Factory(ProjectionBuilder query, UsersTable user) => new UserReader(query, user);
 
     private readonly ProjectedValue<DbInt> _id = query.Get(user.Id);
     private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
@@ -66,13 +66,13 @@ Then you can fetch the results in one of the following styles:
 public async Task Demo(QueryFactory db)
 {
     // Use the factory type, requires IReaderMappingFactory
-    users = await db.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArrayAsync();
+    users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
 
     // Use the factory method, only requires IReaderMapping
-    users = await db.SelectFrom<UsersTable>().Map(UserMapping.Factory).FetchArrayAsync();
+    users = await db.SelectFrom<UsersTable>().Map(UserReader.Factory).FetchArray();
 
     // Using a dynamic lambda, doesn't require any interface at all
-    users = await db.SelectFrom<UsersTable>().Project((rs, x) => new UserMapping(rs, x)).FetchArray((rs, x) => x.Map(rs));
+    users = await db.SelectFrom<UsersTable>().Project((rs, x) => new UserReader(rs, x)).FetchArray((rs, x) => x.Map(rs));
 }
 ```
 

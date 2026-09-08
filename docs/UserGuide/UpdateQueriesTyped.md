@@ -61,8 +61,8 @@ public async Task Demo(QueryFactory db)
     var bob = new User { Id = 43, Username = "bob", Email = "bob@example.com" };
 
     var rowsInserted = await db.InsertInto<UsersTable>()
-        .AddRow<UserMapping, User>(alice)
-        .AddRow<UserMapping, User>(bob)  // You may add multiple rows in a single query
+        .AddRow<UserWriter, User>(alice)
+        .AddRow<UserWriter, User>(bob)  // You may add multiple rows in a single query
         .Execute();
 }
 ```
@@ -85,7 +85,7 @@ public async Task Demo(QueryFactory db)
 {
     var alice = new User { Id = 42, Username = "ajones", Email = "jones@example.com" };
 
-    var rowsUpdated = await db.Update<UsersTable>().With<UserMapping, User>(alice).Execute();
+    var rowsUpdated = await db.Update<UsersTable>().With<UserWriter, User>(alice).Execute();
 }
 ```
 

@@ -41,6 +41,12 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return new ProjectedQuery<TProj>(_con, proj, this, rs.Build());
     }
 
+    public ProjectedQuery<ProjectedValue<TProj>> Project<TProj>(Func<TQuery, IQueryExpression<TProj>> selector)
+        where TProj : struct, IExpressionType
+    {
+        return this.Project((rs, x) => rs.Get(selector(x)));
+    }
+
     public ProjectedMap<TQuery, TObj> Map<TMapper, TObj>()
         where TMapper : IReaderMappingFactory<TQuery, TObj>
     {

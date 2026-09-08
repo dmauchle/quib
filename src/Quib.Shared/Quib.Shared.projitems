@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\PrimaryKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\TableInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MappingExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IWriterMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SQL.cs" />
     <Compile Include="..\Quib.Shared\ormapper\SingleQueryResult.cs" />

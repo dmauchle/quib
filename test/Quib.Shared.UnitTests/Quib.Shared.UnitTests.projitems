@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\ColumnInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchingTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\QueryCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\TypeTest.cs" />
@@ -28,8 +29,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)updatetests\InsertTest.cs" />
     <Compile Include="..\Quib.Shared.UnitTests\infrastructure\DockerController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\EnvironmentVariables.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)QueryTests\" />
   </ItemGroup>
 </Project>

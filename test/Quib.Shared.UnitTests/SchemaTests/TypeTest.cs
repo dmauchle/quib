@@ -24,8 +24,8 @@ public class TypeTest(DatabaseFixture env) : DbTestBase(env)
         Assert.Equal(1, inserted);
 
         var rs = await DB.SelectFromTable("users")
-            .Project((q, x) => q.Get(x.Column<DbText>("name")))
-            .FetchOne((rs, x) => rs.Get(x));
+            .Project(x => x.Column<DbText>("name"))
+            .FetchOne();
 
         Assert.Equal("Alice", rs.Result);
     }

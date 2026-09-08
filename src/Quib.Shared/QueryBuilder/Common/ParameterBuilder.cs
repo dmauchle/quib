@@ -10,12 +10,12 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-internal sealed class ParameterBuilder
+public sealed class ParameterBuilder
 {
 
     private readonly List<IQueryParameter> _parameters = [];
 
-    public QueryParameter<DbText> CreateParameter(string value)
+    public IQueryExpression<DbText> Create(string value)
     {
         var index = _parameters.Count + 1;
         var parameter = new QueryParameter<DbText>(index, value);
@@ -23,7 +23,7 @@ internal sealed class ParameterBuilder
         return parameter;
     }
 
-    public IEnumerable<IQueryParameter> Build()
+    internal IEnumerable<IQueryParameter> Build()
     {
         return _parameters;
     }

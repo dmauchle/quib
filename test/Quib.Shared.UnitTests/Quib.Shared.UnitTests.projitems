@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\QueryCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestCollections.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\InsertCodeStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)updatetests\InsertTest.cs" />
     <Compile Include="..\Quib.Shared.UnitTests\infrastructure\DockerController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\EnvironmentVariables.cs" />
   </ItemGroup>

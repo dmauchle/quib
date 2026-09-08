@@ -14,25 +14,32 @@ public sealed class InsertQueryBuilder
 {
 
     private readonly List<DbColumnForUpdate> _columns = [];
-    private readonly List<Dictionary<DbColumnForUpdate, IQueryParameter>> _rows = [];
+    private readonly List<Dictionary<DbColumnForUpdate, IQueryExpression>> _rows = [];
     private readonly ParameterBuilder _parameters = new ParameterBuilder();
     private readonly TableReference _table;
 
-    private Dictionary<DbColumnForUpdate, IQueryParameter>? _currentRow = null;
+    private Dictionary<DbColumnForUpdate, IQueryExpression>? _currentRow = null;
 
     internal InsertQueryBuilder(TableReference table)
     {
         _table = table;
     }
 
-    public void Set(DbColumn<DbText> column, string value)
+    public ParameterBuilder Parameters => _parameters;
+
+    public void Set<T>(DbColumn<T> column, IQueryExpression<T> value)
+        where T : struct, IDbType
     {
         var updateColumn = column.ForUpdate();
         if (!_columns.Contains(updateColumn))
             _columns.Add(updateColumn);
+        _currentRow ??= new Dictionary<DbColumnForUpdate, IQueryExpression>();
+        _currentRow[updateColumn] = value;
+    }
 
-        _currentRow ??= new Dictionary<DbColumnForUpdate, IQueryParameter>();
-        _currentRow[updateColumn] = _parameters.CreateParameter(value);
+    public void Set(DbColumn<DbText> column, string value)
+    {
+        this.Set(column, Parameters.Create(value));
     }
 
     internal void NextRow()

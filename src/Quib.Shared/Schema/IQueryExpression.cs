@@ -10,7 +10,12 @@ namespace Quib.MySql84.Schema;
 namespace Quib.Postgres18.Schema;
 #endif
 
-public interface IQueryExpression<T> : IQueryPart
+
+public interface IQueryExpression : IQueryPart
+{
+}
+
+public interface IQueryExpression<T> : IQueryExpression, IQueryPart
     where T : IDbType
 {
 

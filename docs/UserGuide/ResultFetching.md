@@ -12,7 +12,7 @@ e.g. inside the for loop.
 ```csharp
 public async Task Demo(QueryFactory db)
 {
-    var users = await db.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArrayAsync();
+    var users = await db.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
     foreach (var user in users) 
     {
         Console.WriteLine(user.Username);

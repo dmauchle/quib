@@ -47,16 +47,16 @@ public class ProjectedQuery<TProj> : IQueryPart
         }
     }
 
+    public async Task<TObj[]> FetchArray<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
+    {
+        return await FetchStream(map, cancellationToken).ToArrayAsync(cancellationToken);
+    }
+
     public async Task<SingleQueryResult<TObj>> FetchOne<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
     {
         return await this.FetchStream(map, cancellationToken)
             .Select(x => new SingleQueryResult<TObj>(x))
             .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public async Task<TObj[]> FetchArray<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
-    {
-        return await FetchStream(map, cancellationToken).ToArrayAsync(cancellationToken);
     }
 
     internal string ToSql()

@@ -15,7 +15,7 @@ Example:
 ```csharp
 public async Task Demo(QueryFactory db)
 {
-    var rowsInserted = await db.InsertInto("users")
+    var rowsInserted = await db.InsertIntoTable("users")
         .AddRow((query, table) => {
             query.Set(table.Column<DbInt>("id"), 42);
             query.Set(table.Column<DbText>("username"), "ajones");

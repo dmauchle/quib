@@ -39,7 +39,7 @@ public class UpdateTest(DatabaseFixture env) : DbTestBase(env)
 
         Assert.Equal(1, updated);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArrayAsync();
+        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
 
         Assert.Single(users);
         var user = users[0];
@@ -58,7 +58,7 @@ public class UpdateTest(DatabaseFixture env) : DbTestBase(env)
 
         Assert.Equal(1, updated);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArrayAsync();
+        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
 
         Assert.Single(users);
         var user = users[0];
@@ -77,7 +77,7 @@ public class UpdateTest(DatabaseFixture env) : DbTestBase(env)
 
         Assert.Equal(1, updated);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArrayAsync();
+        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
 
         Assert.Single(users);
         var user = users[0];

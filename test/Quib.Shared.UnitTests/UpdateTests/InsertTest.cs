@@ -32,7 +32,7 @@ public class InsertTest(DatabaseFixture env) : DbTestBase(env)
 
         Assert.Equal(1, insert);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArrayAsync();
+        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
 
         Assert.NotNull(users);
         Assert.Single(users);
@@ -56,7 +56,7 @@ public class InsertTest(DatabaseFixture env) : DbTestBase(env)
 
         Assert.Equal(1, insert);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArrayAsync();
+        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
 
         Assert.NotNull(users);
         Assert.Single(users);

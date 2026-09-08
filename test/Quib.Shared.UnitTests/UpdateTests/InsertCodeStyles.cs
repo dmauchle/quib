@@ -19,7 +19,7 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
         var rs = await DB
             .SelectFrom<UsersTable>()
             .Map<UserMapping, User>()
-            .FetchArrayAsync();
+            .FetchArray();
 
         Assert.Single(rs);
         foreach (var row in rs)

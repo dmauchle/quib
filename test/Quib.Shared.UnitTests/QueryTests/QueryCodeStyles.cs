@@ -90,7 +90,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
         var rs = await DB
             .SelectFrom<UsersTable>()
             .Map<UserMapping, User>()
-            .FetchArrayAsync();
+            .FetchArray();
 
         Assert.Single(rs);
         foreach (var row in rs)
@@ -103,7 +103,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
         var rs = await DB
             .SelectFrom(UsersTable.Factory)
             .Map(User.FromDbTable)
-            .FetchArrayAsync();
+            .FetchArray();
 
         Assert.Single(rs);
         foreach (var row in rs)

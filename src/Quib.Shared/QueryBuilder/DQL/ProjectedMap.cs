@@ -20,14 +20,19 @@ public sealed class ProjectedMap<TQuery, TObj>
         _projection = projection;
     }
 
-    public IAsyncEnumerable<TObj> FetchStreamAsync()
+    public IAsyncEnumerable<TObj> FetchStream(CancellationToken cancellationToken = default)
     {
-        return _projection.FetchStream((rs, x) => x.Map(rs));
+        return _projection.FetchStream((rs, x) => x.Map(rs), cancellationToken);
     }
 
-    public Task<TObj[]> FetchArrayAsync()
+    public Task<TObj[]> FetchArray(CancellationToken cancellationToken = default)
     {
-        return _projection.FetchArray((rs, x) => x.Map(rs));
+        return _projection.FetchArray((rs, x) => x.Map(rs), cancellationToken);
+    }
+
+    public Task<SingleQueryResult<TObj>> FetchOne(CancellationToken cancellationToken = default)
+    {
+        return _projection.FetchOne((rs, x) => x.Map(rs), cancellationToken);
     }
 
 }

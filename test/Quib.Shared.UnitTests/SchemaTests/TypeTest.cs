@@ -14,7 +14,7 @@ public class TypeTest(DatabaseFixture env) : DbTestBase(env)
             install.Table("users").CreateWithPrimaryKey("name", ColumnType.VarChar(64));
         }
 
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");

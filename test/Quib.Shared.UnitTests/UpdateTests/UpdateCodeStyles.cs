@@ -30,7 +30,7 @@ public class UpdateCodeStyles(DatabaseFixture env) : DbTestBase(env)
     [Fact]
     public async Task GenericSytnax()
     {
-        await DB.Update("users")
+        await DB.UpdateTable("users")
             .With((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Bob");

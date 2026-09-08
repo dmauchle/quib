@@ -5,6 +5,11 @@ catching as many errors at compile time as possible. To achieve this, Quib provi
 queries. This API abstracts database tables, columns, SQL types, SQL functions, etc., not domain objects. After fetching 
 the rows from the database, another Quib API layer is used to map the results to .NET objects.
 
+Design trade-offs:
+
+- Mapping to domain objects is somewhat more verbose than with traditional O/R mappers like EF Core. This verbosity is intentional to maintain clarity and type safety.
+- Manual schema definition and mapping setup requires more initial code but provides full control and compile-time safety.
+
 
 ## How does it compare to other O/R mappers?
 
@@ -15,6 +20,12 @@ won't complain.
 
 Other popular approaches let you write the SQL query as plain string. This isn't type safe at all and very error prone.
 And again, the compiler has no chance to check your query for errors.
+
+When to use Quib:
+
+- When you need explicit control over SQL while retaining type safety
+- When you prefer compile-time checks for column types and projections
+- When you want a lightweight alternative to full ORM frameworks for database-centric code
 
 
 ## Features
@@ -32,6 +43,12 @@ that have the same SQL dialect will work. But if the SQL dialect differs, you wi
 
 At the moment, there's no general abstraction API. A package that can target multiple/all databases might be added in 
 the future, but it will be limited to the common features of all supported databases.
+
+
+## API Documentation
+
+- [Overview](UserGuide/Overview.md)
+- [Getting Started](UserGuide/GettingStarted.md)
 
 
 ## Contributing

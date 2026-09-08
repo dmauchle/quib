@@ -75,7 +75,7 @@ public sealed class QueryFactory(DbConnection con)
         return new SelectQuery<T>(this, builder, tableFactory(accessor));
     }
 
-    public InsertQuery<DbTable> InsertInto(string tablename)
+    public InsertQuery<DbTable> InsertIntoTable(string tablename)
     {
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));
@@ -96,7 +96,7 @@ public sealed class QueryFactory(DbConnection con)
         return new InsertQuery<T>(this, builder, tableFactory(accessor));
     }
 
-    public UpdateQuery<DbTable> Update(string tablename)
+    public UpdateQuery<DbTable> UpdateTable(string tablename)
     {
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));

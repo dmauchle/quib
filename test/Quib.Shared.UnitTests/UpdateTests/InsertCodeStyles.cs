@@ -27,9 +27,9 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task GenericSytnax()
+    public async Task DynamicAPI()
     {
-        await DB.InsertInto("users")
+        await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
@@ -40,16 +40,15 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task FactoryInterface()
+    public async Task TypedAPIWithFactoryInterface()
     {
-        // Syntax using factory interface
         await DB.InsertInto<UsersTable>().AddRow<UserMapping, User>(new User { Name = "Alice" }).Execute();
 
         await AssertResult();
     }
 
     [Fact]
-    public async Task FactoryMethods()
+    public async Task TypedAPIWithFactoryMethod()
     {
 
         await DB.InsertInto(UsersTable.Factory).AddRow(UserMapping.Write, new User { Name = "Alice" }).Execute();
@@ -58,7 +57,7 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task Lambdas()
+    public async Task TypedAPIWithLambdas()
     {
         var charlie = new User { Name = "Alice" };
         await DB.InsertInto(x => new UsersTable(x))

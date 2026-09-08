@@ -13,7 +13,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
             install.Table("users").CreateWithPrimaryKey("name", ColumnType.VarChar(64));
         }
 
-        await DB.InsertInto("users")
+        await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
@@ -22,7 +22,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task GenericSyntax()
+    public async Task DynamicAPI()
     {
         var rs = await DB
             .SelectFromTable("users")
@@ -85,7 +85,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task FactoryInterface()
+    public async Task TypedAPIWithFactoryType()
     {
         var rs = await DB
             .SelectFrom<UsersTable>()
@@ -98,7 +98,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task FactoryMethod()
+    public async Task TypedAPIWithFactoryMethod()
     {
         var rs = await DB
             .SelectFrom(UsersTable.Factory)
@@ -111,7 +111,7 @@ public class QueryCodeStyles(DatabaseFixture env) : DbTestBase(env)
     }
 
     [Fact]
-    public async Task Lambdas()
+    public async Task TypedAPIWithFactoryLambda()
     {
         var rs = await DB
               .SelectFrom(x => new UsersTable(x))

@@ -14,7 +14,7 @@ public class NullableColumnsTest(DatabaseFixture env) : DbTestBase(env)
             install.Table("users").CreateWithPrimaryKey("name", ColumnType.VarChar(64));
         }
 
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
@@ -40,7 +40,7 @@ public class NullableColumnsTest(DatabaseFixture env) : DbTestBase(env)
                 .AddColumn("nickname", ColumnType.VarChar(64).Nullable());
         }
 
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("username"), "Jack");
@@ -70,7 +70,7 @@ public class NullableColumnsTest(DatabaseFixture env) : DbTestBase(env)
 
         await Assert.ThrowsAnyAsync<System.Data.Common.DbException>(async () =>
         {
-            await DB.InsertInto("users")
+            await DB.InsertIntoTable("users")
                 .AddRow((query, table) =>
                 {
                     query.Set(table.Column<DbText>("username"), "Jack");
@@ -90,7 +90,7 @@ public class NullableColumnsTest(DatabaseFixture env) : DbTestBase(env)
                 .AddColumn("nickname", ColumnType.VarChar(64).Nullable());
         }
 
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("username"), "Jack");

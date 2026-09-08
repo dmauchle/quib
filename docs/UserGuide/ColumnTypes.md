@@ -1,0 +1,3 @@
+# Column Types
+
+Some more details on the available datatypes for the [Installer](Installer.md) will follow soon...

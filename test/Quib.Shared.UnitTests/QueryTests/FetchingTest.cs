@@ -17,7 +17,7 @@ public class Fetching(DatabaseFixture env) : DbTestBase(env)
     [Fact]
     public async Task FetchStream_WithRows_Works()
     {
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
@@ -58,7 +58,7 @@ public class Fetching(DatabaseFixture env) : DbTestBase(env)
     [Fact]
     public async Task FetchArray_WithRows_Works()
     {
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
@@ -93,7 +93,7 @@ public class Fetching(DatabaseFixture env) : DbTestBase(env)
     [Fact]
     public async Task FetchOne_WithRow_Works()
     {
-        var inserted = await DB.InsertInto("users")
+        var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");

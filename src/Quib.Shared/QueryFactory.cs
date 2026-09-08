@@ -96,4 +96,25 @@ public sealed class QueryFactory(DbConnection con)
         return new InsertQuery<T>(this, builder, tableFactory(accessor));
     }
 
+    public UpdateQuery<DbTable> Update(string tablename)
+    {
+        var table = new TableReference(tablename);
+        var accessor = new DbTable(new TableAlias(0));
+        var builder = new UpdateQueryBuilder(table);
+        return new UpdateQuery<DbTable>(this, builder, accessor);
+    }
+
+    public UpdateQuery<T> Update<T>() where T : IDbTable, IDbTableFactory<T>
+    {
+        return this.Update(T.Factory);
+    }
+
+    public UpdateQuery<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
+    {
+        var table = new TableReference(T.TableName);
+        var accessor = new DbTable(new TableAlias(0));
+        var builder = new UpdateQueryBuilder(table);
+        return new UpdateQuery<T>(this, builder, tableFactory(accessor));
+    }
+
 }

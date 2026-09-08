@@ -10,7 +10,7 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-public sealed class InsertQueryBuilder
+internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
 {
 
     private readonly List<DbColumnForUpdate> _columns = [];
@@ -35,11 +35,6 @@ public sealed class InsertQueryBuilder
             _columns.Add(updateColumn);
         _currentRow ??= new Dictionary<DbColumnForUpdate, IQueryExpression>();
         _currentRow[updateColumn] = value;
-    }
-
-    public void Set(DbColumn<DbText> column, string value)
-    {
-        this.Set(column, Parameters.Create(value));
     }
 
     internal void NextRow()

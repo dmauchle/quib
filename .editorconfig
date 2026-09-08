@@ -320,7 +320,7 @@ dotnet_diagnostic.CA1708.severity = error
 dotnet_code_quality.CA1708.api_surface = internal
 
 # Identifiers should not match keywords
-dotnet_diagnostic.CA1716.severity = error
+dotnet_diagnostic.CA1716.severity = silent
 
 # Type Names Should Not Match Namespaces
 dotnet_diagnostic.CA1724.severity = suggestion

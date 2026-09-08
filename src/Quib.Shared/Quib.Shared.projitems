@@ -17,6 +17,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IWriterMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\ParameterBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\QueryParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IUpdateQueryBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dml\InsertQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectionClause.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\FromClause.cs" />
@@ -31,13 +34,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\TableReference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\TableAlias.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateQueryExtensions.cs" />
     <Compile Include="..\Quib.Shared\Schema\DbColumnForUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\DbTable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\IDbTable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectedQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectionBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)InsertQuery.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SelectQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\InsertQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\DbText.cs" />
@@ -46,6 +50,5 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Installer\" />
     <Folder Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\" />
-    <Folder Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\" />
   </ItemGroup>
 </Project>

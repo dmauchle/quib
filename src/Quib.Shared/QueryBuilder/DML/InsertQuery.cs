@@ -1,13 +1,13 @@
 ﻿#if MYSQL56
-namespace Quib.MySql56;
+namespace Quib.MySql56.QueryBuilder;
 #elif MYSQL57
-namespace Quib.MySql57;
+namespace Quib.MySql57.QueryBuilder;
 #elif MYSQL80
-namespace Quib.MySql80;
+namespace Quib.MySql80.QueryBuilder;
 #elif MYSQL84
-namespace Quib.MySql84;
+namespace Quib.MySql84.QueryBuilder;
 #elif POSTGRES18
-namespace Quib.Postgres18;
+namespace Quib.Postgres18.QueryBuilder;
 #endif
 
 internal interface IInsertQuery : IQueryPart
@@ -29,19 +29,14 @@ public sealed class InsertQuery<TQuery> : IInsertQuery
         _accessor = accessor;
     }
 
-    public InsertQuery<TResult> Select<TResult>(Func<TQuery, TResult> selector)
-    {
-        return new InsertQuery<TResult>(_con, _builder, selector(_accessor));
-    }
-
-    public InsertQuery<TQuery> AddRow(Action<InsertQueryBuilder, TQuery> run)
+    public InsertQuery<TQuery> AddRow(Action<IUpdateQueryBuilder, TQuery> run)
     {
         run(_builder, _accessor);
         _builder.NextRow();
         return this;
     }
 
-    public InsertQuery<TQuery> AddRow<TObj>(Action<InsertQueryBuilder, TQuery, TObj> run, TObj obj)
+    public InsertQuery<TQuery> AddRow<TObj>(Action<IUpdateQueryBuilder, TQuery, TObj> run, TObj obj)
     {
         run(_builder, _accessor, obj);
         _builder.NextRow();

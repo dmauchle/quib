@@ -10,6 +10,9 @@ namespace Quib.MySql84.Schema;
 namespace Quib.Postgres18.Schema;
 #endif
 
+/// <summary>
+/// Represents the LVALUE in a INSERT or UPDATE statement. Implements value equality.
+/// </summary>
 internal readonly record struct DbColumnForUpdate : IQueryPart
 {
     private readonly TableAlias _table;

@@ -11,7 +11,8 @@ namespace Quib.Postgres18.ORMapper;
 #endif
 
 
-public interface IReaderMappingFactory<TQuery, TObj> : IReaderMapping<TQuery, TObj>
+public interface IWriterMapping<TQuery, TObj>
 {
-    public static abstract IReaderMapping<TQuery, TObj> Factory(ProjectionBuilder rs, TQuery query);
+    public static abstract void Write(IUpdateQueryBuilder query, TQuery table, TObj obj);
 }
+

@@ -107,7 +107,7 @@ public class InsertCodeStyles(DatabaseFixture env) : DbTestBase(env)
             };
         }
 
-        public static void Write(InsertQueryBuilder query, UsersTable table, User user)
+        public static void Write(IUpdateQueryBuilder query, UsersTable table, User user)
         {
             query.Set(table.Name, user.Name);
             

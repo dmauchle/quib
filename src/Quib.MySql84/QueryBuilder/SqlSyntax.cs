@@ -3,7 +3,7 @@
 internal static class SqlSyntax
 {
 
-    private static readonly string IDENTIFIER_QUOTE = "`";
+    private const string IDENTIFIER_QUOTE = "`";
 
     public static void WriteIdentifier(this QueryWriter writer, string identifier)
     {

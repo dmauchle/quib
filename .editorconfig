@@ -442,19 +442,13 @@ dotnet_naming_rule.properties_should_be_pascal_case.symbols = properties
 dotnet_naming_rule.properties_should_be_pascal_case.style = pascal_style
 dotnet_naming_rule.properties_should_be_pascal_case.severity = error
 
-# Const and static readonly fields: DB_CONNECTION_STRING
-dotnet_naming_symbols.readonly_symbols.applicable_kinds = field
-dotnet_naming_symbols.readonly_symbols.applicable_accessibilities = *
-dotnet_naming_symbols.readonly_symbols.required_modifiers = static, readonly
+# Const fields: DB_CONNECTION_STRING
 dotnet_naming_symbols.constant_symbols.applicable_kinds = field
 dotnet_naming_symbols.constant_symbols.applicable_accessibilities = *
 dotnet_naming_symbols.constant_symbols.required_modifiers = const
 dotnet_naming_rule.constants_should_be_upper_case_with_underscores.severity = error
-dotnet_naming_rule.constants_should_be_upper_case_with_underscores.symbols = readonly_symbols
+dotnet_naming_rule.constants_should_be_upper_case_with_underscores.symbols = constant_symbols
 dotnet_naming_rule.constants_should_be_upper_case_with_underscores.style = upper_style
-dotnet_naming_rule.readonly_should_be_upper_case_with_underscores.severity = error
-dotnet_naming_rule.readonly_should_be_upper_case_with_underscores.symbols = constant_symbols
-dotnet_naming_rule.readonly_should_be_upper_case_with_underscores.style = upper_style
 
 # Private instance fields are camelCase and start with _
 dotnet_naming_rule.instance_fields_should_be_camel_case.severity = error

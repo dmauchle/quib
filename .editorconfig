@@ -255,6 +255,10 @@ dotnet_diagnostic.IDE0003.severity = silent
 # IDE0305: Simplify collection initialization  list.ToArray() => [...list] OR  new List<string>() => []
 dotnet_diagnostic.IDE0305.severity = silent
 
+# Use primary constructor
+dotnet_diagnostic.IDE0290.severity = silent
+
+
 
 
 # CS1591: Missing XML comment

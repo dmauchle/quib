@@ -2,27 +2,39 @@
 
 ## Project structure
 
-Each database has its own project and Nuget package like:
+Each database and version has its own project and Nuget package:
 
-- Quib.MySql
-- Quib.Postgres
+- Quib.MySql56
+- Quib.MySql57
+- Quib.MySql80
+- Quib.MySql84
+- Quib.Postgres18
 
 Each project also uses its own namespace to allow usage of multiple databases in the same application. Most of the code 
 resides in a shared project (Quib.Shared). In order to assign the shared code to the correct database project, we use 
 compiler directives and declare the namespace in each file like in this example: 
 
 ```csharp
-#if MYSQL
-namespace Quib.MySql.QueryBuilder;
-#elif POSTGRES
-namespace Quib.Postgres.QueryBuilder;
+#if MYSQL56
+namespace Quib.MySql56.QueryBuilder;
+#elif MYSQL57
+namespace Quib.MySql57.QueryBuilder;
+#elif MYSQL80
+namespace Quib.MySql80.QueryBuilder;
+#elif MYSQL84
+namespace Quib.MySql84.QueryBuilder;
+#elif POSTGRES18
+namespace Quib.Postgres18.QueryBuilder;
 #endif
 ```
 
 Same goes for the unit test projects. Each database has its own unit test project like: 
 
-- Quib.MySql.UnitTests
-- Quib.Postgres.UnitTests
+- Quib.MySql56.UnitTests
+- Quib.MySql57.UnitTests
+- Quib.MySql80.UnitTests
+- Quib.MySql84.UnitTests
+- Quib.Postgres18.UnitTests
 
 Again, most of the code resides in a shared project (Quib.Shared.UnitTests). But in this case they all use the same 
 namespaces, so no compiler directives are needed.

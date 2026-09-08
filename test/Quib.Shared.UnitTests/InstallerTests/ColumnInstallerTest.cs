@@ -74,6 +74,7 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
         throw new NotImplementedException("Need more types first.");
     }
 
+#if !MYSQL56 && !MYSQL57
     [Fact]
     public async Task Rename_Works()
     {
@@ -105,7 +106,9 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
             Assert.Equal(1L, newCnt);
         }
     }
+#endif
 
+#if !MYSQL56 && !MYSQL57
     [Fact]
     public async Task Rename_ForeignKeyColumn_Works()
     {
@@ -167,5 +170,6 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
             Assert.Equal("company_id", fkCols[0]);
         }
     }
+#endif
 
 }

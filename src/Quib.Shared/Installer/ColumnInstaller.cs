@@ -1,11 +1,13 @@
-﻿#if !MYSQL && !POSTGRES
-#error Define compilation symbol MYSQL or POSTGRES
-#endif
-
-#if MYSQL
-namespace Quib.MySql.Installer;
-#elif POSTGRES
-namespace Quib.Postgres.Installer;
+﻿#if MYSQL56
+namespace Quib.MySql56.Installer;
+#elif MYSQL57
+namespace Quib.MySql57.Installer;
+#elif MYSQL80
+namespace Quib.MySql80.Installer;
+#elif MYSQL84
+namespace Quib.MySql84.Installer;
+#elif POSTGRES18
+namespace Quib.Postgres18.Installer;
 #endif
 
 public sealed class ColumnInstaller
@@ -72,6 +74,7 @@ public sealed class ColumnInstaller
         return this;
     }
 
+#if !MYSQL56 && !MYSQL57
     /// <summary>
     /// Execute DDL statement to rename column. Requires MySQL version 8+. For older versions, 
     /// use <see cref="ChangeTo(string, DbType)"/> instead.
@@ -87,6 +90,25 @@ public sealed class ColumnInstaller
         sql = $"ALTER TABLE \"{_tablename}\" RENAME COLUMN \"{_columnname}\" TO \"{newColumnName}\";";
 #endif
         _db.ExecuteNonQuery(sql);
+        return this;
+    }
+#endif
+
+    /// <summary>
+    /// Execute DDL statement to change column name and/or type.
+    /// </summary>
+    /// <param name="newColumnname"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public ColumnInstaller ChangeTo(string newColumnname, DbType type)
+    {
+#if MYSQL
+        var sql = $"ALTER TABLE `{_tablename}` CHANGE `{_columnname}` `{newColumnname}` {type.ToSql()};";
+        _db.ExecuteNonQuery(sql);
+#elif POSTGRES
+        this.ChangeType(type);
+        this.RenameTo(newColumnname);
+#endif
         return this;
     }
 

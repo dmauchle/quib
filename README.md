@@ -19,15 +19,18 @@ And again, the compiler has no chance to check your query for errors.
 
 ## Features
 
-Supported databases: 
+### Supported databases
 
-- MySQL
-- Postgres
+- MySQL (5.6, 5.7, 8.0)
+- Postgres (18)
 
-Each database has its own Nuget package. This allows the compiler to check if your specific query functions are 
-supported by the database you are using.
+Each database and version has its own Nuget package. This will make sure you can only call supported query functions and
+the correct SQL dialect will be used. 
 
-At the moment, there's no general abstraction. A Nuget package that can target multiple/all databases might be added in 
+Nothing prevents you from using a package for a different version (or even database) than it is built for. Queries 
+that have the same SQL dialect will work. But if the SQL dialect differs, you will get exceptions at runtime.
+
+At the moment, there's no general abstraction API. A package that can target multiple/all databases might be added in 
 the future, but it will be limited to the common features of all supported databases.
 
 

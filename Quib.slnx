@@ -8,13 +8,19 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Quib.MySql/Quib.MySql.csproj" />
-    <Project Path="src/Quib.Postgres/Quib.Postgres.csproj" />
+    <Project Path="src/Quib.MySql56/Quib.MySql56.csproj" />
+    <Project Path="src/Quib.MySql57/Quib.MySql57.csproj" />
+    <Project Path="src/Quib.MySql80/Quib.MySql80.csproj" />
+    <Project Path="src/Quib.MySql84/Quib.MySql84.csproj" />
+    <Project Path="src/Quib.Postgres18/Quib.Postgres18.csproj" />
     <Project Path="src/Quib.Shared/Quib.Shared.shproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test/Quib.MySql.UnitTests/Quib.MySql.UnitTests.csproj" Id="7a7441a4-76e5-4fdb-8ae3-30a3d95323e0" />
-    <Project Path="test/Quib.Postgres.UnitTests/Quib.Postgres.UnitTests.csproj" Id="392fa3e7-58a1-411e-bd53-8f91a48b1bae" />
+    <Project Path="test/Quib.MySql56.UnitTests/Quib.MySql56.UnitTests.csproj" />
+    <Project Path="test/Quib.MySql57.UnitTests/Quib.MySql57.UnitTests.csproj" />
+    <Project Path="test/Quib.MySql80.UnitTests/Quib.MySql80.UnitTests.csproj" Id="7a7441a4-76e5-4fdb-8ae3-30a3d95323e0" />
+    <Project Path="test/Quib.MySql84.UnitTests/Quib.MySql84.UnitTests.csproj" />
+    <Project Path="test/Quib.Postgres18.UnitTests/Quib.Postgres18.UnitTests.csproj" Id="392fa3e7-58a1-411e-bd53-8f91a48b1bae" />
     <Project Path="test/Quib.Shared.UnitTests/Quib.Shared.UnitTests.shproj" Id="75d75e26-b3da-4d55-a943-279ae3a558d7" />
   </Folder>
 </Solution>

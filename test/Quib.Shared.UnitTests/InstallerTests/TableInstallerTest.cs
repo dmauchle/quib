@@ -1,4 +1,4 @@
-using Quib.UnitTests.Infrastructure;
+﻿using Quib.UnitTests.Infrastructure;
 
 namespace Quib.UnitTests;
 

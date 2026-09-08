@@ -1,6 +1,6 @@
 ﻿using Quib.UnitTests.Infrastructure;
 
-namespace Quib.UnitTests.QueryTests;
+namespace Quib.UnitTests.UpdateTests;
 
 [Collection(TestCollections.DATABASE)]
 public class UpdateCodeStyles(DatabaseFixture env) : DbTestBase(env)
@@ -111,7 +111,6 @@ public class UpdateCodeStyles(DatabaseFixture env) : DbTestBase(env)
         public static void Write(IUpdateQueryBuilder query, UsersTable table, User user)
         {
             query.Set(table.Name, user.Name);
-            
         }
 
     }

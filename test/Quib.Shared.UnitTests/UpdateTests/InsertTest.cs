@@ -1,6 +1,6 @@
 ﻿using Quib.UnitTests.Infrastructure;
 
-namespace Quib.UnitTests.QueryTests;
+namespace Quib.UnitTests.UpdateTests;
 
 [Collection(TestCollections.DATABASE)]
 public class InsertTest(DatabaseFixture env) : DbTestBase(env)

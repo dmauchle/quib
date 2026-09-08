@@ -1,6 +1,6 @@
 ﻿using Quib.UnitTests.Infrastructure;
 
-namespace Quib.UnitTests;
+namespace Quib.UnitTests.InstallerTests;
 
 [Collection(TestCollections.DATABASE)]
 public class DatabaseInstallerTest(DatabaseFixture env) : DbTestBase(env)

@@ -1,6 +1,6 @@
 ﻿using Quib.UnitTests.Infrastructure;
 
-namespace Quib.UnitTests;
+namespace Quib.UnitTests.InstallerTests;
 
 [Collection(TestCollections.DATABASE)]
 public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
@@ -74,7 +74,12 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
         throw new NotImplementedException("Need more types first.");
     }
 
-#if !MYSQL56 && !MYSQL57
+#if MYSQL56 || MYSQL57
+    [Fact(Skip = "MySQL 5.6 and 5.7 do not support renaming columns. Use a different method.")]
+    public async Task Rename_Works()
+    {
+    }
+#else
     [Fact]
     public async Task Rename_Works()
     {
@@ -108,7 +113,12 @@ public class ColumnInstallerTest(DatabaseFixture env) : DbTestBase(env)
     }
 #endif
 
-#if !MYSQL56 && !MYSQL57
+#if MYSQL56 || MYSQL57
+    [Fact(Skip = "MySQL 5.6 and 5.7 do not support renaming columns. Use a different method.")]
+    public async Task Rename_ForeignKeyColumn_Works()
+    {
+    }
+#else
     [Fact]
     public async Task Rename_ForeignKeyColumn_Works()
     {

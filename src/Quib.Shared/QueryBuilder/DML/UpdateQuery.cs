@@ -47,7 +47,6 @@ public sealed class UpdateQuery<TQuery> : IUpdateQuery
         return this.With(TMapper.Write, obj);
     }
 
-
     public async Task<int> Execute()
     {
         var sql = ToSql();

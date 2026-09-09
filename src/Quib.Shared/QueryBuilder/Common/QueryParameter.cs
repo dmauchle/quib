@@ -11,7 +11,7 @@ namespace Quib.Postgres18.QueryBuilder;
 #endif
 
 
-internal interface IQueryParameter : IQueryPart
+internal interface IQueryParameter : IQueryExpression, IQueryPart
 {
     public string Name { get; }
     public object? Value { get; }

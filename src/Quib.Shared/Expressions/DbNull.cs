@@ -11,7 +11,7 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed record DbNull<T> : IQueryExpression<T>
+internal sealed class DbNull<T> : IQueryExpression<T>
     where T : struct, IExpressionType
 {
 

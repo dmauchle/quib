@@ -13,3 +13,6 @@ namespace Quib.Postgres18.Schema;
 
 public readonly struct DbText : IExpressionType { }
 public readonly struct DbTextNullable : IExpressionType, INullableExpressionType { }
+
+public readonly struct DbInt : IExpressionType { }
+public readonly struct DbIntNullable : IExpressionType, INullableExpressionType { }

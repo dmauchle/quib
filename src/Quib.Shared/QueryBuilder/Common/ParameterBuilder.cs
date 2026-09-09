@@ -1,4 +1,6 @@
-﻿#if MYSQL56
+﻿using System.Data.Common;
+
+#if MYSQL56
 namespace Quib.MySql56.QueryBuilder;
 #elif MYSQL57
 namespace Quib.MySql57.QueryBuilder;
@@ -31,9 +33,15 @@ public sealed class ParameterBuilder
         return parameter;
     }
 
-    internal IEnumerable<IQueryParameter> Build()
+    internal void AddTo(DbCommand cmd)
     {
-        return _parameters;
+        foreach (var p in _parameters)
+        {
+            var param = cmd.CreateParameter();
+            param.ParameterName = p.Name;
+            param.Value = p.Value ?? DBNull.Value;
+            cmd.Parameters.Add(param);
+        }
     }
 
 }

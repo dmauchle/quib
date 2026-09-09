@@ -35,4 +35,17 @@ public sealed class ResultReader
             return _reader.GetString(field.Index);
     }
 
+    public int Get(ProjectedValue<DbInt> field)
+    {
+        return _reader.GetInt32(field.Index);
+    }
+
+    public int? Get(ProjectedValue<DbIntNullable> field)
+    {
+        if (_reader.IsDBNull(field.Index))
+            return null;
+        else
+            return _reader.GetInt32(field.Index);
+    }
+
 }

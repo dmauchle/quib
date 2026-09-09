@@ -45,9 +45,12 @@ namespaces, so no compiler directives are needed.
 Namespaces are structured from the consumers perspective, grouped by typical use cases or tasks that the consumers will 
 perform.
 
-- `Quib.MySql`: Root namespace with main entry into the library.
-- `Quib.MySql.Schema`: Types used to describe the db schema with tables, columns and datatypes. Used to build the metadata for your db queries.
-- `Quib.MySql.ORMapper`: Types used to process query results and map them to .NET objects and types.
+- `Quib.MySql80`: Root namespace with main entry into the library.
+- `Quib.MySql80.Schema`: Types used to describe the db schema with tables, columns and datatypes. Used to build the metadata for your db queries.
+- `Quib.MySql80.QueryBuilder`: Types used to build SQL DQL and DML queries.
+- `Quib.MySql80.Expressions`: Types used to represent and build SQL expressions in queries and schemas.
+- `Quib.MySql80.ORMapper`: Types used to process query results and map them to .NET objects and types.
+- `Quib.MySql80.Installer`: Types used to install and migrate database schemas (Installer API).
 
 
 ## Types and Inheritance

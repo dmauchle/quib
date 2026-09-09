@@ -50,8 +50,4 @@ public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
         }
     }
 
-    internal IEnumerable<IQueryParameter> GetParameters()
-    {
-        return _parameters.Build();
-    }
 }

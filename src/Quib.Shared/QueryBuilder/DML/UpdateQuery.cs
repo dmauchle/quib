@@ -50,8 +50,7 @@ public sealed class UpdateQuery<TQuery> : IUpdateQuery
     public async Task<int> Execute()
     {
         var sql = ToSql();
-        var parameters = _builder.GetParameters();
-        var affected = _con.ExecuteNonQuery(sql, parameters);
+        var affected = _con.ExecuteNonQuery(sql, _builder.Parameters);
         return affected;
     }
 

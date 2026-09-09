@@ -17,17 +17,11 @@ public sealed class QueryFactory(DbConnection con)
 
     public DbConnection Connection => con;
 
-    internal int ExecuteNonQuery(string sql, params IEnumerable<IQueryParameter> parameters)
+    internal int ExecuteNonQuery(string sql, ParameterBuilder? parameters = null)
     {
         using var cmd = con.CreateCommand();
         cmd.CommandText = sql;
-        foreach (var p in parameters)
-        {
-            var param = cmd.CreateParameter();
-            param.ParameterName = p.Name;
-            param.Value = p.Value ?? DBNull.Value;
-            cmd.Parameters.Add(param);
-        }
+        parameters?.AddTo(cmd);
         return cmd.ExecuteNonQuery();
     }
 
@@ -56,7 +50,7 @@ public sealed class QueryFactory(DbConnection con)
     {
         var table = new TableReference(tablename);
         var from = new FromClause(table);
-        var builder = new SelectQueryBuilder(from);
+        var builder = new SelectQueryBuilder(new ParameterBuilder(), from);
         var accessor = new DbTable(from.Alias);
         return new SelectQuery<DbTable>(this, builder, accessor);
     }
@@ -70,9 +64,16 @@ public sealed class QueryFactory(DbConnection con)
     {
         var table = new TableReference(T.TableName);
         var from = new FromClause(table);
-        var builder = new SelectQueryBuilder(from);
+        var builder = new SelectQueryBuilder(new ParameterBuilder(), from);
         var accessor = new DbTable(from.Alias);
         return new SelectQuery<T>(this, builder, tableFactory(accessor));
+    }
+
+    public ProjectedQuery<T> Select<T>(Func<ProjectionBuilder, T> factory)
+    {
+        var builder = new SelectQueryBuilder(new ParameterBuilder());
+        var select = new SelectQuery<object>(this, builder, new object());
+        return select.Project((rs, _) => factory(rs));
     }
 
     public InsertQuery<DbTable> InsertIntoTable(string tablename)

@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\ColumnInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querytests\ExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchingTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\QueryCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />

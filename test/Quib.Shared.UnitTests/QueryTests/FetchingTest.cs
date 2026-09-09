@@ -3,7 +3,7 @@
 namespace Quib.UnitTests.SchemaTests;
 
 [Collection(TestCollections.DATABASE)]
-public class Fetching(DatabaseFixture env) : DbTestBase(env)
+public class FetchingTest(DatabaseFixture env) : DbTestBase(env)
 {
 
     protected override async ValueTask InitializeTestDatabase()

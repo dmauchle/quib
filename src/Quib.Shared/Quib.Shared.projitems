@@ -9,6 +9,10 @@
     <Import_RootNamespace>Quib</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\ImplicitCast.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)expressions\BinaryOperator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)expressions\Constant.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\DbNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)installer\ColumnTypeFactory.cs" />
@@ -25,7 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IUpdateQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQueryBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dml\InsertQueryBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\InsertQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectionClause.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\FromClause.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\IQueryPart.cs" />
@@ -33,7 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\QueryWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IReaderMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)schema\DbColumn.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Schema\IQueryExpression.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\IQueryExpression.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectedMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ProjectedValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQueryBuilder.cs" />
@@ -50,7 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\DbText.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Schema\IExpressionType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\IExpressionType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Installer\" />

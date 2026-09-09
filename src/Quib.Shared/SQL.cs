@@ -19,4 +19,9 @@ public static class SQL
         return DbNull<T>.Value;
     }
 
+    public static IQueryExpression<DbInt> Constant(int value)
+    {
+        return new Constant<DbInt>(value.ToString());
+    }
+
 }

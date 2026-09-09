@@ -34,6 +34,7 @@ public class ProjectedQuery<TProj> : IQueryPart
         using (var cmd = _db.Connection.CreateCommand())
         {
             cmd.CommandText = sql;
+            _baseQuery.Parameters.AddTo(cmd);
 
             using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
             {

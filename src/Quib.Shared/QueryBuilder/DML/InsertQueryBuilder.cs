@@ -84,8 +84,4 @@ internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
         }
     }
 
-    internal IEnumerable<IQueryParameter> GetParameters()
-    {
-        return _parameters.Build();
-    }
 }

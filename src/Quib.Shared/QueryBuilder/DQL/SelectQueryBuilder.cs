@@ -13,17 +13,21 @@ namespace Quib.Postgres18.QueryBuilder;
 internal sealed class SelectQueryBuilder
 {
 
-    private readonly FromClause _from;
+    private readonly FromClause? _from;
+    private readonly ParameterBuilder _parameters;
 
-
-    public SelectQueryBuilder(FromClause from)
+    public SelectQueryBuilder(ParameterBuilder parameters, FromClause? from = null)
     {
+        _parameters = parameters;
         _from = from;
     }
 
+    public ParameterBuilder Parameters => _parameters;
+
     public void ToSql(QueryWriter query)
     {
-        query.Write(_from);
+        if (_from != null)
+            query.Write(_from);
     }
 
 }

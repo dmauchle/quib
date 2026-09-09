@@ -56,7 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Schema\DbText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\DbTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IExpressionType.cs" />
   </ItemGroup>
   <ItemGroup>

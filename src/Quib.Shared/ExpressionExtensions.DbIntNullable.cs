@@ -31,6 +31,66 @@ public static partial class ExpressionExtensions
             return left + SQL.NullableParameter(right);
         }
 
+        public static IQueryExpression<DbIntNullable> operator -(IQueryExpression<DbIntNullable> left, IQueryExpression<DbIntNullable> right)
+        {
+            return new BinaryOperator<DbIntNullable>(left, "-", right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator -(IQueryExpression<DbIntNullable> left, IQueryExpression<DbInt> right)
+        {
+            return left - right.AsNullable();
+        }
+
+        public static IQueryExpression<DbIntNullable> operator -(IQueryExpression<DbIntNullable> left, int right)
+        {
+            return left - SQL.NullableParameter(right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator *(IQueryExpression<DbIntNullable> left, IQueryExpression<DbIntNullable> right)
+        {
+            return new BinaryOperator<DbIntNullable>(left, "*", right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator *(IQueryExpression<DbIntNullable> left, IQueryExpression<DbInt> right)
+        {
+            return left * right.AsNullable();
+        }
+
+        public static IQueryExpression<DbIntNullable> operator *(IQueryExpression<DbIntNullable> left, int right)
+        {
+            return left * SQL.NullableParameter(right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator /(IQueryExpression<DbIntNullable> left, IQueryExpression<DbIntNullable> right)
+        {
+            return new BinaryOperator<DbIntNullable>(left, "/", right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator /(IQueryExpression<DbIntNullable> left, IQueryExpression<DbInt> right)
+        {
+            return left / right.AsNullable();
+        }
+
+        public static IQueryExpression<DbIntNullable> operator /(IQueryExpression<DbIntNullable> left, int right)
+        {
+            return left / SQL.NullableParameter(right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator %(IQueryExpression<DbIntNullable> left, IQueryExpression<DbIntNullable> right)
+        {
+            return new BinaryOperator<DbIntNullable>(left, "%", right);
+        }
+
+        public static IQueryExpression<DbIntNullable> operator %(IQueryExpression<DbIntNullable> left, IQueryExpression<DbInt> right)
+        {
+            return left % right.AsNullable();
+        }
+
+        public static IQueryExpression<DbIntNullable> operator %(IQueryExpression<DbIntNullable> left, int right)
+        {
+            return left % SQL.NullableParameter(right);
+        }
+
     }
 
 

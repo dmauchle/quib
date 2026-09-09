@@ -71,7 +71,7 @@ or `SQL` factory class.
 ## DB types for expressions
 
 DB types are marker types used to represent the SQL types in expressions like `DbText` or `DbInt`. They are used to ensure 
-type safety. They implement `IExpressionType` and `INotNullExpressionType`. 
+type safety. They implement `IExpressionType` and `INotNullExpressionType`. All DB type structs reside in DbTypes.cs.
 
 For every type there should be a corresponding nullable type like `DbTextNullable` or `DbIntNullable`. The nullable types 
 implement `IExpressionType`and `INullableExpressionType` in addition.

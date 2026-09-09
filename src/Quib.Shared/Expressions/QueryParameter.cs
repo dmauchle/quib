@@ -16,7 +16,7 @@ internal interface IQueryParameter
     public object? Value { get; }
 }
 
-internal sealed class QueryParameter<T> : IQueryExpression<T>, IQueryParameter
+internal sealed class QueryParameter<T> : QueryExpression<T>, IQueryParameter
     where T : struct, IExpressionType
 {
 
@@ -29,7 +29,7 @@ internal sealed class QueryParameter<T> : IQueryExpression<T>, IQueryParameter
 
     object? IQueryParameter.Value => _value;
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.WriteParameter(this);
     }

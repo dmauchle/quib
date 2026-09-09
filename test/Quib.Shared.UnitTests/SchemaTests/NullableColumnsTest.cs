@@ -1,9 +1,10 @@
 ﻿using Quib.UnitTests.Infrastructure;
+using Xunit.Abstractions;
 
 namespace Quib.UnitTests.SchemaTests;
 
 [Collection(TestCollections.DATABASE)]
-public class NullableColumnsTest(DatabaseFixture env) : DbTestBase(env)
+public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
     [Fact]

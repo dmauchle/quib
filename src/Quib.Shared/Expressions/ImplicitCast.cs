@@ -11,18 +11,18 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed class ImplicitCast<T> : IQueryExpression<T>
+internal sealed class ImplicitCast<T> : QueryExpression<T>
     where T : struct, IExpressionType
 {
 
-    private readonly IQueryExpression _value;
+    private readonly QueryExpression _value;
 
-    public ImplicitCast(IQueryExpression value)
+    public ImplicitCast(QueryExpression value)
     {
         _value = value;
     }
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.Write(_value);
     }

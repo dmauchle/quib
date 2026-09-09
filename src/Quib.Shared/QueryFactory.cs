@@ -17,11 +17,34 @@ public sealed class QueryFactory(DbConnection con)
 
     public DbConnection Connection => con;
 
+    public Action<string> Logger { get; set; } = _ => { };
+
+    internal void Log(DbCommand cmd)
+    {
+        Logger(cmd.CommandText);
+        foreach (var parameter in cmd.Parameters)
+        {
+            if (parameter is DbParameter p)
+            {
+                string formatValue(object? value)
+                {
+                    return value switch
+                    {
+                        null or DBNull => "NULL",
+                        _ => value.ToString() ?? ""
+                    };
+                }
+                Logger($"  {p.ParameterName} = {formatValue(p.Value)}");
+            }
+        }
+    }
+
     internal int ExecuteNonQuery(string sql)
     {
         using (var cmd = con.CreateCommand())
         {
             cmd.CommandText = sql;
+            Log(cmd);
             return cmd.ExecuteNonQuery();
         }
     }
@@ -31,6 +54,7 @@ public sealed class QueryFactory(DbConnection con)
         using (var cmd = con.CreateCommand())
         {
             cmd.CommandText = sql;
+            Log(cmd);
             return cmd.ExecuteNonQueryAsync(cancellationToken);
         }
     }
@@ -40,6 +64,7 @@ public sealed class QueryFactory(DbConnection con)
         using (var cmd = con.CreateCommand())
         {
             query.Build(cmd);
+            Log(cmd);
             return cmd.ExecuteNonQueryAsync(cancellationToken);
         }
     }
@@ -49,6 +74,7 @@ public sealed class QueryFactory(DbConnection con)
         using (var cmd = con.CreateCommand())
         {
             cmd.CommandText = sql;
+            Log(cmd);
             return cmd.ExecuteScalar();
         }
     }
@@ -58,6 +84,7 @@ public sealed class QueryFactory(DbConnection con)
         using (var cmd = con.CreateCommand())
         {
             cmd.CommandText = sql;
+            Log(cmd);
             return cmd.ExecuteScalarAsync();
         }
     }

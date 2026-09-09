@@ -40,7 +40,7 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return new ProjectedQuery<TProj>(_con, proj, this, rs.Build());
     }
 
-    public ProjectedQuery<ProjectedValue<TProj>> Project<TProj>(Func<TQuery, IQueryExpression<TProj>> selector)
+    public ProjectedQuery<ProjectedValue<TProj>> Project<TProj>(Func<TQuery, QueryExpression<TProj>> selector)
         where TProj : struct, IExpressionType
     {
         return this.Project((rs, x) => rs.Get(selector(x)));

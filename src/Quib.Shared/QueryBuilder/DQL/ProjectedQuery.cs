@@ -35,6 +35,7 @@ public class ProjectedQuery<TProj> : IQueryPart
             var query = new QueryWriter();
             query.Write(this);
             query.Build(cmd);
+            _db.Log(cmd);
 
             using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
             {

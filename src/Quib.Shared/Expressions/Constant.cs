@@ -11,7 +11,7 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed class Constant<T> : IQueryExpression<T>
+internal sealed class Constant<T> : QueryExpression<T>
     where T : struct, IExpressionType
 {
 
@@ -22,7 +22,7 @@ internal sealed class Constant<T> : IQueryExpression<T>
         _sqlConstant = sqlConstant;
     }
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.Write(_sqlConstant);
     }

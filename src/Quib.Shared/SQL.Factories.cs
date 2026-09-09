@@ -13,31 +13,46 @@ namespace Quib.Postgres18;
 public static partial class SQL
 {
 
-    public static readonly DbNull NULL = DbNull.Value;
+    public static readonly DbNull Null = DbNull.Value;
 
-    public static IQueryExpression<DbInt> Constant(int value)
+    public static QueryExpression<DbInt> Constant(int value)
     {
         return new Constant<DbInt>(value.ToString());
     }
 
-    public static IQueryExpression<DbText> Parameter(string value)
+    public static QueryExpression<DbBool> Constant(bool value)
+    {
+        return new Constant<DbBool>(value ? "true" : "false");
+    }
+
+    public static QueryExpression<DbText> Parameter(string value)
     {
         return new QueryParameter<DbText>(value);
     }
 
-    public static IQueryExpression<DbTextNullable> NullableParameter(string? value)
+    public static QueryExpression<DbTextNullable> NullableParameter(string? value)
     {
         return new QueryParameter<DbTextNullable>(value);
     }
 
-    public static IQueryExpression<DbInt> Parameter(int value)
+    public static QueryExpression<DbInt> Parameter(int value)
     {
         return new QueryParameter<DbInt>(value);
     }
 
-    public static IQueryExpression<DbIntNullable> NullableParameter(int? value)
+    public static QueryExpression<DbIntNullable> NullableParameter(int? value)
     {
         return new QueryParameter<DbIntNullable>(value);
+    }
+
+    public static QueryExpression<DbBool> Parameter(bool value)
+    {
+        return new QueryParameter<DbBool>(value);
+    }
+
+    public static QueryExpression<DbBoolNullable> NullableParameter(bool? value)
+    {
+        return new QueryParameter<DbBoolNullable>(value);
     }
 
 }

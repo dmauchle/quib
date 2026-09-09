@@ -12,6 +12,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbIntNullable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbInt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBoolNullable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbTextNullable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNotNull.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNull.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\UnaryOperator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SQL.TextFunctions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\ConcatOperator.cs" />
     <Compile Include="..\Quib.Shared\Expressions\QueryParameter.cs" />
@@ -40,7 +46,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\QueryWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IReaderMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)schema\DbColumn.cs" />
-    <Compile Include="..\Quib.Shared\Expressions\IQueryExpression.cs" />
+    <Compile Include="..\Quib.Shared\Expressions\QueryExpression.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectedMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ProjectedValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQueryBuilder.cs" />

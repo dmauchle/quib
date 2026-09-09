@@ -1,9 +1,10 @@
 ﻿using Quib.UnitTests.Infrastructure;
+using Xunit.Abstractions;
 
 namespace Quib.UnitTests.UpdateTests;
 
 [Collection(TestCollections.DATABASE)]
-public class UpdateCodeStyles(DatabaseFixture env) : DbTestBase(env)
+public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
     protected override async ValueTask InitializeTestDatabase()

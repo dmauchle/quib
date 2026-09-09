@@ -11,7 +11,7 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-public sealed class DbNull : IQueryExpression
+public sealed class DbNull : QueryExpression
 {
 
     public static readonly DbNull Value = new DbNull();
@@ -21,19 +21,19 @@ public sealed class DbNull : IQueryExpression
 
     }
 
-    public IQueryExpression<T> As<T>()
+    public QueryExpression<T> As<T>()
         where T : struct, INullableExpressionType
     {
         return DbNull<T>.Value;
     }
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.Write("NULL");
     }
 }
 
-internal sealed class DbNull<T> : IQueryExpression<T>
+internal sealed class DbNull<T> : QueryExpression<T>
     where T : struct, INullableExpressionType
 {
 
@@ -44,7 +44,7 @@ internal sealed class DbNull<T> : IQueryExpression<T>
 
     }
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.Write(DbNull.Value);
     }

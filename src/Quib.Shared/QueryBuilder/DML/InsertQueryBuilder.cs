@@ -14,23 +14,23 @@ internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
 {
 
     private readonly List<DbColumnForUpdate> _columns = [];
-    private readonly List<Dictionary<DbColumnForUpdate, IQueryExpression>> _rows = [];
+    private readonly List<Dictionary<DbColumnForUpdate, QueryExpression>> _rows = [];
     private readonly TableReference _table;
 
-    private Dictionary<DbColumnForUpdate, IQueryExpression>? _currentRow = null;
+    private Dictionary<DbColumnForUpdate, QueryExpression>? _currentRow = null;
 
     internal InsertQueryBuilder(TableReference table)
     {
         _table = table;
     }
 
-    public void Set<T>(DbColumn<T> column, IQueryExpression<T> value)
+    public void Set<T>(DbColumn<T> column, QueryExpression<T> value)
         where T : struct, IExpressionType
     {
         var updateColumn = column.ForUpdate();
         if (!_columns.Contains(updateColumn))
             _columns.Add(updateColumn);
-        _currentRow ??= new Dictionary<DbColumnForUpdate, IQueryExpression>();
+        _currentRow ??= new Dictionary<DbColumnForUpdate, QueryExpression>();
         _currentRow[updateColumn] = value;
     }
 

@@ -25,7 +25,7 @@ public sealed class ProjectionBuilder
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public ProjectedValue<T> Get<T>(IQueryExpression<T> value)
+    public ProjectedValue<T> Get<T>(QueryExpression<T> value)
         where T : struct, IExpressionType
     {
         var fieldIndex = _projections.Count;

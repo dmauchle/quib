@@ -13,7 +13,7 @@ namespace Quib.Postgres18.QueryBuilder;
 public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
 {
 
-    private readonly List<(DbColumnForUpdate column, IQueryExpression value)> _values = [];
+    private readonly List<(DbColumnForUpdate column, QueryExpression value)> _values = [];
     private readonly TableReference _table;
 
     internal UpdateQueryBuilder(TableReference table)
@@ -21,7 +21,7 @@ public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
         _table = table;
     }
 
-    public void Set<T>(DbColumn<T> column, IQueryExpression<T> value)
+    public void Set<T>(DbColumn<T> column, QueryExpression<T> value)
         where T : struct, IExpressionType
     {
         var updateColumn = column.ForUpdate();

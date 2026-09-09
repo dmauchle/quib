@@ -15,7 +15,7 @@ namespace Quib.Postgres18.Schema;
 /// Physical column in a database table.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public sealed class DbColumn<T> : IQueryExpression<T>
+public sealed class DbColumn<T> : QueryExpression<T>
     where T : struct, IExpressionType
 {
 
@@ -28,7 +28,7 @@ public sealed class DbColumn<T> : IQueryExpression<T>
         _fieldname = fieldname;
     }
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.Write(_table);
         query.Write(".");

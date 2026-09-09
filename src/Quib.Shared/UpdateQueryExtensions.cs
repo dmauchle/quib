@@ -17,7 +17,7 @@ public static class UpdateQueryExtensions
         where TQuery : IUpdateQueryBuilder
         where TDbType : struct, INullableExpressionType
     {
-        query.Set(column, SQL.NULL.As<TDbType>());
+        query.Set(column, SQL.Null.As<TDbType>());
     }
 
     public static void Set<TQuery>(this TQuery query, DbColumn<DbText> column, string value)

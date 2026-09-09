@@ -11,8 +11,14 @@ namespace Quib.Postgres18.Schema;
 #endif
 
 
-public readonly struct DbText : IExpressionType, INotNullExpressionType { }
-public readonly struct DbTextNullable : IExpressionType, INullableExpressionType { }
+public interface IDbText : IExpressionType { }
+public readonly struct DbText : IExpressionType, INotNullExpressionType, IDbText { }
+public readonly struct DbTextNullable : IExpressionType, INullableExpressionType, IDbText { }
 
-public readonly struct DbInt : IExpressionType, INotNullExpressionType { }
-public readonly struct DbIntNullable : IExpressionType, INullableExpressionType { }
+public interface IDbInt : IExpressionType { }
+public readonly struct DbInt : IExpressionType, INotNullExpressionType, IDbInt { }
+public readonly struct DbIntNullable : IExpressionType, INullableExpressionType, IDbInt { }
+
+public interface IDbBool : IExpressionType { }
+public readonly struct DbBool : IExpressionType, INotNullExpressionType, IDbBool { }
+public readonly struct DbBoolNullable : IExpressionType, INullableExpressionType, IDbBool { }

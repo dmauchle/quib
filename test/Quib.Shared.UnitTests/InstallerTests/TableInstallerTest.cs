@@ -1,9 +1,10 @@
 ﻿using Quib.UnitTests.Infrastructure;
+using Xunit.Abstractions;
 
 namespace Quib.UnitTests.InstallerTests;
 
 [Collection(TestCollections.DATABASE)]
-public class TableInstallerTest(DatabaseFixture env) : DbTestBase(env)
+public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
     private async Task<long> ScalarLong(string sql)

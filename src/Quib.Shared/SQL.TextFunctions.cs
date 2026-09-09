@@ -15,32 +15,32 @@ public static partial class SQL
 {
 
 
-    public static IQueryExpression<DbText> Concat(IQueryExpression<DbText> left, IQueryExpression<DbText> right)
+    public static QueryExpression<DbText> Concat(QueryExpression<DbText> left, QueryExpression<DbText> right)
     {
-        return new ConcatOperator(left, right.AsNullable());
+        return new ConcatOperator<DbText>(left, right);
     }
 
-    public static IQueryExpression<DbTextNullable> Concat(IQueryExpression<DbText> left, IQueryExpression<DbTextNullable> right)
+    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbText> left, QueryExpression<DbTextNullable> right)
     {
-        return new ConcatOperator(left, right);
+        return new ConcatOperator<DbTextNullable>(left, right);
     }
 
-    public static IQueryExpression<DbTextNullable> Concat(IQueryExpression<DbText> left, string right)
+    public static QueryExpression<DbText> Concat(QueryExpression<DbText> left, string right)
     {
-        return Concat(left, SQL.NullableParameter(right));
+        return Concat(left, SQL.Parameter(right));
     }
 
-    public static IQueryExpression<DbTextNullable> Concat(IQueryExpression<DbTextNullable> left, IQueryExpression<DbTextNullable> right)
+    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbTextNullable> left, QueryExpression<DbTextNullable> right)
     {
-        return new ConcatOperator(left, right);
+        return new ConcatOperator<DbTextNullable>(left, right);
     }
 
-    public static IQueryExpression<DbTextNullable> Concat(IQueryExpression<DbTextNullable> left, IQueryExpression<DbText> right)
+    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbTextNullable> left, QueryExpression<DbText> right)
     {
         return Concat(left, right.AsNullable());
     }
 
-    public static IQueryExpression<DbTextNullable> Concat(IQueryExpression<DbTextNullable> left, string right)
+    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbTextNullable> left, string right)
     {
         return Concat(left, SQL.NullableParameter(right));
     }

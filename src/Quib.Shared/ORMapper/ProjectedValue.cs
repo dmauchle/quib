@@ -19,7 +19,7 @@ internal interface IProjectedValue
 /// Represents the f1 in "SELECT name as f1 FROM users u";
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public sealed class ProjectedValue<T> : IProjectedValue, IQueryExpression<T>
+public sealed class ProjectedValue<T> : QueryExpression<T>, IProjectedValue
     where T : struct, IExpressionType
 {
 
@@ -33,7 +33,7 @@ public sealed class ProjectedValue<T> : IProjectedValue, IQueryExpression<T>
     internal int Index => _fieldIndex;
     int IProjectedValue.Index => _fieldIndex;
 
-    void IQueryPart.ToSql(QueryWriter query)
+    internal override void ToSql(QueryWriter query)
     {
         query.Write("f");
         query.Write(_fieldIndex.ToString());

@@ -48,4 +48,17 @@ public sealed class ResultReader
             return _reader.GetInt32(field.Index);
     }
 
+    public bool Get(ProjectedValue<DbBool> field)
+    {
+        return _reader.GetBoolean(field.Index);
+    }
+
+    public bool? Get(ProjectedValue<DbBoolNullable> field)
+    {
+        if (_reader.IsDBNull(field.Index))
+            return null;
+        else
+            return _reader.GetBoolean(field.Index);
+    }
+
 }

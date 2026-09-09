@@ -13,10 +13,12 @@ namespace Quib.Postgres18.Expressions;
 
 public interface IQueryExpression : IQueryPart
 {
+
 }
 
 public interface IQueryExpression<T> : IQueryExpression, IQueryPart
     where T : IExpressionType
 {
 
+   
 }

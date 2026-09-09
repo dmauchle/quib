@@ -19,7 +19,7 @@ internal interface IProjectedValue
 /// Represents the f1 in "SELECT name as f1 FROM users u";
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ProjectedValue<T> : IProjectedValue, IQueryExpression<T>
+public sealed class ProjectedValue<T> : IProjectedValue, IQueryExpression<T>
     where T : struct, IExpressionType
 {
 

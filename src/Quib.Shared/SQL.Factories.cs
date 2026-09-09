@@ -10,14 +10,10 @@ namespace Quib.MySql84;
 namespace Quib.Postgres18;
 #endif
 
-public static class SQL
+public static partial class SQL
 {
 
-    public static IQueryExpression<T> Null<T>()
-        where T : struct, INullableExpressionType
-    {
-        return DbNull<T>.Value;
-    }
+    public static readonly DbNull NULL = DbNull.Value;
 
     public static IQueryExpression<DbInt> Constant(int value)
     {
@@ -32,6 +28,16 @@ public static class SQL
     public static IQueryExpression<DbTextNullable> NullableParameter(string? value)
     {
         return new QueryParameter<DbTextNullable>(value);
+    }
+
+    public static IQueryExpression<DbInt> Parameter(int value)
+    {
+        return new QueryParameter<DbInt>(value);
+    }
+
+    public static IQueryExpression<DbIntNullable> NullableParameter(int? value)
+    {
+        return new QueryParameter<DbIntNullable>(value);
     }
 
 }

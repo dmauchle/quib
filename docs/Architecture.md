@@ -59,3 +59,65 @@ perform.
 - When the type holds other classes, especially lists, heap allocation is anyway required, so struct might not be appropriate.
 - `IQueryPart` implementations may be structs if feasible, and no other interface prevents it.
 - `IQueryExpression<T>` implementations should be classes, as they would have to be boxed in expression trees anyway.
+
+
+## SQL expression builder
+
+SQL expressions are parts of a query that can be evaluated to a value. Like `users.name` or `users.age + 1`. The implementations
+of SQL expressions reside in `Quib.Shared.Expressions`. Usage is typically through `ExpressionExtensions` extensions class
+or `SQL` factory class.
+
+
+## DB types for expressions
+
+DB types are marker types used to represent the SQL types in expressions like `DbText` or `DbInt`. They are used to ensure 
+type safety. They implement `IExpressionType` and `INotNullExpressionType`. 
+
+For every type there should be a corresponding nullable type like `DbTextNullable` or `DbIntNullable`. The nullable types 
+implement `IExpressionType`and `INullableExpressionType` in addition.
+
+DB types have a corresponding .NET value type like `string` for `DbText`, `string?` for `DbTextNullable` or `int` for `DbInt`.
+
+You can take `DbInt`and `DbText` as reference implementations. Assume these are correct. But they could be lacking features.
+
+### Factory methods
+
+In the static `SQL` class (SQL.Factories.cs), there should be the following factory methods to create expressions for each db type:
+
+- Parameter: `SQL.Parameter<T>(T value)` where T is the corresponding .NET value type of the db type.
+- Nullable parameter: `SQL.NullableParameter<T>(T? value)` where T is the corresponding .NET value type of the db type.
+- Constant: only for types that DON'T have a literal representation like numbers, create a `SQL.Constant<T>(T value)` where T is the corresponding .NET value type of the db type.
+
+### Expression extensions
+
+For every type (and its nullable counterpart), there should be extensions in the static `ExpressionExtensions` class. 
+Extensions for each type (and nullable) should be placed in individual files like `ExpressionExtensions.DbText.cs` or 
+`ExpressionExtensions.DbTextNullable.cs`.
+
+**Cast methods:**
+
+- Not-null db types should have a `AsNullable()` extension method to convert to the nullable counterpart.
+
+**Operator overloads:**
+
+- All types should have comparison operators (equal, not equal, greater than, less than, greater or equal, less or equal)
+- Implement arithmetic operator overloads as feasible for numeric db types. Numeric types should have all arithmetic operators.
+- Don't implement concat operator for text types, because it would be ambiguous with the standard .NET plus operator on strings.
+- The binary operators should have overloads with the left-value always beeing the db type and variations for the right value: 
+    - The same db type (e.g. `DbText` or `DbTextNullable`)
+    - The nullable or not-null counterpart of the db type
+    - The corresponding non-nullable .NET value type (should be converted to parameter). Accepting the nullable type here would make no sense because the operator always evaluates NULL in that case. If you still want to do it, use an explicit cast.
+
+> **Note:** if expression implementations are missing, you can create them (see above). But check first if an existing 
+implementation can be used.
+
+### Unit tests
+
+For every db type (including nullable), there should be a unit test file like `ExpressionTests.DbTextExpressionTest` or
+`ExpressionTests.DbTextNullableExpressionTest`. You can use the tests of `DbInt` and `DbText` as a reference. 
+
+The unit tests should cover: 
+
+- All factory methods. Always test with all input variants like for `DbTextNullable` the input could be either a text or null.
+- All operator extensions. Always test with all input variants like for `DbTextNullable` the input could be either a text or null.
+- For nullable DB types, test the existing `SQL.Null.As<T>()` cast method.

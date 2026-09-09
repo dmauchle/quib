@@ -9,7 +9,11 @@
     <Import_RootNamespace>Quib</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbIntNullable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbInt.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQL.TextFunctions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\ConcatOperator.cs" />
     <Compile Include="..\Quib.Shared\Expressions\QueryParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\ImplicitCast.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)expressions\BinaryOperator.cs" />
@@ -23,7 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)installer\TableInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MappingExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IWriterMapping.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SQL.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SQL.Factories.cs" />
     <Compile Include="..\Quib.Shared\ormapper\SingleQueryResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IUpdateQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQuery.cs" />
@@ -36,7 +40,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\Common\QueryWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IReaderMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)schema\DbColumn.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Expressions\IQueryExpression.cs" />
+    <Compile Include="..\Quib.Shared\Expressions\IQueryExpression.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ProjectedMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ProjectedValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQueryBuilder.cs" />

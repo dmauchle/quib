@@ -11,7 +11,7 @@ namespace Quib.Postgres18;
 #endif
 
 
-public static class ExpressionExtensions
+public static partial class ExpressionExtensions
 {
 
     extension(IQueryExpression<DbInt> value)
@@ -22,7 +22,6 @@ public static class ExpressionExtensions
             return new ImplicitCast<DbIntNullable>(value);
         }
 
-
         public static IQueryExpression<DbInt> operator +(IQueryExpression<DbInt> left, IQueryExpression<DbInt> right)
         {
             return new BinaryOperator<DbInt>(left, "+", right);
@@ -30,21 +29,12 @@ public static class ExpressionExtensions
 
         public static IQueryExpression<DbIntNullable> operator +(IQueryExpression<DbInt> left, IQueryExpression<DbIntNullable> right)
         {
-            return new BinaryOperator<DbIntNullable>(left.AsNullable(), "+", right);
+            return left.AsNullable() + right;
         }
 
-    }
-
-    extension(IQueryExpression<DbIntNullable> value)
-    {
-        public static IQueryExpression<DbIntNullable> operator +(IQueryExpression<DbIntNullable> left, IQueryExpression<DbIntNullable> right)
+        public static IQueryExpression<DbInt> operator +(IQueryExpression<DbInt> left, int right)
         {
-            return new BinaryOperator<DbIntNullable>(left, "+", right);
-        }
-
-        public static IQueryExpression<DbIntNullable> operator +(IQueryExpression<DbIntNullable> left, IQueryExpression<DbInt> right)
-        {
-            return new BinaryOperator<DbIntNullable>(left, "+", right.AsNullable());
+            return left + SQL.Parameter(right);
         }
 
     }

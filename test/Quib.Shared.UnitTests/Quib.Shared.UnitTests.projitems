@@ -9,6 +9,9 @@
     <Import_RootNamespace>Quib.Shared.UnitTests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntNullableExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbTextNullableExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)expressiontests\DbTextExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalTestConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DbTestBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\MySqlContainer.cs" />
@@ -18,7 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\ColumnInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)querytests\ExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchingTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\QueryCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />

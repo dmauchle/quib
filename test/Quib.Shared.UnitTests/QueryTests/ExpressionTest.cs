@@ -24,7 +24,7 @@ public class ExpressionTest(DatabaseFixture env) : DbTestBase(env)
     [Fact]
     public async Task StringParameter()
     {
-        var rs = await DB.Select(x => x.Get(x.Parameters.Create("Hello"))).FetchOne();
+        var rs = await DB.Select(x => x.Get(SQL.Parameter("Hello"))).FetchOne();
         Assert.Equal("Hello", rs.Result);
     }
 

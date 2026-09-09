@@ -24,4 +24,14 @@ public static class SQL
         return new Constant<DbInt>(value.ToString());
     }
 
+    public static IQueryExpression<DbText> Parameter(string value)
+    {
+        return new QueryParameter<DbText>(value);
+    }
+
+    public static IQueryExpression<DbTextNullable> NullableParameter(string? value)
+    {
+        return new QueryParameter<DbTextNullable>(value);
+    }
+
 }

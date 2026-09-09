@@ -13,7 +13,6 @@ namespace Quib.Postgres18.ORMapper;
 public interface IUpdateQueryBuilder
 {
 
-    public ParameterBuilder Parameters { get; }
     public void Set<T>(DbColumn<T> column, IQueryExpression<T> value) where T : struct, IExpressionType;
 
 }

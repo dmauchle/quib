@@ -30,11 +30,11 @@ public class ProjectedQuery<TProj> : IQueryPart
 
     public async IAsyncEnumerable<TObj> FetchStream<TObj>(Func<ResultReader, TProj, TObj> map, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var sql = this.ToSql();
         using (var cmd = _db.Connection.CreateCommand())
         {
-            cmd.CommandText = sql;
-            _baseQuery.Parameters.AddTo(cmd);
+            var query = new QueryWriter();
+            query.Write(this);
+            query.Build(cmd);
 
             using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
             {
@@ -58,13 +58,6 @@ public class ProjectedQuery<TProj> : IQueryPart
         return await this.FetchStream(map, cancellationToken)
             .Select(x => new SingleQueryResult<TObj>(x))
             .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    internal string ToSql()
-    {
-        var writer = new QueryWriter();
-        writer.Write(this);
-        return writer.ToString();
     }
 
     void IQueryPart.ToSql(QueryWriter query)

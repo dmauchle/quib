@@ -13,15 +13,11 @@ namespace Quib.Postgres18.QueryBuilder;
 public sealed class ProjectionBuilder
 {
 
-    private readonly ParameterBuilder _parameters = new ParameterBuilder();
     private readonly List<IProjectionClause> _projections = [];
 
-    internal ProjectionBuilder(ParameterBuilder parameter)
+    internal ProjectionBuilder()
     {
-        _parameters = parameter;
     }
-
-    public ParameterBuilder Parameters => _parameters;
 
     /// <summary>
     /// Create and add a new projection clause.

@@ -47,18 +47,11 @@ public sealed class UpdateQuery<TQuery> : IUpdateQuery
         return this.With(TMapper.Write, obj);
     }
 
-    public async Task<int> Execute()
+    public Task<int> Execute(CancellationToken cancellationToken = default)
     {
-        var sql = ToSql();
-        var affected = _con.ExecuteNonQuery(sql, _builder.Parameters);
-        return affected;
-    }
-
-    internal string ToSql()
-    {
-        var writer = new QueryWriter();
-        writer.Write(this);
-        return writer.ToString();
+        var query = new QueryWriter();
+        query.Write(this);
+        return _con.ExecuteNonQueryAsync(query, cancellationToken);
     }
 
     void IQueryPart.ToSql(QueryWriter query)

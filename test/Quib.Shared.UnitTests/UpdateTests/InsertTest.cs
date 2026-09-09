@@ -48,9 +48,9 @@ public class InsertTest(DatabaseFixture env) : DbTestBase(env)
         var insert = await DB.InsertInto<UsersTable>()
             .AddRow((query, table) =>
             {
-                query.Set(table.Username, query.Parameters.Create("asmith"));
-                query.Set(table.Firstname, query.Parameters.Create("Alice"));
-                query.Set(table.Lastname, query.Parameters.Create("Smith"));
+                query.Set(table.Username,  SQL.Parameter("asmith"));
+                query.Set(table.Firstname, SQL.Parameter("Alice"));
+                query.Set(table.Lastname, SQL.Parameter("Smith"));
             })
             .Execute();
 

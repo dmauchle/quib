@@ -14,15 +14,11 @@ internal sealed class SelectQueryBuilder
 {
 
     private readonly FromClause? _from;
-    private readonly ParameterBuilder _parameters;
 
-    public SelectQueryBuilder(ParameterBuilder parameters, FromClause? from = null)
+    public SelectQueryBuilder(FromClause? from = null)
     {
-        _parameters = parameters;
         _from = from;
     }
-
-    public ParameterBuilder Parameters => _parameters;
 
     public void ToSql(QueryWriter query)
     {

@@ -17,40 +17,56 @@ public sealed class QueryFactory(DbConnection con)
 
     public DbConnection Connection => con;
 
-    internal int ExecuteNonQuery(string sql, ParameterBuilder? parameters = null)
+    internal int ExecuteNonQuery(string sql)
     {
-        using var cmd = con.CreateCommand();
-        cmd.CommandText = sql;
-        parameters?.AddTo(cmd);
-        return cmd.ExecuteNonQuery();
+        using (var cmd = con.CreateCommand())
+        {
+            cmd.CommandText = sql;
+            return cmd.ExecuteNonQuery();
+        }
     }
 
-    internal Task<int> ExecuteNonQueryAsync(string sql)
+    internal Task<int> ExecuteNonQueryAsync(string sql, CancellationToken cancellationToken = default)
     {
-        var cmd = con.CreateCommand();
-        cmd.CommandText = sql;
-        return cmd.ExecuteNonQueryAsync();
+        using (var cmd = con.CreateCommand())
+        {
+            cmd.CommandText = sql;
+            return cmd.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    internal Task<int> ExecuteNonQueryAsync(QueryWriter query, CancellationToken cancellationToken = default)
+    {
+        using (var cmd = con.CreateCommand())
+        {
+            query.Build(cmd);
+            return cmd.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     internal object? ExecuteScalar(string sql)
     {
-        using var cmd = con.CreateCommand();
-        cmd.CommandText = sql;
-        return cmd.ExecuteScalar();
+        using (var cmd = con.CreateCommand())
+        {
+            cmd.CommandText = sql;
+            return cmd.ExecuteScalar();
+        }
     }
 
     internal Task<object?> ExecuteScalarAsync(string sql)
     {
-        var cmd = con.CreateCommand();
-        cmd.CommandText = sql;
-        return cmd.ExecuteScalarAsync();
+        using (var cmd = con.CreateCommand())
+        {
+            cmd.CommandText = sql;
+            return cmd.ExecuteScalarAsync();
+        }
     }
 
     public SelectQuery<DbTable> SelectFromTable(string tablename)
     {
         var table = new TableReference(tablename);
         var from = new FromClause(table);
-        var builder = new SelectQueryBuilder(new ParameterBuilder(), from);
+        var builder = new SelectQueryBuilder(from);
         var accessor = new DbTable(from.Alias);
         return new SelectQuery<DbTable>(this, builder, accessor);
     }
@@ -64,14 +80,14 @@ public sealed class QueryFactory(DbConnection con)
     {
         var table = new TableReference(T.TableName);
         var from = new FromClause(table);
-        var builder = new SelectQueryBuilder(new ParameterBuilder(), from);
+        var builder = new SelectQueryBuilder(from);
         var accessor = new DbTable(from.Alias);
         return new SelectQuery<T>(this, builder, tableFactory(accessor));
     }
 
     public ProjectedQuery<T> Select<T>(Func<ProjectionBuilder, T> factory)
     {
-        var builder = new SelectQueryBuilder(new ParameterBuilder());
+        var builder = new SelectQueryBuilder();
         var select = new SelectQuery<object>(this, builder, new object());
         return select.Project((rs, _) => factory(rs));
     }

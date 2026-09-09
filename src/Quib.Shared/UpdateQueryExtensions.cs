@@ -23,13 +23,13 @@ public static class UpdateQueryExtensions
     public static void Set<TQuery>(this TQuery query, DbColumn<DbText> column, string value)
         where TQuery : IUpdateQueryBuilder
     {
-        query.Set(column, query.Parameters.Create(value));
+        query.Set(column, SQL.Parameter(value));
     }
 
     public static void Set<TQuery>(this TQuery query, DbColumn<DbTextNullable> column, string? value)
         where TQuery : IUpdateQueryBuilder
     {
-        query.Set(column, query.Parameters.CreateNullable(value));
+        query.Set(column, SQL.NullableParameter(value));
     }
 
     

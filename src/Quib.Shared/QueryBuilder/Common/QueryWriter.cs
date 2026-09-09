@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data.Common;
+using System.Text;
 
 #if MYSQL56
 namespace Quib.MySql56.QueryBuilder;
@@ -12,10 +13,13 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
+
+
 internal sealed class QueryWriter
 {
 
     private readonly StringBuilder _sb = new StringBuilder();
+    private readonly Dictionary<IQueryParameter, int> _parameters = new Dictionary<IQueryParameter, int>();
 
     public void Write(string str)
     {
@@ -31,6 +35,17 @@ internal sealed class QueryWriter
         where T : IQueryPart
     {
         part.ToSql(this);
+    }
+
+    public void WriteParameter(IQueryParameter parameter)
+    {
+        if (!_parameters.TryGetValue(parameter, out var parameterIndex))
+        {
+            parameterIndex = _parameters.Count+1;
+            _parameters.Add(parameter, parameterIndex);
+        }
+        _sb.Append("@p");
+        _sb.Append(parameterIndex);
     }
 
     public void WriteCommaSeparated<T>(T[] parts)
@@ -55,6 +70,18 @@ internal sealed class QueryWriter
                 Write(", ");
             Write(part);
             first = false;
+        }
+    }
+
+    public void Build(DbCommand command)
+    {
+        command.CommandText = _sb.ToString();
+        foreach (var p in _parameters)
+        {
+            var cmdParameter = command.CreateParameter();
+            cmdParameter.ParameterName = $"@p{p.Value}";
+            cmdParameter.Value = p.Key.Value ?? DBNull.Value;
+            command.Parameters.Add(cmdParameter);
         }
     }
 

@@ -12,7 +12,6 @@ namespace Quib.Postgres18.QueryBuilder;
 
 internal interface ISelectQuery : IQueryPart
 {
-    public ParameterBuilder Parameters { get; }
 }
 
 public sealed class SelectQuery<TQuery> : ISelectQuery
@@ -36,7 +35,7 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
 
     public ProjectedQuery<TProj> Project<TProj>(Func<ProjectionBuilder, TQuery, TProj> selector)
     {
-        var rs = new ProjectionBuilder(_builder.Parameters);
+        var rs = new ProjectionBuilder();
         var proj = selector(rs, _accessor);
         return new ProjectedQuery<TProj>(_con, proj, this, rs.Build());
     }
@@ -50,14 +49,14 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     public ProjectedMap<TQuery, TObj> Map<TMapper, TObj>()
         where TMapper : IReaderMappingFactory<TQuery, TObj>
     {
-        var rs = new ProjectionBuilder(_builder.Parameters);
+        var rs = new ProjectionBuilder();
         var proj = this.Project(TMapper.Factory);
         return new ProjectedMap<TQuery, TObj>(proj);
     }
 
     public ProjectedMap<TQuery, TObj> Map<TObj>(Func<ProjectionBuilder, TQuery, IReaderMapping<TQuery, TObj>> factory)
     {
-        var rs = new ProjectionBuilder(_builder.Parameters);
+        var rs = new ProjectionBuilder();
         var proj = this.Project(factory);
         return new ProjectedMap<TQuery, TObj>(proj);
     }
@@ -66,7 +65,5 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     {
         _builder.ToSql(query);
     }
-
-    ParameterBuilder ISelectQuery.Parameters => _builder.Parameters;
 
 }

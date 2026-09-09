@@ -15,7 +15,6 @@ internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
 
     private readonly List<DbColumnForUpdate> _columns = [];
     private readonly List<Dictionary<DbColumnForUpdate, IQueryExpression>> _rows = [];
-    private readonly ParameterBuilder _parameters = new ParameterBuilder();
     private readonly TableReference _table;
 
     private Dictionary<DbColumnForUpdate, IQueryExpression>? _currentRow = null;
@@ -24,8 +23,6 @@ internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
     {
         _table = table;
     }
-
-    public ParameterBuilder Parameters => _parameters;
 
     public void Set<T>(DbColumn<T> column, IQueryExpression<T> value)
         where T : struct, IExpressionType

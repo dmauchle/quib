@@ -14,15 +14,12 @@ public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
 {
 
     private readonly List<(DbColumnForUpdate column, IQueryExpression value)> _values = [];
-    private readonly ParameterBuilder _parameters = new ParameterBuilder();
     private readonly TableReference _table;
 
     internal UpdateQueryBuilder(TableReference table)
     {
         _table = table;
     }
-
-    public ParameterBuilder Parameters => _parameters;
 
     public void Set<T>(DbColumn<T> column, IQueryExpression<T> value)
         where T : struct, IExpressionType

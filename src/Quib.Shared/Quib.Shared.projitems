@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.cs" />
+    <Compile Include="..\Quib.Shared\Expressions\QueryParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\ImplicitCast.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)expressions\BinaryOperator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)expressions\Constant.cs" />
@@ -24,8 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IWriterMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SQL.cs" />
     <Compile Include="..\Quib.Shared\ormapper\SingleQueryResult.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\ParameterBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\common\QueryParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\IUpdateQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\UpdateQueryBuilder.cs" />

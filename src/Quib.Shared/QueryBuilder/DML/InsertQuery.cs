@@ -49,18 +49,12 @@ public sealed class InsertQuery<TQuery> : IInsertQuery
         return this.AddRow(TMapper.Write, obj);
     }
 
-    public async Task<int> Execute()
+    public async Task<int> Execute(CancellationToken cancellationToken = default)
     {
-        var sql = ToSql();
-        var affected = _con.ExecuteNonQuery(sql, _builder.Parameters);
+        var query = new QueryWriter();
+        query.Write(this);
+        var affected = await _con.ExecuteNonQueryAsync(query, cancellationToken);
         return affected;
-    }
-
-    internal string ToSql()
-    {
-        var writer = new QueryWriter();
-        writer.Write(this);
-        return writer.ToString();
     }
 
     void IQueryPart.ToSql(QueryWriter query)

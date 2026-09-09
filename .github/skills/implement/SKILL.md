@@ -1,0 +1,47 @@
+---
+name: implement
+description: "Use when I want you to implement new code, let it be a feature, unit test or a fix."
+---
+
+# Development & Verification Workflow
+
+Execute the following sequential steps when asked to implement, build or code a new feature or test in this project. Do 
+not skip any phase.
+
+
+## 1. Preparation
+
+Look at the /docs/UserGuide to understand the project. Load the solution and get an overview of the project structure 
+with projects and classes. Check the /docs/Architecture.md to understand the architecture and design principles.
+
+
+## 2. Planning
+
+Before starting the implementation, plan the approach to solve the task. Identify the components that need to be modified 
+or created, consider the impact on existing code, and determine the best way to structure the new code. Break down the 
+task into smaller, manageable steps and think about potential edge cases and error handling.
+
+/docs/Architecture.md will give you more details on how specific areas of the project are supposed to be implemented and 
+also about the process to follow. Use it as a reference to ensure that your implementation aligns with the overall 
+architecture and design principles.
+
+When you're not sure about the implementation details, ask for clarification or additional information. Make sure you have 
+a clear understanding of the requirements and the expected outcome before proceeding.
+
+Always include unit tests. Plan the test cases to cover various scenarios, including normal cases, edge cases, and error 
+conditions. Ensure that the tests are comprehensive and validate the correctness of the implementation. You might find
+some more details on how to write unit tests for specific areas in /docs/Architecture.md.
+
+
+## 3. Implementation
+
+Implement the requested task according to your plan. Adhere to /docs/Architecture.md and /docs/CodingGuidelines.md. Try 
+to stick to the existing coding style and naming conventions. Use the existing code as a reference.
+
+
+## 4. Verification
+
+- Compile the code and fix errors.
+- Only compile once. If you cannot fix errors in the first try, ask me for help. Do not try to fix errors in multiple iterations.
+- Run all unit tests and ensure they pass. If any test fails, investigate the cause and fix the issue.
+- Again, if you cannot fix the issue in the first try, ask me for help. Do not try to fix issues in multiple iterations.

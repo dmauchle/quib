@@ -33,6 +33,13 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return new SelectQuery<TResult>(_con, _builder, selector(_accessor));
     }
 
+    public SelectQuery<TQuery> Filter<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
+        where TBool : struct, IExpressionType, IDbBool
+    {
+        _builder.Filter(predicate(_accessor));
+        return this;
+    }
+
     public ProjectedQuery<TProj> Project<TProj>(Func<ProjectionBuilder, TQuery, TProj> selector)
     {
         var rs = new ProjectionBuilder();

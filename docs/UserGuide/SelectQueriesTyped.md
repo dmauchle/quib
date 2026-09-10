@@ -39,8 +39,18 @@ public void Demo(QueryFactory db)
 
 ## Filtering (WHERE clause)
 
-Will follow soon...
+```csharp
+db.SelectFrom<UsersTable>()
+    .Filter(x => x.City == "New York")
+    .Filter(x => x.Lastname == "Jones")
 
+db.SelectFrom<UsersTable>()
+    .Filter(x => x.City == "New York" | x.Lastname == "Jones" | x.Name == "Charlie")
+```
+
+You can apply multiple filters. They will be combined with `AND` in the SQL query. 
+
+Read [Expressions.md](Expressions.md) for more information about building the filter expressions.
 
 ## Sorting (ORDER BY clause)
 

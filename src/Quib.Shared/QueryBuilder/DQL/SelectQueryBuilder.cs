@@ -14,16 +14,36 @@ internal sealed class SelectQueryBuilder
 {
 
     private readonly FromClause? _from;
+    private List<QueryExpression>? _filters;
 
     public SelectQueryBuilder(FromClause? from = null)
     {
         _from = from;
     }
 
+    public void Filter(QueryExpression filter)
+    {
+        (_filters ??= []).Add(filter);
+    }
+
     public void ToSql(QueryWriter query)
     {
         if (_from != null)
             query.Write(_from);
+
+        if (_filters != null)
+        {
+            query.Write(" WHERE ");
+
+            var index = 0;
+            foreach (var filter in _filters)
+            {
+                if (index > 0)
+                    query.Write(" AND ");
+                query.Write(filter);
+                index++;
+            }
+        }
     }
 
 }

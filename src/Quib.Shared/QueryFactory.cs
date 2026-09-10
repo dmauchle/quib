@@ -105,11 +105,7 @@ public sealed class QueryFactory(DbConnection con)
 
     public SelectQuery<T> SelectFrom<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
-        var table = new TableReference(T.TableName);
-        var from = new FromClause(table);
-        var builder = new SelectQueryBuilder(from);
-        var accessor = new DbTable(from.Alias);
-        return new SelectQuery<T>(this, builder, tableFactory(accessor));
+        return this.SelectFromTable(T.TableName).Select(tableFactory);
     }
 
     public ProjectedQuery<T> Select<T>(Func<ProjectionBuilder, T> factory)

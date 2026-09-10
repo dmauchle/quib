@@ -10,12 +10,41 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-internal interface IUpdateQuery : IQueryPart
+
+public interface IUpdateTable<TQuery> : IUpdateFilterable<TQuery>, IQueryPart
 {
+
+    public IUpdateUnfiltered<TQuery> AllRows();
 
 }
 
-public sealed class UpdateQuery<TQuery> : IUpdateQuery
+public interface IUpdateFilterable<TQuery> : IQueryPart
+{
+    public IUpdateFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate) where TBool : struct, IExpressionType, IDbBool;
+}
+
+public interface IUpdateSettable<TQuery> : IQueryPart
+{
+    public IUpdateExecutable<TQuery> With(Action<UpdateQueryBuilder, TQuery> run);
+    public IUpdateExecutable<TQuery> With<TObj>(Action<UpdateQueryBuilder, TQuery, TObj> run, TObj obj);
+    public IUpdateExecutable<TQuery> With<TMapper, TObj>(TObj obj) where TMapper : IWriterMapping<TQuery, TObj>;
+}
+
+public interface IUpdateFiltered<TQuery> : IUpdateFilterable<TQuery>, IUpdateExecutable<TQuery>, IQueryPart
+{
+}
+
+public interface IUpdateUnfiltered<TQuery> : IUpdateSettable<TQuery>, IQueryPart
+{
+}
+
+public interface IUpdateExecutable<TQuery> : IUpdateSettable<TQuery>, IQueryPart
+{
+    public Task<int> Execute(CancellationToken cancellationToken = default);
+}
+
+
+internal sealed class UpdateQuery<TQuery> : IUpdateTable<TQuery>, IUpdateFiltered<TQuery>, IUpdateUnfiltered<TQuery>, IQueryPart
 {
 
     private readonly QueryFactory _con;
@@ -29,22 +58,35 @@ public sealed class UpdateQuery<TQuery> : IUpdateQuery
         _accessor = accessor;
     }
 
-    public UpdateQuery<TQuery> With(Action<UpdateQueryBuilder, TQuery> run)
+    public IUpdateUnfiltered<TQuery> AllRows()
+    {
+        return this;
+    }
+
+    public IUpdateFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
+        where TBool : struct, IExpressionType, IDbBool
+    {
+        _builder.Filter(predicate(_accessor));
+        return this;
+    }
+
+    public IUpdateExecutable<TQuery> With(Action<UpdateQueryBuilder, TQuery> run)
     {
         run(_builder, _accessor);
         return this;
     }
 
-    public UpdateQuery<TQuery> With<TObj>(Action<UpdateQueryBuilder, TQuery, TObj> run, TObj obj)
+    public IUpdateExecutable<TQuery> With<TObj>(Action<UpdateQueryBuilder, TQuery, TObj> run, TObj obj)
     {
         run(_builder, _accessor, obj);
         return this;
     }
 
-    public UpdateQuery<TQuery> With<TMapper, TObj>(TObj obj)
+    public IUpdateExecutable<TQuery> With<TMapper, TObj>(TObj obj)
         where TMapper : IWriterMapping<TQuery, TObj>
     {
-        return this.With(TMapper.Write, obj);
+        this.With(TMapper.Write, obj);
+        return this;
     }
 
     public Task<int> Execute(CancellationToken cancellationToken = default)

@@ -4,7 +4,7 @@ Start building SELECT queries based on a strongly typed schema class (see [Schem
 
 Key interfaces: 
 
-- `QueryFactory.SelectFrom`
+- `QueryFactory.SelectFromTable`
 - `QueryFactory.SelectFrom<T>`
 - `Quib.*.QueryBuilder` namespace
 
@@ -52,6 +52,7 @@ You can apply multiple filters. They will be combined with `AND` in the SQL quer
 
 Read [Expressions.md](Expressions.md) for more information about building the filter expressions.
 
+
 ## Sorting (ORDER BY clause)
 
 Will follow soon...
@@ -60,3 +61,8 @@ Will follow soon...
 ## Next Steps
 
 - **[ResultMappingTyped.md](ResultMappingTyped.md)** — execute the query and map results to domain objects
+
+
+## See also
+
+- **[Expressions.md](Expressions.md)** — learn more about the SQL expressions for filtering and updating

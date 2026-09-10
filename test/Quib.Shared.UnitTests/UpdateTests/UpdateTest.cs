@@ -32,6 +32,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
     public async Task Update_WithStandardParameter_Works()
     {
         var updated = await DB.Update<UsersTable>()
+            .AllRows()
             .With((row, table) =>
             {
                 row.Set(table.Firstname, "Bob");
@@ -51,6 +52,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
     public async Task Update_WithExplicitParameter_Works()
     {
         var updated = await DB.Update<UsersTable>()
+            .AllRows()
             .With((row, table) =>
             {
                 row.Set(table.Firstname, "Bob");
@@ -70,6 +72,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
     public async Task Update_WithOtherColumn_Works()
     {
         var updated = await DB.Update<UsersTable>()
+            .AllRows()
             .With((row, table) =>
             {
                 row.Set(table.Firstname, table.Lastname);

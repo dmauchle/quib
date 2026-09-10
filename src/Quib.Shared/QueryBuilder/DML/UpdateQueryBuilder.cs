@@ -13,12 +13,19 @@ namespace Quib.Postgres18.QueryBuilder;
 public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
 {
 
-    private readonly List<(DbColumnForUpdate column, QueryExpression value)> _values = [];
+    private readonly List<(DbColumnForUpdate column, QueryExpression value)> _values;
     private readonly TableReference _table;
+    private List<QueryExpression>? _filters;
 
     internal UpdateQueryBuilder(TableReference table)
     {
         _table = table;
+        _values = [];
+    }
+
+    public void Filter(QueryExpression filter)
+    {
+        (_filters ??= []).Add(filter);
     }
 
     public void Set<T>(DbColumn<T> column, QueryExpression<T> value)
@@ -33,17 +40,33 @@ public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
         query.Write("UPDATE ");
         query.Write(_table);
         query.Write(" t0 ");
-        query.Write(" SET ");
 
-        var first = true;
-        foreach (var val in _values)
         {
-            if (!first)
-                query.Write(", ");
-            query.Write(val.column);
-            query.Write(" = ");
-            query.Write(val.value);
-            first = false;
+            query.Write(" SET ");
+            var first = true;
+            foreach (var val in _values)
+            {
+                if (!first)
+                    query.Write(", ");
+                query.Write(val.column);
+                query.Write(" = ");
+                query.Write(val.value);
+                first = false;
+            }
+        }
+
+        if (_filters != null)
+        {
+            query.Write(" WHERE ");
+
+            var first = true;
+            foreach (var filter in _filters)
+            {
+                if (!first)
+                    query.Write(" AND ");
+                query.Write(filter);
+                first = false;
+            }
         }
     }
 

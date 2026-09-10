@@ -32,6 +32,7 @@ public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task GenericSytnax()
     {
         await DB.UpdateTable("users")
+            .AllRows()
             .With((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Bob");
@@ -45,7 +46,7 @@ public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task FactoryInterface()
     {
         // Syntax using factory interface
-        await DB.Update<UsersTable>().With<UserMapping, User>(new User { Name = "Bob" }).Execute();
+        await DB.Update<UsersTable>().AllRows().With<UserMapping, User>(new User { Name = "Bob" }).Execute();
 
         await AssertResult();
     }
@@ -54,7 +55,7 @@ public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task FactoryMethods()
     {
 
-        await DB.Update(UsersTable.Factory).With(UserMapping.Write, new User { Name = "Bob" }).Execute();
+        await DB.Update(UsersTable.Factory).AllRows().With(UserMapping.Write, new User { Name = "Bob" }).Execute();
 
         await AssertResult();
     }
@@ -64,6 +65,7 @@ public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     {
         var bob = new User { Name = "Bob" };
         await DB.Update(x => new UsersTable(x))
+            .AllRows()
             .With((query, table) =>
             {
                 query.Set(table.Name, bob.Name);

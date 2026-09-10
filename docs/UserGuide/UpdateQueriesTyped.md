@@ -48,8 +48,8 @@ public class UserWriter : IWriterMapping<UsersTable, User>
 
 Key interfaces: 
 
-- `QueryFactory.InsertInto`
-- `QueryFactory.InsertInto<T>`
+- `QueryFactory.InsertIntoTable()`
+- `QueryFactory.InsertInto<T>()`
 
 
 Example:
@@ -74,24 +74,56 @@ The method will return the number of affected rows.
 
 Key interfaces: 
 
-- `QueryFactory.Update`
-- `QueryFactory.Update<T>`
+- `QueryFactory.UpdateTable()`
+- `QueryFactory.Update<T>()`
 
 
-Example:
+Example for an updates using the declared mapping from the schema:
 
 ```csharp
 public async Task Demo(QueryFactory db)
 {
     var alice = new User { Id = 42, Username = "ajones", Email = "jones@example.com" };
 
-    var rowsUpdated = await db.Update<UsersTable>().With<UserWriter, User>(alice).Execute();
+    var rowsUpdated = await db.Update<UsersTable>()
+        .Where(x => x.Id == alice.Id)
+        .With<UserWriter, User>(alice)
+        .Execute();
 }
 ```
 
-The method will return the number of affected rows.
+Example for an inline update. This is especially useful when you don't want to update all the columns:
 
-**Attention**: this will update all rows in the table! Filter function will follow soon...
+```csharp
+public async Task Demo(QueryFactory db)
+{
+    var rowsUpdated = await db.Update<UsersTable>()
+        .Where(x => x.Id == 42)
+        .With((row, x) => {
+            row.Set(x.Email, "jones@example.com");
+        })
+        .Execute();
+}
+```
+
+Updating all rows in the table: 
+
+```csharp
+public async Task Demo(QueryFactory db)
+{
+    var rowsUpdated = await db.Update<UsersTable>()
+        .AllRows()
+        .With((row, x) => {
+            row.Set(x.Country, "Switzerland");
+        })
+        .Execute();
+}
+```
+
+It is mandatory to either filter the rows to update (`Where()`) or explicitly use `AllRows()`. This avoids accidental 
+updates of all rows in the table if you forget the filter.
+
+The method will return the number of affected rows.
 
 
 ## DELETE query
@@ -103,3 +135,8 @@ Will follow soon...
 
 - **[SelectQueriesTyped.md](SelectQueriesTyped.md)** — query the results of your modifications using your schema
 - **[ResultMappingTyped.md](ResultMappingTyped.md)** — read back results and map to domain objects
+
+
+## See also
+
+- **[Expressions.md](Expressions.md)** — learn more about the SQL expressions for filtering and updating

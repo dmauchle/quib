@@ -35,13 +35,13 @@ internal sealed class SelectQueryBuilder
         {
             query.Write(" WHERE ");
 
-            var index = 0;
+            var first = true;
             foreach (var filter in _filters)
             {
-                if (index > 0)
+                if (!first)
                     query.Write(" AND ");
                 query.Write(filter);
-                index++;
+                first = false;
             }
         }
     }

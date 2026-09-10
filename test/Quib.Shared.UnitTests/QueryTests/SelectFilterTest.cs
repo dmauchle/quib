@@ -1,10 +1,10 @@
 ﻿using Quib.UnitTests.Infrastructure;
 using Xunit.Abstractions;
 
-namespace Quib.UnitTests.SchemaTests;
+namespace Quib.UnitTests.QueryTests;
 
 [Collection(TestCollections.DATABASE)]
-public class FilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
+public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
     private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>

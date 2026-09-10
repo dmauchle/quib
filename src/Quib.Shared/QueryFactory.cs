@@ -136,7 +136,7 @@ public sealed class QueryFactory(DbConnection con)
         return new InsertQuery<T>(this, builder, tableFactory(accessor));
     }
 
-    public UpdateQuery<DbTable> UpdateTable(string tablename)
+    public IUpdateTable<DbTable> UpdateTable(string tablename)
     {
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));
@@ -144,12 +144,12 @@ public sealed class QueryFactory(DbConnection con)
         return new UpdateQuery<DbTable>(this, builder, accessor);
     }
 
-    public UpdateQuery<T> Update<T>() where T : IDbTable, IDbTableFactory<T>
+    public IUpdateTable<T> Update<T>() where T : IDbTable, IDbTableFactory<T>
     {
         return this.Update(T.Factory);
     }
 
-    public UpdateQuery<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
+    public IUpdateTable<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
         var table = new TableReference(T.TableName);
         var accessor = new DbTable(new TableAlias(0));

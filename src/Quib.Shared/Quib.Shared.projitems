@@ -19,6 +19,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNotNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\UnaryOperator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\DeleteQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\DeleteQueryBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SQL.TextFunctions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\ConcatOperator.cs" />
     <Compile Include="..\Quib.Shared\Expressions\QueryParameter.cs" />

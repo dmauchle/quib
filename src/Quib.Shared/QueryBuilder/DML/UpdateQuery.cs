@@ -11,7 +11,7 @@ namespace Quib.Postgres18.QueryBuilder;
 #endif
 
 
-public interface IUpdateTable<TQuery> : IUpdateFilterable<TQuery>, IQueryPart
+public interface IUpdateQuery<TQuery> : IUpdateFilterable<TQuery>, IQueryPart
 {
 
     public IUpdateUnfiltered<TQuery> AllRows();
@@ -44,7 +44,7 @@ public interface IUpdateExecutable<TQuery> : IUpdateSettable<TQuery>, IQueryPart
 }
 
 
-internal sealed class UpdateQuery<TQuery> : IUpdateTable<TQuery>, IUpdateFiltered<TQuery>, IUpdateUnfiltered<TQuery>, IQueryPart
+internal sealed class UpdateQuery<TQuery> : IUpdateQuery<TQuery>, IUpdateFiltered<TQuery>, IUpdateUnfiltered<TQuery>, IQueryPart
 {
 
     private readonly QueryFactory _con;

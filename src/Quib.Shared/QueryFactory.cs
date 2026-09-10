@@ -136,7 +136,7 @@ public sealed class QueryFactory(DbConnection con)
         return new InsertQuery<T>(this, builder, tableFactory(accessor));
     }
 
-    public IUpdateTable<DbTable> UpdateTable(string tablename)
+    public IUpdateQuery<DbTable> UpdateTable(string tablename)
     {
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));
@@ -144,17 +144,38 @@ public sealed class QueryFactory(DbConnection con)
         return new UpdateQuery<DbTable>(this, builder, accessor);
     }
 
-    public IUpdateTable<T> Update<T>() where T : IDbTable, IDbTableFactory<T>
+    public IUpdateQuery<T> Update<T>() where T : IDbTable, IDbTableFactory<T>
     {
         return this.Update(T.Factory);
     }
 
-    public IUpdateTable<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
+    public IUpdateQuery<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
         var table = new TableReference(T.TableName);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new UpdateQueryBuilder(table);
         return new UpdateQuery<T>(this, builder, tableFactory(accessor));
+    }
+
+    public IDeleteQuery<DbTable> DeleteFromTable(string tablename)
+    {
+        var table = new TableReference(tablename);
+        var accessor = new DbTable(new TableAlias(0));
+        var builder = new DeleteQueryBuilder(table);
+        return new DeleteQuery<DbTable>(this, builder, accessor);
+    }
+
+    public IDeleteQuery<T> DeleteFrom<T>() where T : IDbTable, IDbTableFactory<T>
+    {
+        return this.DeleteFrom(T.Factory);
+    }
+
+    public IDeleteQuery<T> DeleteFrom<T>(Func<DbTable, T> tableFactory) where T : IDbTable
+    {
+        var table = new TableReference(T.TableName);
+        var accessor = new DbTable(new TableAlias(0));
+        var builder = new DeleteQueryBuilder(table);
+        return new DeleteQuery<T>(this, builder, tableFactory(accessor));
     }
 
 }

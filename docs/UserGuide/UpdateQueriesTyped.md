@@ -128,7 +128,37 @@ The method will return the number of affected rows.
 
 ## DELETE query
 
-Will follow soon...
+Key interfaces: 
+
+- `QueryFactory.DeleteFromTable()`
+- `QueryFactory.DeleteFrom<T>()`
+
+
+Example for a delete query using the declared mapping from the schema:
+
+```csharp
+public async Task Demo(QueryFactory db)
+{
+    var rowsDeleted = await db.DeleteFrom<UsersTable>()
+        .Where(x => x.Id == 42)
+        .Execute();
+}
+```
+
+Deleting all rows from a table:
+
+```csharp
+public async Task Demo(QueryFactory db)
+{
+    var rowsDeleted = await db.DeleteFrom<UsersTable>().AllRows().Execute();
+}
+```
+
+It is mandatory to either filter the rows to delete (`Where()`) or explicitly use `AllRows()`. This avoids accidental 
+deletes of all rows in the table if you forget the filter.
+
+The method will return the number of affected rows.
+
 
 
 ## Next Steps

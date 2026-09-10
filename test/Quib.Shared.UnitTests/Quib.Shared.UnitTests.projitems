@@ -31,6 +31,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\TypeTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestCollections.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\DeleteFilterTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\DeleteCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\UpdateFilterTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\UpdateCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\InsertCodeStyles.cs" />

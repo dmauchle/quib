@@ -138,7 +138,7 @@ All binary operators should have overloads with the left-value always beeing the
 
 ### Unit tests
 
-For every db type (including nullable), there should be a unit test file in /src/Quib.Shared.UnitTEsts/ExpressionTests. 
+For every db type (including nullable), there should be a unit test file in /src/Quib.Shared.UnitTests/ExpressionTests. 
 Examples are `DbTextExpressionTest` for `DbText`, `DbTextNullableExpressionTest` for `DbTextNullable` or 
 `DbIntExpressionTest` for `DbInt`. You can use all existing unit tests as reference.
 

@@ -9,6 +9,7 @@
     <Import_RootNamespace>Quib.Shared.UnitTests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\NullCheckExpressionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntNullableExpressionTest.cs" />

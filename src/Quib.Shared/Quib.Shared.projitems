@@ -9,6 +9,7 @@
     <Import_RootNamespace>Quib</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbIntNullable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbInt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbText.cs" />

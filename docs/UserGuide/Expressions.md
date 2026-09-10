@@ -17,7 +17,7 @@ public class UsersTable(DbTable table) : IDbTable
 public void Demo(QueryFactory db) 
 {
     db.SelectFrom<UsersTable>()
-        .Filter(x => x.Credits > 100 & x.Country == "Switzerland");  // Filter expressions
+        .Where(x => x.Credits > 100 & x.Country == "Switzerland");  // Filter expressions
         .Project((rs, x) => new { GoodCusomter = rs.Get(x.TotalOrders > 1000) });  // Projection expressions
 
     db.Update<UsersTable>().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();  // Update expressions
@@ -31,7 +31,7 @@ You can use the standard comparison operators in your expressions: `==`, `!=`, `
 ```csharp
 public void Demo(QueryFactory db)
 {
-    db.SelectFrom<UsersTable>().Filter(x => x.Credits > 100 & x.Company == "Google");
+    db.SelectFrom<UsersTable>().Where(x => x.Credits > 100 & x.Company == "Google");
 }
 ```
 
@@ -63,7 +63,7 @@ On boolean types, you can use the following operators: `&`, `|`, `!`.
 ```csharp
 public void Demo(QueryFactory db)
 {
-    db.SelectFrom<UsersTable>().Filter(x => x.IsActive & !x.IsDeleted);
+    db.SelectFrom<UsersTable>().Where(x => x.IsActive & !x.IsDeleted);
 }
 ```
 
@@ -75,7 +75,7 @@ String concatenation is not supported using an operator (`+`). Use `SQL.Concat()
 ```csharp
 public void Demo(QueryFactory db)
 {
-    db.SelectFrom<UsersTable>().Filter(x => x.Email.IsNull());
-    db.SelectFrom<UsersTable>().Filter(x => x.Email.IsNotNull());
+    db.SelectFrom<UsersTable>().Where(x => x.Email.IsNull());
+    db.SelectFrom<UsersTable>().Where(x => x.Email.IsNotNull());
 }
 ```

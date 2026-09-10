@@ -59,7 +59,7 @@ public class UpdateFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
 
         Assert.Equal(1, updated);
 
-        var rs = await DB.SelectFrom<UsersTable>().Filter(x => x.City == "Zurich").Project((rs, x) => rs.Get(x.Name)).FetchArray();
+        var rs = await DB.SelectFrom<UsersTable>().Where(x => x.City == "Zurich").Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Alice", rs[0]);
     }
@@ -74,7 +74,7 @@ public class UpdateFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
             .Execute();
 
         var rs = await DB.SelectFrom<UsersTable>()
-            .Filter(x => x.Lastname == "Sinclair")
+            .Where(x => x.Lastname == "Sinclair")
             .Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Charlie", rs[0]);
@@ -91,7 +91,7 @@ public class UpdateFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("users")
-            .Filter(x => x.Column<DbText>("city") == "Zurich")
+            .Where(x => x.Column<DbText>("city") == "Zurich")
             .Project((rs, x) => rs.Get(x.Column<DbText>("name")))
             .FetchArray();
         Assert.Single(rs);

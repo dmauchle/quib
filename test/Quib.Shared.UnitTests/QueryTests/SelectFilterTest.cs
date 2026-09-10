@@ -52,7 +52,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     [Fact]
     public async Task FilterOnNotNull()
     {
-        var rs = await DB.SelectFrom<UsersTable>().Filter(x => x.Name == "Alice").Project((rs, x) => rs.Get(x.Name)).FetchArray();
+        var rs = await DB.SelectFrom<UsersTable>().Where(x => x.Name == "Alice").Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Alice", rs[0]);
     }
@@ -60,7 +60,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     [Fact]
     public async Task FilterOnNullable()
     {
-        var rs = await DB.SelectFrom<UsersTable>().Filter(x => x.City == "New York").Project((rs, x) => rs.Get(x.Name)).FetchArray();
+        var rs = await DB.SelectFrom<UsersTable>().Where(x => x.City == "New York").Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Equal(2, rs.Length);
         Assert.Contains(rs, x => x == "Alice");
         Assert.Contains(rs, x => x == "Charlie");
@@ -69,7 +69,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     [Fact]
     public async Task FilterNull()
     {
-        var rs = await DB.SelectFrom<UsersTable>().Filter(x => x.City.IsNull()).Project((rs, x) => rs.Get(x.Name)).FetchArray();
+        var rs = await DB.SelectFrom<UsersTable>().Where(x => x.City.IsNull()).Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Bob", rs[0]);
     }
@@ -78,8 +78,8 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task DualFilter()
     {
         var rs = await DB.SelectFrom<UsersTable>()
-            .Filter(x => x.City == "New York")
-            .Filter(x => x.Lastname == "Jones")
+            .Where(x => x.City == "New York")
+            .Where(x => x.Lastname == "Jones")
             .Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Charlie", rs[0]);
@@ -89,7 +89,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task AndFilter()
     {
         var rs = await DB.SelectFrom<UsersTable>()
-            .Filter(x => x.City == "New York" & x.Lastname == "Jones")
+            .Where(x => x.City == "New York" & x.Lastname == "Jones")
             .Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Charlie", rs[0]);
@@ -99,7 +99,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task OrFilter()
     {
         var rs = await DB.SelectFrom<UsersTable>()
-            .Filter(x => x.Name == "Alice" | x.Name == "Bob")
+            .Where(x => x.Name == "Alice" | x.Name == "Bob")
             .Project((rs, x) => rs.Get(x.Name)).FetchArray();
 
         Assert.Equal(2, rs.Length);
@@ -111,7 +111,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task MultiAndFilter()
     {
         var rs = await DB.SelectFrom<UsersTable>()
-            .Filter(x => x.City == "New York" & x.Lastname == "Jones" & x.Name == "Charlie")
+            .Where(x => x.City == "New York" & x.Lastname == "Jones" & x.Name == "Charlie")
             .Project((rs, x) => rs.Get(x.Name)).FetchArray();
         Assert.Single(rs);
         Assert.Equal("Charlie", rs[0]);
@@ -121,7 +121,7 @@ public class SelectFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task DynamicFilter()
     {
         var rs = await DB.SelectFromTable("users")
-            .Filter(x => x.Column<DbText>("name") == "Alice")
+            .Where(x => x.Column<DbText>("name") == "Alice")
             .Project((rs, x) => rs.Get(x.Column<DbText>("name")))
             .FetchArray();
         Assert.Single(rs);

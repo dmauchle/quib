@@ -41,11 +41,11 @@ public void Demo(QueryFactory db)
 
 ```csharp
 db.SelectFrom<UsersTable>()
-    .Filter(x => x.City == "New York")
-    .Filter(x => x.Lastname == "Jones")
+    .Where(x => x.City == "New York")
+    .Where(x => x.Lastname == "Jones")
 
 db.SelectFrom<UsersTable>()
-    .Filter(x => x.City == "New York" | x.Lastname == "Jones" | x.Name == "Charlie")
+    .Where(x => x.City == "New York" | x.Lastname == "Jones" | x.Name == "Charlie")
 ```
 
 You can apply multiple filters. They will be combined with `AND` in the SQL query. 

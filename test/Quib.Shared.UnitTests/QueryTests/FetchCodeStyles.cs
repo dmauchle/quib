@@ -42,6 +42,8 @@ public class FetchCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTes
         
         public ProjectedValue<DbText> Name { get; } = rs.Get(user.Name);
 
+        public IProjectedValue[] ObjectIdentity => [];
+
         public User Map(ResultReader rs)
         {
             return new User(rs.Get(Name));

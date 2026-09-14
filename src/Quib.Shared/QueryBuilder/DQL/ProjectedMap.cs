@@ -11,9 +11,10 @@ namespace Quib.Postgres18.QueryBuilder;
 #endif
 
 public sealed class ProjectedMap<TQuery, TObj>
+    where TObj : notnull
 {
 
-    private readonly ProjectedQuery<IReaderMapping< TObj>> _projection;
+    private readonly ProjectedQuery<IReaderMapping<TObj>> _projection;
 
     internal ProjectedMap(ProjectedQuery<IReaderMapping<TObj>> projection)
     {
@@ -22,17 +23,19 @@ public sealed class ProjectedMap<TQuery, TObj>
 
     public IAsyncEnumerable<TObj> FetchStream(CancellationToken cancellationToken = default)
     {
-        return _projection.FetchStream((rs, x) => x.Map(rs), cancellationToken);
+        return _projection.FetchStream((rs, x) => rs.Map(x), cancellationToken);
     }
 
     public Task<TObj[]> FetchArray(CancellationToken cancellationToken = default)
     {
-        return _projection.FetchArray((rs, x) => x.Map(rs), cancellationToken);
+        return _projection.FetchArray((rs, x) => rs.Map(x), cancellationToken);
     }
 
     public Task<SingleQueryResult<TObj>> FetchOne(CancellationToken cancellationToken = default)
     {
-        return _projection.FetchOne((rs, x) => x.Map(rs), cancellationToken);
+        return _projection.FetchOne((rs, x) => rs.Map(x), cancellationToken);
     }
+
+
 
 }

@@ -20,6 +20,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\JoinClause.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dql\JoinBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dql\ObjectIdentity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dql\QueryMappingCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\ISelectQueryFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\ISortExpression.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\UnaryOperator.cs" />

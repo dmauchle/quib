@@ -16,16 +16,69 @@ public sealed class ResultReader
 {
 
     private readonly IDataReader _reader;
+    private readonly QueryMappingCache _mappingCache;
 
     internal ResultReader(IDataReader reader)
     {
         _reader = reader;
+        _mappingCache = new QueryMappingCache();
     }
 
     public bool IsDBNull<T>(ProjectedValue<T> field)
         where T : struct, IExpressionType
     {
         return _reader.IsDBNull(field.Index);
+    }
+
+    /// <summary>
+    /// If the object has already been mapped, it will be returned from the query context. Otherwise, a new object will be created
+    /// using the mapping. The key will be used to identify the object (primary key).
+    /// </summary>
+    /// <typeparam name="TObj"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="mapping"></param>
+    /// <returns></returns>
+    public TObj Map<TObj>(IReaderMapping<TObj> mapping)
+        where TObj : notnull
+    {
+        // If we don't have an object identity, we always map to new object.
+        var id = mapping.ObjectIdentity;
+        if (id.Length == 0)
+            return mapping.Map(this);
+
+        var keyValues = mapping.ObjectIdentity.Select(x => _reader.GetValue(x.Index)).ToArray();
+        var key = new ObjectIdentity(keyValues);
+
+        if (_mappingCache.TryGet(key, out TObj? obj))
+            return obj;
+
+        var newObj = mapping.Map(this);
+        _mappingCache.Add(key, newObj);
+        return newObj;
+    }
+
+    /// <inheritdoc cref="Map{TObj}(IReaderMapping{TObj})"/>
+    public TObj? MapNullable<TObj>(IReaderMapping<TObj> mapping)
+        where TObj : class
+    {
+        // If we don't have an object identity, we always map to new object (because we wouldn't have the chance to check the identity fields for null).
+        var id = mapping.ObjectIdentity;
+        if (id.Length == 0)
+            return mapping.Map(this);
+
+        if (mapping.ObjectIdentity.All(x => _reader.IsDBNull(x.Index)))
+            return null;
+
+        var keyValues = mapping.ObjectIdentity.Select(x => _reader.GetValue(x.Index)).ToArray();
+        var key = new ObjectIdentity(keyValues);
+
+        if (_mappingCache.TryGet(key, out TObj? obj))
+            return obj;
+
+        var newObj = mapping.Map(this);
+        _mappingCache.Add(key, newObj);
+        return newObj;
     }
 
     public string Get(ProjectedValue<DbText> field)

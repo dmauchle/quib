@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\JoinCodeStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\ObjectIdentityTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\JoinTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\MapCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\SelectFilterTest.cs" />

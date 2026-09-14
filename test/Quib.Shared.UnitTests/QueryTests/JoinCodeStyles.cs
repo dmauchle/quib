@@ -52,6 +52,8 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
         public CompanyMapping Company { get; } = new CompanyMapping(query, row.Company);
 
+        public IProjectedValue[] ObjectIdentity => [];
+
         public Employee Map(ResultReader rs)
         {
 
@@ -69,6 +71,8 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
 
         public ProjectedValue<DbText> CompanyName { get; } = query.Get(row.CompanyName);
         public ProjectedValue<DbText> City { get; } = query.Get(row.City);
+
+        public IProjectedValue[] ObjectIdentity => [];
 
         public Company Map(ResultReader rs)
         {

@@ -78,6 +78,8 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
 
         private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
 
+        public IProjectedValue[] ObjectIdentity => [];
+
         public User Map(ResultReader rs)
         {
             return new User

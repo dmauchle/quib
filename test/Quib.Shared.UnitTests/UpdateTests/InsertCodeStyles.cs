@@ -99,6 +99,8 @@ public class InsertCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
 
         private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
 
+        public IProjectedValue[] ObjectIdentity => [];
+
         public User Map(ResultReader rs)
         {
             return new User

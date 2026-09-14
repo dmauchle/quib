@@ -39,9 +39,9 @@ public class ProjectedQuery<TProj> : IQueryPart
 
             using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
             {
+                var row = new ResultReader(reader);
                 while (await reader.ReadAsync(cancellationToken))
                 {
-                    var row = new ResultReader(reader);
                     var obj = map(row, _accessor);
                     yield return obj;
                 }

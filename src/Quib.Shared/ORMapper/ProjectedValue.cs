@@ -10,9 +10,9 @@ namespace Quib.MySql84.ORMapper;
 namespace Quib.Postgres18.ORMapper;
 #endif
 
-internal interface IProjectedValue
+public interface IProjectedValue
 {
-    public int Index { get; }
+    internal int Index { get; }
 }
 
 /// <summary>

@@ -102,6 +102,8 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         private readonly ProjectedValue<DbText> _firstname = query.Get(user.Firstname);
         private readonly ProjectedValue<DbText> _lastname = query.Get(user.Lastname);
 
+        public IProjectedValue[] ObjectIdentity => [];
+
         public User Map(ResultReader rs)
         {
             return new User

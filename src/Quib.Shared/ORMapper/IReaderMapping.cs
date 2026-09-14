@@ -19,5 +19,11 @@ public interface IReaderMappingFactory<TQuery, TObj> : IReaderMapping<TObj>
 
 public interface IReaderMapping<TObj>
 {
+    /// <summary>
+    /// Gets the key that uniquely identify the object. Will be used to maintain object identity 
+    /// across the query. It can be a multi-column key. When returning an empty key, every entity
+    /// is considered unique and will be created as a new object. 
+    /// </summary>
+    public IProjectedValue[] ObjectIdentity { get; }
     public TObj Map(ResultReader rs);
 }

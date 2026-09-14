@@ -44,6 +44,8 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         public ProjectedValue<DbText> CompanyName { get; } = query.Get(company.CompanyName);
         public ProjectedValue<DbText> City { get; } = query.Get(company.City);
 
+        public IProjectedValue[] ObjectIdentity => [];
+
         public Employee Map(ResultReader rs)
         {
             return new Employee

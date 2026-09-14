@@ -1,4 +1,4 @@
-#if MYSQL56
+﻿#if MYSQL56
 namespace Quib.MySql56.Installer;
 #elif MYSQL57
 namespace Quib.MySql57.Installer;
@@ -22,6 +22,12 @@ public static class ColumnTypeFactory
 
     extension(IColumnTypeFactory)
     {
+
+        public static ColumnType Int()
+        {
+            return new ColumnType($"INTEGER", defaultValue: "0");
+        }
+
         public static ColumnType VarChar(int length)
         {
             return new ColumnType($"VARCHAR({length})", defaultValue: "''");

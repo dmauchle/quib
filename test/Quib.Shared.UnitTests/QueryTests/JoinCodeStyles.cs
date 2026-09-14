@@ -12,6 +12,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         public static string TableName => "companies";
         public static CompaniesTable Factory(DbTable table) => new CompaniesTable(table);
 
+        public DbColumn<DbInt> ID => table.Column<DbInt>("id");
         public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
         public DbColumn<DbText> City => table.Column<DbText>("city");
     }
@@ -22,7 +23,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         public static EmployeesTable Factory(DbTable table) => new EmployeesTable(table);
 
         public DbColumn<DbText> Name => table.Column<DbText>("name");
-        public DbColumn<DbTextNullable> CompanyRef => table.Column<DbTextNullable>("company");
+        public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
     }
 
     private class EmployeesQuery(EmployeesTable employee, CompaniesTable company)
@@ -85,22 +86,25 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         using (var install = new DbInstaller(DB.Connection))
         {
             install.Table("companies")
-                .CreateWithPrimaryKey("companyname", ColumnType.VarChar(64))
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .AddColumn("companyname", ColumnType.VarChar(64).NotNull())
                 .AddColumn("city", ColumnType.VarChar(64).NotNull());
             install.Table("employees")
                 .CreateWithPrimaryKey("name", ColumnType.VarChar(64))
-                .AddColumn("company", ColumnType.VarChar(64).Nullable())
-                .AddForeignKey("employee_company", ["company"], "companies", ["companyname"]);
+                .AddColumn("company_id", ColumnType.Int().Nullable())
+                .AddForeignKey("employee_company", ["company_id"], "companies", ["id"]);
         }
 
         await DB.InsertIntoTable("companies")
             .AddRow((query, table) =>
             {
+                query.Set(table.Column<DbInt>("id"), 1);
                 query.Set(table.Column<DbText>("companyname"), "Microsoft");
                 query.Set(table.Column<DbText>("city"), "Seattle");
             })
             .AddRow((query, table) =>
             {
+                query.Set(table.Column<DbInt>("id"), 2);
                 query.Set(table.Column<DbText>("companyname"), "Google");
                 query.Set(table.Column<DbText>("city"), "Mountain View");
             })
@@ -109,12 +113,12 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
-                query.Set(table.Column<DbTextNullable>("company"), "Microsoft");
+                query.Set(table.Column<DbIntNullable>("company_id"), 1);
             })
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Bob");
-                query.Set(table.Column<DbTextNullable>("company"), "Google");
+                query.Set(table.Column<DbIntNullable>("company_id"), 2);
             })
             .AddRow((query, table) =>
             {
@@ -123,7 +127,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "David");
-                query.Set(table.Column<DbTextNullable>("company"), "Microsoft");
+                query.Set(table.Column<DbIntNullable>("company_id"), 1);
             })
             .Execute();
     }
@@ -139,7 +143,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(x =>
             {
                 var employees = x.FromTable("employees");
-                var companies = x.InnerJoin("companies").On(c => c.Column<DbText>("companyname") == employees.Column<DbTextNullable>("company"));
+                var companies = x.InnerJoin("companies").On(c => c.Column<DbInt>("id") == employees.Column<DbIntNullable>("company_id"));
                 return new
                 {
                     employee = employees,
@@ -176,7 +180,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(query =>
             {
                 var employee = query.From<EmployeesTable>();
-                var company = query.InnerJoin<CompaniesTable>().On(c => c.CompanyName == employee.CompanyRef);
+                var company = query.InnerJoin<CompaniesTable>().On(c => c.ID == employee.CompanyId);
                 return new EmployeesQuery(employee, company);
             })
             .Map<EmployeeMapping, Employee>()
@@ -199,7 +203,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(query =>
             {
                 var employee = query.From(x => new EmployeesTable(x));
-                var company = query.InnerJoin(x => new CompaniesTable(x)).On(c => c.CompanyName == employee.CompanyRef);
+                var company = query.InnerJoin(x => new CompaniesTable(x)).On(c => c.ID == employee.CompanyId);
                 return new EmployeesQuery(employee, company);
             })
             .Map<EmployeeMapping, Employee>()
@@ -222,7 +226,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(x =>
             {
                 var employees = x.FromTable("employees");
-                var companies = x.LeftOuterJoin("companies").On(c => c.Column<DbText>("companyname") == employees.Column<DbTextNullable>("company"));
+                var companies = x.LeftOuterJoin("companies").On(c => c.Column<DbInt>("id") == employees.Column<DbIntNullable>("company_id"));
                 return new
                 {
                     employee = employees,
@@ -232,14 +236,14 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Project((rs, x) => new
             {
                 Name = rs.Get(x.employee.Column<DbText>("name")),
-                Company = rs.Get(x.company.Column<DbTextNullable>("companyname")),
-                City = rs.Get(x.company.Column<DbTextNullable>("city"))
+                Company = rs.Get(x.company.Column<DbText>("companyname")),
+                City = rs.Get(x.company.Column<DbText>("city"))
             })
             .FetchArray((rs, x) => new
             {
                 Name = rs.Get(x.Name),
-                Company = rs.Get(x.Company),
-                City = rs.Get(x.City)
+                Company = rs.IsDBNull(x.Company) ? null : rs.Get(x.Company),
+                City = rs.IsDBNull(x.City) ? null : rs.Get(x.City)
             });
 
         Assert.Equal(4, rs.Length);
@@ -260,7 +264,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(query =>
             {
                 var employee = query.From<EmployeesTable>();
-                var company = query.LeftOuterJoin<CompaniesTable>().On(c => c.CompanyName == employee.CompanyRef);
+                var company = query.LeftOuterJoin<CompaniesTable>().On(c => c.ID == employee.CompanyId);
                 return new EmployeesQuery(employee, company);
             })
             .Map<EmployeeMapping, Employee>()
@@ -284,7 +288,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(query =>
             {
                 var employee = query.From(x => new EmployeesTable(x));
-                var company = query.LeftOuterJoin(x => new CompaniesTable(x)).On(c => c.CompanyName == employee.CompanyRef);
+                var company = query.LeftOuterJoin(x => new CompaniesTable(x)).On(c => c.ID == employee.CompanyId);
                 return new EmployeesQuery(employee, company);
             })
             .Map<EmployeeMapping, Employee>()
@@ -308,7 +312,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(x =>
             {
                 var company = x.FromTable("companies");
-                var employee = x.RightOuterJoin("employees").On(c => c.Column<DbText>("company") == company.Column<DbTextNullable>("companyname"));
+                var employee = x.RightOuterJoin("employees").On(c => c.Column<DbIntNullable>("company_id") == company.Column<DbInt>("id"));
                 return new
                 {
                     employee,
@@ -346,7 +350,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(query =>
             {
                 var company = query.From<CompaniesTable>();
-                var employee = query.RightOuterJoin<EmployeesTable>().On(c => c.CompanyRef == company.CompanyName);
+                var employee = query.RightOuterJoin<EmployeesTable>().On(c => c.CompanyId == company.ID);
                 return new EmployeesQuery(employee, company);
             })
             .Map<EmployeeMapping, Employee>()
@@ -370,7 +374,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(query =>
             {
                 var company = query.From(x => new CompaniesTable(x));
-                var employee = query.RightOuterJoin(x => new EmployeesTable(x)).On(e => e.CompanyRef == company.CompanyName);
+                var employee = query.RightOuterJoin(x => new EmployeesTable(x)).On(e => e.CompanyId == company.ID);
                 return new EmployeesQuery(employee, company);
             })
             .Map<EmployeeMapping, Employee>()

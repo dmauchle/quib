@@ -15,6 +15,11 @@ public static partial class SQL
 
     public static readonly DbNull Null = DbNull.Value;
 
+    public static ISortExpression Sort(QueryExpression value, Sort direction)
+    {
+        return new SortClause(value, direction);
+    }
+
     public static QueryExpression<DbInt> Constant(int value)
     {
         return new Constant<DbInt>(value.ToString());

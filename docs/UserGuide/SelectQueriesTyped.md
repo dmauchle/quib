@@ -55,7 +55,21 @@ Read [Expressions.md](Expressions.md) for more information about building the fi
 
 ## Sorting (ORDER BY clause)
 
-Will follow soon...
+A few examples:
+
+```csharp
+global using static Quib.Postgres18.Schema.Sort;
+
+db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname ]);
+db.SelectFrom<UsersTable>().OrderBy(x => [ SQL.Sort(x.Lastname, ASC) ]);
+db.SelectFrom<UsersTable>().OrderBy(x => [ SQL.Sort(x.Lastname, DESC) ]);
+db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname, x.Firstname ]);
+```
+
+Of course, you may use any [expression](Expressions.md) for the sorting.
+
+> Note: sort order depends on the database and collation (also with NULL ordering). Currently, there's no support for 
+> Postgres NULL FIRST and NULL LAST clause. MySQL doesn't support it anyways.
 
 
 ## Next Steps
@@ -65,4 +79,4 @@ Will follow soon...
 
 ## See also
 
-- **[Expressions.md](Expressions.md)** — learn more about the SQL expressions for filtering and updating
+- **[Expressions.md](Expressions.md)** — learn more about the SQL expressions for filtering

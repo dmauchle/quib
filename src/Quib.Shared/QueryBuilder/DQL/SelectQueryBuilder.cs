@@ -15,6 +15,7 @@ internal sealed class SelectQueryBuilder
 
     private readonly FromClause? _from;
     private List<QueryExpression>? _filters;
+    private ISortExpression[]? _sort;
 
     public SelectQueryBuilder(FromClause? from = null)
     {
@@ -24,6 +25,11 @@ internal sealed class SelectQueryBuilder
     public void Filter(QueryExpression filter)
     {
         (_filters ??= []).Add(filter);
+    }
+
+    internal void OrderBy(ISortExpression[] sort)
+    {
+        _sort = sort;
     }
 
     public void ToSql(QueryWriter query)
@@ -41,6 +47,20 @@ internal sealed class SelectQueryBuilder
                 if (!first)
                     query.Write(" AND ");
                 query.Write(filter);
+                first = false;
+            }
+        }
+
+        if (_sort != null)
+        {
+            query.Write(" ORDER BY ");
+
+            var first = true;
+            foreach (var sort in _sort)
+            {
+                if (!first)
+                    query.Write(", ");
+                query.Write(sort);
                 first = false;
             }
         }

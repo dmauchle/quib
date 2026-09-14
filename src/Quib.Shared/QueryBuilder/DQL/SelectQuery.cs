@@ -40,6 +40,12 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return this;
     }
 
+    public SelectQuery<TQuery> OrderBy(Func<TQuery, ISortExpression[]> sort)
+    {
+        _builder.OrderBy(sort(_accessor));
+        return this;
+    }
+
     public ProjectedQuery<TProj> Project<TProj>(Func<ProjectionBuilder, TQuery, TProj> selector)
     {
         var rs = new ProjectionBuilder();

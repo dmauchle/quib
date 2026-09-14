@@ -31,8 +31,6 @@ public void Demo(QueryFactory db)
 {
     db.SelectFrom<UsersTable>();  // Requires IDbTableFactory<UsersTable> with Factory method
 
-    db.SelectFrom(UsersTable.Factory);  // Use any method you like
-
     db.SelectFrom(x => new UsersTable(x));  // Use a lambda to create the table instance
 }
 ```

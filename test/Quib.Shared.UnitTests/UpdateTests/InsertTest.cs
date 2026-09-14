@@ -90,13 +90,13 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         public required string Firstname { get; init; }
         public required string Lastname { get; init; }
 
-        public static IReaderMapping<UsersTable, User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
     }
 
     private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
     {
 
-        public static IReaderMapping<UsersTable, User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
         private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
         private readonly ProjectedValue<DbText> _firstname = query.Get(user.Firstname);

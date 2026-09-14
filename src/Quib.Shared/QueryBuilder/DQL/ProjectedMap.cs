@@ -13,9 +13,9 @@ namespace Quib.Postgres18.QueryBuilder;
 public sealed class ProjectedMap<TQuery, TObj>
 {
 
-    private readonly ProjectedQuery<IReaderMapping<TQuery, TObj>> _projection;
+    private readonly ProjectedQuery<IReaderMapping< TObj>> _projection;
 
-    internal ProjectedMap(ProjectedQuery<IReaderMapping<TQuery, TObj>> projection)
+    internal ProjectedMap(ProjectedQuery<IReaderMapping<TObj>> projection)
     {
         _projection = projection;
     }

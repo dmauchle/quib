@@ -113,7 +113,7 @@ public sealed class TableInstaller
         return new ColumnInstaller(_db, _tablename, columnname);
     }
 
-    public TableInstaller CreateForeignKey(string keyname, string[] columns, string foreignTable, string[] foreignColumns)
+    public TableInstaller AddForeignKey(string keyname, string[] columns, string foreignTable, string[] foreignColumns)
     {
         if (columns.Length == 0)
             throw new ArgumentException("Missing columns in primary key.", nameof(columns));

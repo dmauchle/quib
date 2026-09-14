@@ -18,6 +18,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbTextNullable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNotNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNull.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\JoinClause.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)querybuilder\dql\JoinBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Schema\ISelectQueryFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Schema\ISortExpression.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\UnaryOperator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DML\DeleteQuery.cs" />
@@ -71,6 +74,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Installer\" />
-    <Folder Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ namespace Quib.Postgres18.QueryBuilder;
 
 internal interface ISelectQuery : IQueryPart
 {
+   
 }
 
 public sealed class SelectQuery<TQuery> : ISelectQuery
@@ -31,6 +32,11 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     public SelectQuery<TResult> Select<TResult>(Func<TQuery, TResult> selector)
     {
         return new SelectQuery<TResult>(_con, _builder, selector(_accessor));
+    }
+
+    public SelectQuery<TResult> Select<TResult>(Func<SelectQueryBuilder, TQuery, TResult> selector)
+    {
+        return new SelectQuery<TResult>(_con, _builder, selector(_builder, _accessor));
     }
 
     public SelectQuery<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
@@ -67,7 +73,7 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return new ProjectedMap<TQuery, TObj>(proj);
     }
 
-    public ProjectedMap<TQuery, TObj> Map<TObj>(Func<ProjectionBuilder, TQuery, IReaderMapping<TQuery, TObj>> factory)
+    public ProjectedMap<TQuery, TObj> Map<TObj>(Func<ProjectionBuilder, TQuery, IReaderMapping<TObj>> factory)
     {
         var rs = new ProjectionBuilder();
         var proj = this.Project(factory);
@@ -79,4 +85,5 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         _builder.ToSql(query);
     }
 
+    
 }

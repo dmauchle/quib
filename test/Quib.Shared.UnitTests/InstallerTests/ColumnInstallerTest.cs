@@ -137,7 +137,7 @@ public class ColumnInstallerTest(DatabaseFixture env, ITestOutputHelper log) : D
             var users = install.Table(usersTableName)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
                 .AddColumn("company", ColumnType.VarChar(32).NotNull())
-                .CreateForeignKey(fkname, ["company"], companiesTableName, ["id"]);  // create foreign key from users.company -> companies.id
+                .AddForeignKey(fkname, ["company"], companiesTableName, ["id"]);  // create foreign key from users.company -> companies.id
 
             // rename the company column
             users.Column("company").RenameTo("company_id");

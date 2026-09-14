@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 namespace Quib.UnitTests.QueryTests;
 
 [Collection(TestCollections.DATABASE)]
-public class QueryCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
+public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
     protected override async ValueTask InitializeTestDatabase()
@@ -60,13 +60,13 @@ public class QueryCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTes
     {
         public required string Name { get; init; }
 
-        public static IReaderMapping<UsersTable, User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
     }
 
     private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>, IWriterMapping<UsersTable, User>
     {
 
-        public static IReaderMapping<UsersTable, User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
         private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
 
@@ -123,4 +123,18 @@ public class QueryCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTes
         foreach (var row in rs)
             Assert.Equal("Alice", row.Name);
     }
+
+    [Fact]
+    public async Task TypedAPIWithQueryBuilder()
+    {
+        var rs = await DB
+              .Select(x => x.From<UsersTable>())
+              .Project((rs, x) => new UserMapping(rs, x))
+              .FetchArray((rs, x) => x.Map(rs));
+
+        Assert.Single(rs);
+        foreach (var row in rs)
+            Assert.Equal("Alice", row.Name);
+    }
+
 }

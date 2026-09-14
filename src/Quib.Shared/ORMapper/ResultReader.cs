@@ -22,14 +22,33 @@ public sealed class ResultReader
         _reader = reader;
     }
 
+    public bool IsDBNull<T>(ProjectedValue<T> field)
+        where T : struct, IExpressionType
+    {
+        return _reader.IsDBNull(field.Index);
+    }
+
     public string Get(ProjectedValue<DbText> field)
     {
         return _reader.GetString(field.Index);
     }
 
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public string? GetNullable(ProjectedValue<DbText> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetString(field.Index);
+    }
+
     public string? Get(ProjectedValue<DbTextNullable> field)
     {
-        if (_reader.IsDBNull(field.Index))
+        if (this.IsDBNull(field))
             return null;
         else
             return _reader.GetString(field.Index);
@@ -40,9 +59,22 @@ public sealed class ResultReader
         return _reader.GetInt32(field.Index);
     }
 
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public int? GetNullable(ProjectedValue<DbInt> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetInt32(field.Index);
+    }
+
     public int? Get(ProjectedValue<DbIntNullable> field)
     {
-        if (_reader.IsDBNull(field.Index))
+        if (this.IsDBNull(field))
             return null;
         else
             return _reader.GetInt32(field.Index);
@@ -53,9 +85,22 @@ public sealed class ResultReader
         return _reader.GetBoolean(field.Index);
     }
 
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public bool? GetNullable(ProjectedValue<DbBool> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetBoolean(field.Index);
+    }
+
     public bool? Get(ProjectedValue<DbBoolNullable> field)
     {
-        if (_reader.IsDBNull(field.Index))
+        if (this.IsDBNull(field))
             return null;
         else
             return _reader.GetBoolean(field.Index);

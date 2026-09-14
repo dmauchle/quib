@@ -11,15 +11,17 @@ namespace Quib.Postgres18.QueryBuilder;
 #endif
 
 
-
-internal sealed class FromClause(ITableOrSubquery tableOrSubquery) : IQueryPart
+/// <summary>
+/// Represents a single part of a (potentially multi-table) FROM clause, like the `employees e` in `SELECT * FROM employees e, departments d`.
+/// </summary>
+/// <param name="tableOrSubquery"></param>
+internal sealed class FromClause(ITableOrSubquery tableOrSubquery, TableAlias alias) : IQueryPart
 {
 
-    public TableAlias Alias => new TableAlias(0);
+    public TableAlias Alias => alias;
 
     void IQueryPart.ToSql(QueryWriter query)
     {
-        query.Write("FROM ");
         query.Write(tableOrSubquery);
         query.Write(" AS ");
         query.Write(Alias);

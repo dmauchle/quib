@@ -89,26 +89,35 @@ public sealed class QueryFactory(DbConnection con)
         }
     }
 
+    public SelectQuery<T> Select<T>(Func<SelectQueryBuilder, T> queryFactory)
+    {
+        var builder = new SelectQueryBuilder();
+        var accessor = queryFactory(builder);
+        return new SelectQuery<T>(this, builder, accessor);
+    }
+
+    public SelectQuery<T> Select<T>()
+        where T : ISelectQueryFactory<T>
+    {
+        return this.Select(T.Factory);
+    }
+
     public SelectQuery<DbTable> SelectFromTable(string tablename)
     {
-        var table = new TableReference(tablename);
-        var from = new FromClause(table);
-        var builder = new SelectQueryBuilder(from);
-        var accessor = new DbTable(from.Alias);
-        return new SelectQuery<DbTable>(this, builder, accessor);
+        return this.Select(query => query.FromTable(tablename));
     }
 
     public SelectQuery<T> SelectFrom<T>() where T : IDbTable, IDbTableFactory<T>
     {
-        return this.SelectFrom(T.Factory);
+        return this.Select(query => query.From<T>());
     }
 
     public SelectQuery<T> SelectFrom<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
-        return this.SelectFromTable(T.TableName).Select(tableFactory);
+        return this.Select(query => query.From(tableFactory));
     }
 
-    public ProjectedQuery<T> Select<T>(Func<ProjectionBuilder, T> factory)
+    public ProjectedQuery<T> SelectValues<T>(Func<ProjectionBuilder, T> factory)
     {
         var builder = new SelectQueryBuilder();
         var select = new SelectQuery<object>(this, builder, new object());

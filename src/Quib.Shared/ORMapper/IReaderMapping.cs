@@ -11,13 +11,13 @@ namespace Quib.Postgres18.ORMapper;
 #endif
 
 
-public interface IReaderMappingFactory<TQuery, TObj> : IReaderMapping<TQuery, TObj>
+public interface IReaderMappingFactory<TQuery, TObj> : IReaderMapping<TObj>
 {
-    public static abstract IReaderMapping<TQuery, TObj> Factory(ProjectionBuilder rs, TQuery query);
+    public static abstract IReaderMapping<TObj> Factory(ProjectionBuilder rs, TQuery query);
 }
 
 
-public interface IReaderMapping<TQuery, TObj>
+public interface IReaderMapping<TObj>
 {
     public TObj Map(ResultReader rs);
 }

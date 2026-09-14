@@ -10,19 +10,41 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-internal sealed class SelectQueryBuilder
+
+public sealed class SelectQueryBuilder
 {
 
-    private readonly FromClause? _from;
+    private List<FromClause>? _from;
+    private List<JoinClause>? _joins;
     private List<QueryExpression>? _filters;
     private ISortExpression[]? _sort;
 
-    public SelectQueryBuilder(FromClause? from = null)
+    internal SelectQueryBuilder()
     {
-        _from = from;
     }
 
-    public void Filter(QueryExpression filter)
+    internal FromClause From(ITableOrSubquery table)
+    {
+        var index = GetNextTableIndex();
+        var from = new FromClause(table, new TableAlias(index));
+        (_from ??= []).Add(from);
+        return from;
+    }
+
+    internal JoinClause Join(ITableOrSubquery table, string joinType)
+    {
+        var index = GetNextTableIndex();
+        var join = new JoinClause(joinType, table, new TableAlias(index));
+        (_joins ??= []).Add(join);
+        return join;
+    }
+
+    private int GetNextTableIndex()
+    {
+        return (_from?.Count ?? 0) + (_joins?.Count ?? 0);
+    }
+
+    internal void Filter(QueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }
@@ -32,10 +54,109 @@ internal sealed class SelectQueryBuilder
         _sort = sort;
     }
 
-    public void ToSql(QueryWriter query)
+    public DbTable FromTable(string tablename)
+    {
+        var table = new TableReference(tablename);
+        var from = this.From(table);
+        var accessor = new DbTable(from.Alias);
+        return accessor;
+    }
+
+    public T From<T>() where T : IDbTable, IDbTableFactory<T>
+    {
+        return this.From(T.Factory);
+    }
+
+    public T From<T>(Func<DbTable, T> tableFactory) where T : IDbTable
+    {
+        var table = this.FromTable(T.TableName);
+        return tableFactory(table);
+    }
+
+    public JoinBuilder<DbTable> InnerJoin(string tablename)
+    {
+        var table = new TableReference(tablename);
+        var join = this.Join(table, "INNER JOIN");
+        var accessor = new DbTable(join.Alias);
+        return new JoinBuilder<DbTable>(join, accessor);
+    }
+
+    public JoinBuilder<T> InnerJoin<T>(Func<DbTable, T> tableFactory)
+        where T : IDbTable
+    {
+        return this.InnerJoin(T.TableName).Select(tableFactory);
+    }
+
+    public JoinBuilder<T> InnerJoin<T>()
+      where T : IDbTable, IDbTableFactory<T>
+    {
+        return this.InnerJoin(T.Factory);
+    }
+
+    public JoinBuilder<DbTable> LeftOuterJoin(string tablename)
+    {
+        var table = new TableReference(tablename);
+        var join = this.Join(table, "LEFT OUTER JOIN");
+        var accessor = new DbTable(join.Alias);
+        return new JoinBuilder<DbTable>(join, accessor);
+    }
+
+    public JoinBuilder<T> LeftOuterJoin<T>(Func<DbTable, T> tableFactory)
+        where T : IDbTable
+    {
+        return this.LeftOuterJoin(T.TableName).Select(tableFactory);
+    }
+
+    public JoinBuilder<T> LeftOuterJoin<T>()
+      where T : IDbTable, IDbTableFactory<T>
+    {
+        return this.LeftOuterJoin(T.Factory);
+    }
+
+    public JoinBuilder<DbTable> RightOuterJoin(string tablename)
+    {
+        var table = new TableReference(tablename);
+        var join = this.Join(table, "RIGHT OUTER JOIN");
+        var accessor = new DbTable(join.Alias);
+        return new JoinBuilder<DbTable>(join, accessor);
+    }
+
+    public JoinBuilder<T> RightOuterJoin<T>(Func<DbTable, T> tableFactory)
+        where T : IDbTable
+    {
+        return this.RightOuterJoin(T.TableName).Select(tableFactory);
+    }
+
+    public JoinBuilder<T> RightOuterJoin<T>()
+      where T : IDbTable, IDbTableFactory<T>
+    {
+        return this.RightOuterJoin(T.Factory);
+    }
+
+    internal void ToSql(QueryWriter query)
     {
         if (_from != null)
-            query.Write(_from);
+        {
+            query.Write("FROM ");
+
+            var first = true;
+            foreach (var from in _from)
+            {
+                if (!first)
+                    query.Write(", ");
+                query.Write(from);
+                first = false;
+            }
+        }
+
+        if (_joins != null)
+        {
+            foreach (var join in _joins)
+            {
+                query.Write(" ");
+                query.Write(join);
+            }
+        }
 
         if (_filters != null)
         {

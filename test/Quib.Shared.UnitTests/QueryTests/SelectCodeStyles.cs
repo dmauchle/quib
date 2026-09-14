@@ -23,22 +23,14 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     }
 
     [Fact]
-    public async Task DynamicAPI()
+    public async Task ThroughTableName()
     {
         var rs = await DB
             .SelectFromTable("users")
-            .Project((rs, x) => new
-            {
-                Name = rs.Get(x.Column<DbText>("name"))
-            })
-            .FetchArray((rs, x) => new
-            {
-                Name = rs.Get(x.Name)
-            });
+            .Project(x => x.Column<DbText>("name"))
+            .FetchOne();
 
-        Assert.Single(rs);
-        foreach (var row in rs)
-            Assert.Equal("Alice", row.Name);
+        Assert.Equal("Alice", rs.Result);
     }
 
 
@@ -48,93 +40,121 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
         public static string TableName => "users";
         public static UsersTable Factory(DbTable table) => new UsersTable(table);
 
+
         public static UsersTable CreateQuery(DbTable table)
         {
             return new UsersTable(table);
         }
 
         public DbColumn<DbText> Name => table.Column<DbText>("name");
+
     }
 
-    private class User
+    private class UsersQuery(UsersTable user) : ISelectQueryFactory<UsersQuery>
     {
-        public required string Name { get; init; }
+        public static UsersQuery Factory(SelectQueryBuilder query) => new UsersQuery(query.From<UsersTable>());
 
-        public static IReaderMapping<User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public UsersTable User => user;
     }
 
-    private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>, IWriterMapping<UsersTable, User>
-    {
-
-        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
-
-        private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
-
-        public User Map(ResultReader rs)
-        {
-            return new User
-            {
-                Name = rs.Get(_name)
-            };
-        }
-
-        public static void Write(IUpdateQueryBuilder query, UsersTable table, User user)
-        {
-            query.Set(table.Name, user.Name);
-        }
-
-    }
 
     [Fact]
-    public async Task TypedAPIWithFactoryType()
+    public async Task ThroughIDbTableFactory()
     {
         var rs = await DB
             .SelectFrom<UsersTable>()
-            .Map<UserMapping, User>()
-            .FetchArray();
+            .Project(x => x.Name)
+            .FetchOne();
 
-        Assert.Single(rs);
-        foreach (var row in rs)
-            Assert.Equal("Alice", row.Name);
+        Assert.Equal("Alice", rs.Result);
     }
 
     [Fact]
-    public async Task TypedAPIWithFactoryMethod()
+    public async Task ThroughIDbTable()
     {
         var rs = await DB
-            .SelectFrom(UsersTable.Factory)
-            .Map(User.FromDbTable)
-            .FetchArray();
+            .SelectFrom(table => new UsersTable(table))
+            .Project(x => x.Name)
+            .FetchOne();
 
-        Assert.Single(rs);
-        foreach (var row in rs)
-            Assert.Equal("Alice", row.Name);
+        Assert.Equal("Alice", rs.Result);
     }
 
     [Fact]
-    public async Task TypedAPIWithFactoryLambda()
+    public async Task ThroughQueryBuilder_WithTableName()
     {
         var rs = await DB
-              .SelectFrom(x => new UsersTable(x))
-              .Project((rs, x) => new UserMapping(rs, x))
-              .FetchArray((rs, x) => x.Map(rs));
+              .Select(x => x.FromTable("users"))
+              .Project(x => x.Column<DbText>("name"))
+              .FetchOne();
 
-        Assert.Single(rs);
-        foreach (var row in rs)
-            Assert.Equal("Alice", row.Name);
+        Assert.Equal("Alice", rs.Result);
     }
 
     [Fact]
-    public async Task TypedAPIWithQueryBuilder()
+    public async Task ThroughQueryBuilder_WithIDbTableFactory()
     {
         var rs = await DB
               .Select(x => x.From<UsersTable>())
-              .Project((rs, x) => new UserMapping(rs, x))
-              .FetchArray((rs, x) => x.Map(rs));
+              .Project(x => x.Name)
+              .FetchOne();
 
-        Assert.Single(rs);
-        foreach (var row in rs)
-            Assert.Equal("Alice", row.Name);
+        Assert.Equal("Alice", rs.Result);
+    }
+
+    [Fact]
+    public async Task ThroughQueryBuilder_WithIDbTable()
+    {
+        var rs = await DB
+              .Select(query => query.From(table => new UsersTable(table)))
+              .Project(x => x.Name)
+              .FetchOne();
+
+        Assert.Equal("Alice", rs.Result);
+    }
+
+    [Fact]
+    public async Task ThroughQueryBuilder_WithISelectQueryFactory()
+    {
+        var rs = await DB
+              .Select<UsersQuery>()
+              .Project(x => x.User.Name)
+              .FetchOne();
+
+        Assert.Equal("Alice", rs.Result);
+    }
+
+    [Fact]
+    public async Task ThroughProjectionBuilder()
+    {
+        var rs = await DB
+            .SelectValues(x => x.Get(SQL.Constant(3)))
+            .FetchOne();
+        Assert.Equal(3, rs.Result);
+    }
+
+    [Fact]
+    public async Task ThroughSubselect_WithTable()
+    {
+        var rs = await DB
+            .SelectFromTable("users")
+            .Select(x => new UsersTable(x))
+            .Project(x => x.Name)
+            .FetchOne();
+
+        Assert.Equal("Alice", rs.Result);
+    }
+
+    [Fact]
+    public async Task ThroughSubselect_WithTableAndQuery()
+    {
+        var rs = await DB
+            .SelectFromTable("users")
+            .Select((query, table) => new UsersTable(table))
+            .Project(x => x.Name)
+            .FetchOne();
+
+        Assert.Equal("Alice", rs.Result);
     }
 
 }

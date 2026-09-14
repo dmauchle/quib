@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 namespace Quib.UnitTests.SchemaTests;
 
 [Collection(TestCollections.DATABASE)]
-public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
+public class FetchTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
     protected override async ValueTask InitializeTestDatabase()
@@ -16,7 +16,7 @@ public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
     }
 
     [Fact]
-    public async Task FetchStream_WithRows_Works()
+    public async Task FetchStream_WithRows()
     {
         var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
@@ -45,7 +45,7 @@ public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
     }
 
     [Fact]
-    public async Task FetchStream_WithoutRows_Works()
+    public async Task FetchStream_WithoutRows()
     {
         var rs = DB.SelectFromTable("users")
             .Project(x => x.Column<DbText>("name"))
@@ -57,7 +57,7 @@ public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
     }
 
     [Fact]
-    public async Task FetchArray_WithRows_Works()
+    public async Task FetchArray_WithRows()
     {
         var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
@@ -82,7 +82,7 @@ public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
     }
 
     [Fact]
-    public async Task FetchArray_WithoutRows_Works()
+    public async Task FetchArray_WithoutRows()
     {
         var rs = await DB.SelectFromTable("users")
             .Project(x => x.Column<DbText>("name"))
@@ -92,7 +92,7 @@ public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
     }
 
     [Fact]
-    public async Task FetchOne_WithRow_Works()
+    public async Task FetchOne_WithRow()
     {
         var inserted = await DB.InsertIntoTable("users")
             .AddRow((query, table) =>
@@ -112,7 +112,7 @@ public class FetchingTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
     }
 
     [Fact]
-    public async Task FetchOne_WithoutRow_Works()
+    public async Task FetchOne_WithoutRow()
     {
         var rs = await DB.SelectFromTable("users")
             .Project(x => x.Column<DbText>("name"))

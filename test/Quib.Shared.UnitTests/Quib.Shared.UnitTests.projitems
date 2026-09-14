@@ -25,12 +25,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntExpressionTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\InnerJoinCodeStyles.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\LeftOuterJoinCodeStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchCodeStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\JoinCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\JoinTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\RightOuterJoinCodeStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\MapCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\SelectFilterTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchingTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\SelectCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\TypeTest.cs" />

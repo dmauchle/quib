@@ -66,11 +66,11 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     }
 
     public ProjectedMap<TQuery, TObj> Map<TMapper, TObj>()
-        where TMapper : IReaderMappingFactory<TQuery, TObj>
+        where TMapper : IReaderMapping<TQuery, TObj>
         where TObj : notnull
     {
         var rs = new ProjectionBuilder();
-        var proj = this.Project(TMapper.Factory);
+        var proj = this.Project(TMapper.CreateFrom);
         return new ProjectedMap<TQuery, TObj>(proj);
     }
 

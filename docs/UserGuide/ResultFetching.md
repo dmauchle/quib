@@ -1,6 +1,6 @@
 # Result Fetching Methods
 
-After building a projected SELECT query (see [ResultMappingTyped.md](ResultMappingTyped.md)), you can fetch results from 
+After building a projected SELECT query (see [ResultMapping.md](ResultMapping.md)), you can fetch results from 
 the database using one of three methods: 
 
 
@@ -10,31 +10,24 @@ With `FetchArray` the entire result set is loaded into memory and the reader is 
 e.g. inside the for loop.
 
 ```csharp
-public async Task Demo(QueryFactory db)
+var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
+foreach (var user in users) 
 {
-    var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
-    foreach (var user in users) 
-    {
-        Console.WriteLine(user.Username);
-    }
+    Console.WriteLine(user.Username);
 }
 ```
 
 
 ## FetchOne — Retrieve a single result row (or none)
 
-Use `FetchOne` when you expect at most one result row from your query. It returns a `SingleQueryResult<T>` that indicates whether a result exists.
+Use `FetchOne` when you expect at most one result row from your query. It returns a `SingleQueryResult<T>` that indicates 
+whether a result exists.
 
 ```csharp
-public async Task FetchSingleRow(QueryFactory db)
-{
-    var user = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchOne();
+var user = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchOne();
 
-    if (user.HasResult)
-    {
-        Console.WriteLine(user.Result.Username);
-    }
-}
+if (user.HasResult)
+    Console.WriteLine(user.Result.Username);
 ```
 
 Always check `HasResult` before accessing `Result` to determine if a row was found. If no rows are returned from the 
@@ -48,13 +41,10 @@ approach for large result sets. The data reader behind the result will remain op
 result set. So you can't run another query at the same time.
 
 ```csharp
-public async Task Demo(QueryFactory db)
-{
-    var users = db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchStream();
+var users = db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchStream();
 
-    await foreach (var user in users)
-    {
-        Console.WriteLine(user.Username);
-    }
+await foreach (var user in users)
+{
+    Console.WriteLine(user.Username);
 }
 ```

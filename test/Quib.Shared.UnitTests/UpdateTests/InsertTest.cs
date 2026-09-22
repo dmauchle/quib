@@ -13,8 +13,8 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         {
             install.Table("users")
                 .CreateWithPrimaryKey("username", ColumnType.VarChar(64))
-                .AddColumn("firstname", ColumnType.VarChar(64).NotNull())
-                .AddColumn("lastname", ColumnType.VarChar(64).NotNull());
+                .CreateColumn("firstname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("lastname", ColumnType.VarChar(64).NotNull());
         }
     }
 
@@ -33,7 +33,7 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
 
         Assert.Equal(1, insert);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
+        var users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
 
         Assert.NotNull(users);
         Assert.Single(users);
@@ -57,7 +57,7 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
 
         Assert.Equal(1, insert);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
+        var users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
 
         Assert.NotNull(users);
         Assert.Single(users);
@@ -68,11 +68,11 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
     }
 
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
         public static UsersTable CreateQuery(DbTable table)
         {
@@ -89,14 +89,11 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         public required string Username { get; init; }
         public required string Firstname { get; init; }
         public required string Lastname { get; init; }
-
-        public static IReaderMapping<User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
     }
 
-    private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
+    private class UserMapping(IProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>
     {
-
-        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
         private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
         private readonly ProjectedValue<DbText> _firstname = query.Get(user.Firstname);

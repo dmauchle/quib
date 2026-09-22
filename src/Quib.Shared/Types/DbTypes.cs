@@ -1,13 +1,13 @@
 ﻿#if MYSQL56
-namespace Quib.MySql56.Schema;
+namespace Quib.MySql56.Types;
 #elif MYSQL57
-namespace Quib.MySql57.Schema;
+namespace Quib.MySql57.Types;
 #elif MYSQL80
-namespace Quib.MySql80.Schema;
+namespace Quib.MySql80.Types;
 #elif MYSQL84
-namespace Quib.MySql84.Schema;
+namespace Quib.MySql84.Types;
 #elif POSTGRES18
-namespace Quib.Postgres18.Schema;
+namespace Quib.Postgres18.Types;
 #endif
 
 

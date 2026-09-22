@@ -97,9 +97,9 @@ public sealed class QueryFactory(DbConnection con)
     }
 
     public SelectQuery<T> Select<T>()
-        where T : ISelectQueryFactory<T>
+        where T : ISelectContext<T>
     {
-        return this.Select(T.Factory);
+        return this.Select(T.CreateFrom);
     }
 
     public SelectQuery<DbTable> SelectFromTable(string tablename)
@@ -107,7 +107,7 @@ public sealed class QueryFactory(DbConnection con)
         return this.Select(query => query.FromTable(tablename));
     }
 
-    public SelectQuery<T> SelectFrom<T>() where T : IDbTable, IDbTableFactory<T>
+    public SelectQuery<T> SelectFrom<T>() where T : IDbTable, IDbTable<T>
     {
         return this.Select(query => query.From<T>());
     }
@@ -132,9 +132,9 @@ public sealed class QueryFactory(DbConnection con)
         return new InsertQuery<DbTable>(this, builder, accessor);
     }
 
-    public InsertQuery<T> InsertInto<T>() where T : IDbTable, IDbTableFactory<T>
+    public InsertQuery<T> InsertInto<T>() where T : IDbTable, IDbTable<T>
     {
-        return this.InsertInto(T.Factory);
+        return this.InsertInto(T.CreateFrom);
     }
 
     public InsertQuery<T> InsertInto<T>(Func<DbTable, T> tableFactory) where T : IDbTable
@@ -153,9 +153,9 @@ public sealed class QueryFactory(DbConnection con)
         return new UpdateQuery<DbTable>(this, builder, accessor);
     }
 
-    public IUpdateQuery<T> Update<T>() where T : IDbTable, IDbTableFactory<T>
+    public IUpdateQuery<T> Update<T>() where T : IDbTable, IDbTable<T>
     {
-        return this.Update(T.Factory);
+        return this.Update(T.CreateFrom);
     }
 
     public IUpdateQuery<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
@@ -174,9 +174,9 @@ public sealed class QueryFactory(DbConnection con)
         return new DeleteQuery<DbTable>(this, builder, accessor);
     }
 
-    public IDeleteQuery<T> DeleteFrom<T>() where T : IDbTable, IDbTableFactory<T>
+    public IDeleteQuery<T> DeleteFrom<T>() where T : IDbTable, IDbTable<T>
     {
-        return this.DeleteFrom(T.Factory);
+        return this.DeleteFrom(T.CreateFrom);
     }
 
     public IDeleteQuery<T> DeleteFrom<T>(Func<DbTable, T> tableFactory) where T : IDbTable

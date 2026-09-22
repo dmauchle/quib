@@ -7,6 +7,9 @@
 	<File Path="docs/CodingGuidelines.md" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/examples/">
+    <Project Path="examples/CheatSheet/CheatSheet.csproj" Id="f90aafa1-1c1d-47c1-83c4-ecf67a1ae2b1" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Quib.MySql56/Quib.MySql56.csproj" />
     <Project Path="src/Quib.MySql57/Quib.MySql57.csproj" />

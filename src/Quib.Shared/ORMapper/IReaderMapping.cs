@@ -11,12 +11,16 @@ namespace Quib.Postgres18.ORMapper;
 #endif
 
 
-public interface IReaderMappingFactory<TQuery, TObj> : IReaderMapping<TObj>
+/// <inheritdoc cref="IReaderMapping{TObj}"/>
+public interface IReaderMapping<TQuery, TObj> : IReaderMapping<TObj>
 {
-    public static abstract IReaderMapping<TObj> Factory(ProjectionBuilder rs, TQuery query);
+    public static abstract IReaderMapping<TObj> CreateFrom(IProjectionBuilder rs, TQuery query);
 }
 
-
+/// <summary>
+/// Defines a mapping from an SQL query result (<see cref="ResultReader"/>) to a domain object.
+/// </summary>
+/// <typeparam name="TObj"></typeparam>
 public interface IReaderMapping<TObj>
 {
     /// <summary>
@@ -25,5 +29,6 @@ public interface IReaderMapping<TObj>
     /// is considered unique and will be created as a new object. 
     /// </summary>
     public IProjectedValue[] ObjectIdentity { get; }
+
     public TObj Map(ResultReader rs);
 }

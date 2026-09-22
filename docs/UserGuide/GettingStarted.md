@@ -1,4 +1,4 @@
-# Getting Started
+# Getting Started with Quib
 
 ## Choose the right database package
 
@@ -17,17 +17,16 @@ Quib provides a fluent API for database migrations. So you don't have to use raw
 SQL files.
 
 ```csharp
-using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionString))
-{
-    await connection.OpenAsync();
+using var connection = new NpgsqlConnection("...");
+await connection.OpenAsync();
 
-    using (var installer = new DbInstaller(connection))
-    {
-        installer.Table("users")
-            .CreateWithPrimaryKey("id", ColumnType.Int)
-            .AddColumn("username", ColumnType.VarChar(32).NotNull())
-            .AddColumn("email", ColumnType.VarChar(255).Nullable());
-    }
+using (var installer = new DbInstaller(connection))
+{
+    installer.Table("products")
+        .CreateWithPrimaryKey("id", ColumnType.Int())
+        .CreateColumn("product_name", ColumnType.VarChar(32).NotNull())
+        .CreateColumn("category_id", ColumnType.Int().NotNull())
+        .CreateColumn("price", ColumnType.Int().NotNull());
 }
 ```
 
@@ -39,43 +38,134 @@ Read [Installer.md](Installer.md) for more details.
 Define a schema class that describes your table structure. 
 
 ```csharp
-public class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
-{
-    public static string TableName => "users";
-    public static UsersTable Factory(DbTable table) => new UsersTable(table);
+using Quib.Postgres18.Schema;
 
-    public DbColumn<DbInt> Id => table.Column<DbInt>("id");
-    public DbColumn<DbText> Username => table.Column<DbText>("username");
-    public DbColumn<DbText> Email => table.Column<DbText>("email");
+internal class ProductsTable(DbTable table) : IDbTable, IDbTable<ProductsTable>
+{
+    public static string TableName => "products";
+    public static ProductsTable CreateFrom(DbTable table) => new ProductsTable(table);
+
+    public DbColumn<DbInt> ID => field ??= table.Column<DbInt>("id");
+    public DbColumn<DbText> ProductName => field ??= table.Column<DbText>("productname");
+    public DbColumn<DbInt> CategoryId => field ??= table.Column<DbInt>("categoryid");
+    public DbColumn<DbInt> Price => field ??= table.Column<DbInt>("price");
 }
+
 ```
 
 Read [SchemaDefinition.md](SchemaDefinition.md) for more details.
 
 
-## Insert data
+## Query the database (SELECT)
+
+In order to deserialize the data/rows into our domain object, we need to have a mapping class.
+
+```csharp
+using Quib.Postgres18.ORMapper;
+using Quib.Postgres18.QueryBuilder;
+using Quib.Postgres18.Schema;
+
+internal class ProductsReader(ProjectionBuilder query, ProductsTable product) : IReaderMapping<Product>, IReaderMapping<ProductsTable, Product>
+{
+    static IReaderMapping<Product> IReaderMapping<ProductsTable, Product>.CreateFrom(ProjectionBuilder rs, ProductsTable query) => new ProductsReader(rs, query);
+
+    private readonly ProjectedValue<DbInt> _id = query.Get(product.ID);
+    private readonly ProjectedValue<DbText> _productName = query.Get(product.ProductName);
+    private readonly ProjectedValue<DbInt> _categoryId = query.Get(product.CategoryId);
+    private readonly ProjectedValue<DbInt> _price = query.Get(product.Price);
+
+    IProjectedValue[] IReaderMapping<Product>.ObjectIdentity => [ _id ];
+
+    Product IReaderMapping<Product>.Map(ResultReader rs)
+    {
+        return new Product
+        {
+            ID = new ProductId(rs.Get(_id)),
+            ProductName = rs.Get(_productName),
+            CategoryId = new CategoryId(rs.Get(_categoryId)),
+            Price = rs.Get(_price)
+        };
+    }
+
+}
+```
+
+Then use it to query the database and map the results into our domain object:
+
+```csharp
+var rs1 = await db.SelectFrom<ProductsTable>()
+    .Where(x => x.CategoryId == 1 | x.CategoryId == 2)
+    .Where(x => x.Price < 1000)
+    .OrderBy(x => [SQL.Sort(x.ProductName, ASC)])
+    .Map((query, x) => new ProductsReader(query, x))
+    .FetchArray();
+```
+
+When you expect only a single row, you can use `FetchOne()` instead of `FetchArray()`.
+
+```csharp
+var rs2 = await db.SelectFrom<ProductsTable>()
+    .Where(x => x.ID == 7265)
+    .Map((query, x) => new ProductsReader(query, x))
+    .FetchOne();
+```
+
+Read [SelectQueries.md](SelectQueries.md), [ResultMapping.md](ResultMapping.md) and [ResultFetching.md](ResultFetching.md) 
+for more details.
+
+For a query with JOIN's: 
+
+```csharp
+var rs3 = await db
+    .Select(query =>
+    {
+        var product = query.From<ProductsTable>();
+        var category = query.InnerJoin<CategoriesTable>().On(x => x.ID == product.CategoryId);
+        return new { product, category };
+    })
+    .Project((rs, query) => new
+    {
+        product = new ProductsReader(rs, query.product),
+        category = new CategoriesReader(rs, query.category)
+    })
+    .FetchArray((rs, x) => new
+    {
+        product = rs.Map(x.product),
+        category = rs.Map(x.category)
+    });
+```
+
+Read [Joins.md](Joins.md) for more details.
+
+
+## Writing to the database (INSERT, UPDATE, DELETE)
 
 Assume the following domain model we want to insert into the database:
 
 ```csharp
-public class User
+internal class Product
 {
-    public int Id { get; init; }
-    public required string Username { get; init; }
-    public required string Email { get; init; }
+    public ProductId ID { get; set; }
+    public string ProductName { get; set; }
+    public CategoryId CategoryId { get; set; }
+    public int Price { get; set; }
 }
+
 ```
 
 We need to declare a writer mapping from the class to the database table:
 
 ```csharp
-public class UserWriter : IWriterMapping<UsersTable, User>
+using Quib.Postgres18.ORMapper;
+
+internal class ProductsWriter : IWriterMapping<ProductsTable, Model.Product>
 {
-    public static void Write(IUpdateQueryBuilder query, UsersTable table, User user)
+    public static void Write(IUpdateQueryBuilder query, ProductsTable table, Model.Product product)
     {
-        query.Set(table.Id, user.Id);
-        query.Set(table.Username, user.Username);
-        query.Set(table.Email, user.Email);
+        query.Set(table.ID, product.ID.Value);
+        query.Set(table.ProductName, product.ProductName);
+        query.Set(table.CategoryId, product.CategoryId.Value);
+        query.Set(table.Price, product.Price);
     }
 }
 ```
@@ -83,62 +173,46 @@ public class UserWriter : IWriterMapping<UsersTable, User>
 Insert a new user record:
 
 ```csharp
-using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionString))
+var product = new Product
 {
-    await connection.OpenAsync();
+    ID = new ProductId(6253),
+    ProductName = "Nike Air Max 90",
+    CategoryId = new CategoryId(1),
+    Price = 129
+};
 
-    var db = new QueryFactory(connection);
-
-    var newUser = new User { Id = 1, Username = "alice", Email = "alice@example.com" };
-
-    await db.InsertInto<UsersTable>()
-        .AddRow<UserWriter, User>(newUser)
-        .Execute();
-}
+await db.InsertInto<ProductsTable>()
+    .AddRow<ProductsWriter, Product>(product)
+    .Execute();
 ```
 
-Read [UpdateQueriesTyped.md](UpdateQueriesTyped.md) for more details.
-
-
-## Query the database
-
-In order to deserialize the data/rows into our domain object, we need to have a mapping class.
+Updating uses the same writer mapping:
 
 ```csharp
-public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
-{
+await db.Update<ProductsTable>()
+    .Where(x => x.ID == 7265)
+    .With<ProductsWriter, Product>(product)
+    .Execute();
+```
 
-    public static IReaderMapping<UsersTable, User> Factory(ProjectionBuilder query, UsersTable user) => new UserReader(query, user);
+You can also dynamically update only certain columns, either in all rows or a subset of rows:
 
-    private readonly ProjectedValue<DbInt> _id = query.Get(user.Id);
-    private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
-    private readonly ProjectedValue<DbText> _email = query.Get(user.Email);
-
-    public User Map(ResultReader rs)
+```csharp
+await db.Update<ProductsTable>()
+    .AllRows()
+    .With((query, table) =>
     {
-        return new User
-        {
-            Id = rs.Get(_id),
-            Username = rs.Get(_username),
-            Email = rs.Get(_email)
-        };
-    }
-}
+        query.Set(table.Price, table.Price + 5);
+    })
+    .Execute();
 ```
 
-Then use it to query the database and map the results into our domain object:
+Deleting rows is similar:
 
 ```csharp
-using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionString))
-{
-    await connection.OpenAsync();
-    var db = new QueryFactory(connection);
-
-    // A simple query would look like this:
-    var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
-}
+await db.DeleteFrom<ProductsTable>()
+    .Where(x => x.ID == 5329)
+    .Execute();
 ```
 
-Read [SelectQueriesTyped.md](SelectQueriesTyped.md), [ResultMappingTyped.md](ResultMappingTyped.md) and
-[ResultFetching.md](ResultFetching.md) for more details.
-
+Read [UpdateQueries.md](UpdateQueries.md) for more details.

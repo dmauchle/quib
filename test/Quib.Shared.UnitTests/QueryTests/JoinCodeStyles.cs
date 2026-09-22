@@ -7,20 +7,20 @@ namespace Quib.UnitTests.QueryTests;
 public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
-    private class CompaniesTable(DbTable table) : IDbTable, IDbTableFactory<CompaniesTable>
+    private class CompaniesTable(DbTable table) : IDbTable, IDbTable<CompaniesTable>
     {
         public static string TableName => "companies";
-        public static CompaniesTable Factory(DbTable table) => new CompaniesTable(table);
+        public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
         public DbColumn<DbInt> ID => table.Column<DbInt>("id");
         public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
         public DbColumn<DbText> City => table.Column<DbText>("city");
     }
 
-    private class EmployeesTable(DbTable table) : IDbTable, IDbTableFactory<EmployeesTable>
+    private class EmployeesTable(DbTable table) : IDbTable, IDbTable<EmployeesTable>
     {
         public static string TableName => "employees";
-        public static EmployeesTable Factory(DbTable table) => new EmployeesTable(table);
+        public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
         public DbColumn<DbText> Name => table.Column<DbText>("name");
         public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
@@ -44,10 +44,10 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         public required string City { get; init; }
     }
 
-    private class EmployeeMapping(ProjectionBuilder query, EmployeesQuery row) : IReaderMapping<Employee>, IReaderMappingFactory<EmployeesQuery, Employee>
+    private class EmployeeMapping(IProjectionBuilder query, EmployeesQuery row) : IReaderMapping<EmployeesQuery, Employee>
     {
 
-        public static IReaderMapping<Employee> Factory(ProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
+        public static IReaderMapping<Employee> CreateFrom(IProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
 
         public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
         public CompanyMapping Company { get; } = new CompanyMapping(query, row.Company);
@@ -65,9 +65,9 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         }
     }
 
-    private class CompanyMapping(ProjectionBuilder query, CompaniesTable row) : IReaderMappingFactory<CompaniesTable, Company>
+    private class CompanyMapping(IProjectionBuilder query, CompaniesTable row) : IReaderMapping<CompaniesTable, Company>
     {
-        public static IReaderMapping<Company> Factory(ProjectionBuilder query, CompaniesTable user) => new CompanyMapping(query, user);
+        public static IReaderMapping<Company> CreateFrom(IProjectionBuilder query, CompaniesTable user) => new CompanyMapping(query, user);
 
         public ProjectedValue<DbText> CompanyName { get; } = query.Get(row.CompanyName);
         public ProjectedValue<DbText> City { get; } = query.Get(row.City);
@@ -91,12 +91,12 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         {
             install.Table("companies")
                 .CreateWithPrimaryKey("id", ColumnType.Int())
-                .AddColumn("companyname", ColumnType.VarChar(64).NotNull())
-                .AddColumn("city", ColumnType.VarChar(64).NotNull());
+                .CreateColumn("companyname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("city", ColumnType.VarChar(64).NotNull());
             install.Table("employees")
                 .CreateWithPrimaryKey("name", ColumnType.VarChar(64))
-                .AddColumn("company_id", ColumnType.Int().Nullable())
-                .AddForeignKey("employee_company", ["company_id"], "companies", ["id"]);
+                .CreateColumn("company_id", ColumnType.Int().Nullable())
+                .CreateForeignKey("employee_company", ["company_id"], "companies", ["id"]);
         }
 
         await DB.InsertIntoTable("companies")
@@ -174,7 +174,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
     }
 
     /// <summary>
-    /// Do the join through <see cref="IDbTableFactory{T}"/>
+    /// Do the join through <see cref="IDbTable{T}"/>
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -258,7 +258,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
     }
 
     /// <summary>
-    /// Do the join through <see cref="IDbTableFactory{T}"/>
+    /// Do the join through <see cref="IDbTable{T}"/>
     /// </summary>
     /// <returns></returns>
     [Fact]
@@ -344,7 +344,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
     }
 
     /// <summary>
-    /// Do the join through <see cref="IDbTableFactory{T}"/>
+    /// Do the join through <see cref="IDbTable{T}"/>
     /// </summary>
     /// <returns></returns>
     [Fact]

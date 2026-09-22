@@ -7,20 +7,20 @@ namespace Quib.UnitTests.QueryTests;
 public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
-    private class CompaniesTable(DbTable table) : IDbTable, IDbTableFactory<CompaniesTable>
+    private class CompaniesTable(DbTable table) : IDbTable, IDbTable<CompaniesTable>
     {
         public static string TableName => "companies";
-        public static CompaniesTable Factory(DbTable table) => new CompaniesTable(table);
+        public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
         public DbColumn<DbInt> ID => table.Column<DbInt>("id");
         public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
         public DbColumn<DbText> City => table.Column<DbText>("city");
     }
 
-    private class EmployeesTable(DbTable table) : IDbTable, IDbTableFactory<EmployeesTable>
+    private class EmployeesTable(DbTable table) : IDbTable, IDbTable<EmployeesTable>
     {
         public static string TableName => "employees";
-        public static EmployeesTable Factory(DbTable table) => new EmployeesTable(table);
+        public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
         public DbColumn<DbText> Name => table.Column<DbText>("name");
         public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
@@ -67,12 +67,12 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         {
             install.Table("companies")
                 .CreateWithPrimaryKey("id", ColumnType.Int())
-                .AddColumn("companyname", ColumnType.VarChar(64).NotNull())
-                .AddColumn("city", ColumnType.VarChar(64).NotNull());
+                .CreateColumn("companyname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("city", ColumnType.VarChar(64).NotNull());
             install.Table("employees")
                 .CreateWithPrimaryKey("name", ColumnType.VarChar(64))
-                .AddColumn("company_id", ColumnType.Int().Nullable())
-                .AddForeignKey("employee_company", ["company_id"], "companies", ["id"]);
+                .CreateColumn("company_id", ColumnType.Int().Nullable())
+                .CreateForeignKey("employee_company", ["company_id"], "companies", ["id"]);
         }
 
         await DB.InsertIntoTable("companies")

@@ -24,7 +24,7 @@ public class ColumnInstallerTest(DatabaseFixture env, ITestOutputHelper log) : D
         {
             install.Table(name)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
-                .AddColumn("age", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("age", ColumnType.VarChar(32).NotNull());
 
             var colCnt = await ScalarLong(
 #if MYSQL
@@ -45,7 +45,7 @@ public class ColumnInstallerTest(DatabaseFixture env, ITestOutputHelper log) : D
         {
             install.Table(name)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
-                .AddColumn("age", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("age", ColumnType.VarChar(32).NotNull());
 
             var before = await ScalarLong(
 #if MYSQL
@@ -89,7 +89,7 @@ public class ColumnInstallerTest(DatabaseFixture env, ITestOutputHelper log) : D
         {
             var table = install.Table(name)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
-                .AddColumn("c1", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("c1", ColumnType.VarChar(32).NotNull());
 
             table.Column("c1").RenameTo("c2");
 
@@ -136,8 +136,8 @@ public class ColumnInstallerTest(DatabaseFixture env, ITestOutputHelper log) : D
             // create child table with company column
             var users = install.Table(usersTableName)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
-                .AddColumn("company", ColumnType.VarChar(32).NotNull())
-                .AddForeignKey(fkname, ["company"], companiesTableName, ["id"]);  // create foreign key from users.company -> companies.id
+                .CreateColumn("company", ColumnType.VarChar(32).NotNull())
+                .CreateForeignKey(fkname, ["company"], companiesTableName, ["id"]);  // create foreign key from users.company -> companies.id
 
             // rename the company column
             users.Column("company").RenameTo("company_id");

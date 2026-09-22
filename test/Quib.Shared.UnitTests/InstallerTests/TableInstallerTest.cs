@@ -204,14 +204,14 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
                 .CreateWithPrimaryKey("pid", ColumnType.VarChar(32));
             install.Table(child)
                 .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
-                .AddColumn("pid", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("pid", ColumnType.VarChar(32).NotNull());
 
             // empty local columns
-            Assert.Throws<ArgumentException>(() => install.Table(child).AddForeignKey("bad", [], parent, []));
+            Assert.Throws<ArgumentException>(() => install.Table(child).CreateForeignKey("bad", [], parent, []));
             // empty local columns but foreign provided 
-            Assert.Throws<ArgumentException>(() => install.Table(child).AddForeignKey("bad", [], parent, ["pid"]));
+            Assert.Throws<ArgumentException>(() => install.Table(child).CreateForeignKey("bad", [], parent, ["pid"]));
             // mismatched lengths
-            Assert.Throws<ArgumentException>(() => install.Table(child).AddForeignKey("bad2", ["a"], parent, []));
+            Assert.Throws<ArgumentException>(() => install.Table(child).CreateForeignKey("bad2", ["a"], parent, []));
         }
     }
 
@@ -231,9 +231,9 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
             // create child with PK cid and a pid column
             install.Table(child)
                 .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
-                .AddColumn("pid", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("pid", ColumnType.VarChar(32).NotNull());
             // create fk
-            install.Table(child).AddForeignKey(fkname, ["pid"], parent, ["pid"]);
+            install.Table(child).CreateForeignKey(fkname, ["pid"], parent, ["pid"]);
 
             var fkCnt = await ScalarLong(
 #if MYSQL
@@ -264,11 +264,11 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
             // create child with its own PK and the two fk columns
             install.Table(child)
                 .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
-                .AddColumn("pid1", ColumnType.VarChar(32).NotNull())
-                .AddColumn("pid2", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("pid1", ColumnType.VarChar(32).NotNull())
+                .CreateColumn("pid2", ColumnType.VarChar(32).NotNull());
 
             // create fk spanning two columns
-            install.Table(child).AddForeignKey(fkname, ["pid1", "pid2"], parent, ["pid1", "pid2"]);
+            install.Table(child).CreateForeignKey(fkname, ["pid1", "pid2"], parent, ["pid1", "pid2"]);
 
             var fkCnt = await ScalarLong(
 #if MYSQL
@@ -334,10 +334,10 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
             // create child with PK cid and a pid column
             install.Table(child)
                 .CreateWithPrimaryKey("cid", ColumnType.VarChar(32))
-                .AddColumn("pid", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("pid", ColumnType.VarChar(32).NotNull());
 
             // create fk
-            install.Table(child).AddForeignKey(fkname, ["pid"], parent, ["pid"]);
+            install.Table(child).CreateForeignKey(fkname, ["pid"], parent, ["pid"]);
 
             var fkCnt = await ScalarLong(
 #if MYSQL
@@ -372,8 +372,8 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
         {
             var table = install.Table(name)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
-                .AddColumn("c1", ColumnType.VarChar(32).NotNull())
-                .AddColumn("c2", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("c1", ColumnType.VarChar(32).NotNull())
+                .CreateColumn("c2", ColumnType.VarChar(32).NotNull());
 
             Assert.Throws<ArgumentNullException>(() => install.Table(name).CreateIndex("bad", []));
 
@@ -400,8 +400,8 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
         {
             var table = install.Table(name)
                 .CreateWithPrimaryKey("id", ColumnType.VarChar(32))
-                .AddColumn("c1", ColumnType.VarChar(32).NotNull())
-                .AddColumn("c2", ColumnType.VarChar(32).NotNull());
+                .CreateColumn("c1", ColumnType.VarChar(32).NotNull())
+                .CreateColumn("c2", ColumnType.VarChar(32).NotNull());
 
             install.Table(name).CreateIndex(idx, "c1", "c2");
 
@@ -444,8 +444,8 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
             // create child (users) with PK uid and company_id column
             var users = install.Table(usersTN)
                 .CreateWithPrimaryKey("uid", ColumnType.VarChar(32))
-                .AddColumn("company_id", ColumnType.VarChar(32).NotNull())
-                .AddForeignKey(fkname, ["company_id"], companiesTN, ["id"]);  // create fk from users.company_id -> companies.id
+                .CreateColumn("company_id", ColumnType.VarChar(32).NotNull())
+                .CreateForeignKey(fkname, ["company_id"], companiesTN, ["id"]);  // create fk from users.company_id -> companies.id
 
             // verify fk exists before rename
             var fkCntBefore = await ScalarLong(

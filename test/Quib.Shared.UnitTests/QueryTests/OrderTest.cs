@@ -7,11 +7,11 @@ namespace Quib.UnitTests.QueryTests;
 public class OrderTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
         public DbColumn<DbText> Name => field ??= table.Column<DbText>("name");
         public DbColumn<DbText> Lastname => field ??= table.Column<DbText>("lastname");
@@ -24,8 +24,8 @@ public class OrderTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(
         {
             installer.Table("users")
                 .CreateWithPrimaryKey("name", ColumnType.VarChar(64))
-                .AddColumn("lastname", ColumnType.VarChar(64).NotNull())
-                .AddColumn("city", ColumnType.VarChar(64).Nullable());
+                .CreateColumn("lastname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("city", ColumnType.VarChar(64).Nullable());
         }
 
         await DB.InsertInto<UsersTable>()

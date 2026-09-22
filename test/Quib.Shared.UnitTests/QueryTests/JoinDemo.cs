@@ -7,10 +7,10 @@ namespace Quib.UnitTests.QueryTests;
 public class JoinDemo(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
-    private class CompaniesTable(DbTable table) : IDbTable, IDbTableFactory<CompaniesTable>
+    private class CompaniesTable(DbTable table) : IDbTable, IDbTable<CompaniesTable>
     {
         public static string TableName => "companies";
-        public static CompaniesTable Factory(DbTable table) => new CompaniesTable(table);
+        public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
         public DbColumn<DbInt> ID => table.Column<DbInt>("id");
         public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
@@ -23,9 +23,9 @@ public class JoinDemo(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         public required string City { get; init; }
     }
 
-    private class CompanyMapping(ProjectionBuilder rs, CompaniesTable company) : IReaderMappingFactory<CompaniesTable, Company>
+    private class CompanyMapping(IProjectionBuilder rs, CompaniesTable company) : IReaderMapping<CompaniesTable, Company>
     {
-        public static IReaderMapping<Company> Factory(ProjectionBuilder rs, CompaniesTable company) => new CompanyMapping(rs, company);
+        public static IReaderMapping<Company> CreateFrom(IProjectionBuilder rs, CompaniesTable company) => new CompanyMapping(rs, company);
 
         private readonly ProjectedValue<DbText> _companyName = rs.Get(company.CompanyName);
         private readonly ProjectedValue<DbText> _city = rs.Get(company.City);
@@ -42,22 +42,21 @@ public class JoinDemo(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         }
     }
 
-    private class EmployeesTable(DbTable table) : IDbTable, IDbTableFactory<EmployeesTable>
+    private class EmployeesTable(DbTable table) : IDbTable, IDbTable<EmployeesTable>
     {
         public static string TableName => "employees";
-        public static EmployeesTable Factory(DbTable table) => new EmployeesTable(table);
+        public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
         public DbColumn<DbText> Name => table.Column<DbText>("name");
         public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
     }
 
-    private class EmployeesQuery(SelectQueryBuilder query) : ISelectQueryFactory<EmployeesQuery>
+    private class EmployeesQuery(SelectQueryBuilder query) : ISelectContext<EmployeesQuery>
     {
-        public static EmployeesQuery Factory(SelectQueryBuilder query) => new EmployeesQuery(query);
+        public static EmployeesQuery CreateFrom(SelectQueryBuilder query) => new EmployeesQuery(query);
 
         public EmployeesTable Employee => field ??= query.From<EmployeesTable>();
         public CompaniesTable Company => field ??= query.LeftOuterJoin<CompaniesTable>().On(c => c.ID == Employee.CompanyId);
-
     }
 
     private class Employee
@@ -67,9 +66,9 @@ public class JoinDemo(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
     }
 
 
-    private class EmployeeMapping(ProjectionBuilder query, EmployeesQuery row) : IReaderMapping<Employee>, IReaderMappingFactory<EmployeesQuery, Employee>
+    private class EmployeeMapping(IProjectionBuilder query, EmployeesQuery row) : IReaderMapping<EmployeesQuery, Employee>
     {
-        public static IReaderMapping<Employee> Factory(ProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
+        public static IReaderMapping<Employee> CreateFrom(IProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
 
         public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
 
@@ -95,12 +94,12 @@ public class JoinDemo(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         {
             install.Table("companies")
                 .CreateWithPrimaryKey("id", ColumnType.Int())
-                .AddColumn("companyname", ColumnType.VarChar(64).NotNull())
-                .AddColumn("city", ColumnType.VarChar(64).NotNull());
+                .CreateColumn("companyname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("city", ColumnType.VarChar(64).NotNull());
             install.Table("employees")
                 .CreateWithPrimaryKey("name", ColumnType.VarChar(64))
-                .AddColumn("company_id", ColumnType.Int().Nullable())
-                .AddForeignKey("employee_company", ["company_id"], "companies", ["id"]);
+                .CreateColumn("company_id", ColumnType.Int().Nullable())
+                .CreateForeignKey("employee_company", ["company_id"], "companies", ["id"]);
         }
 
         await DB.InsertIntoTable("companies")
@@ -142,7 +141,7 @@ public class JoinDemo(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
 
     [Fact]
-    public async Task ISelectQueryFactory_Style()
+    public async Task ISelectQueryBuilder_Style()
     {
         var rs = await DB
             .Select<EmployeesQuery>()

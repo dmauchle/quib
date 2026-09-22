@@ -25,10 +25,10 @@ using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionStrin
     using (var installer = new DbInstaller(connection))
     {
         // Simple creation with primary key and additional columns
-        installer.Table("users")
-            .CreateWithPrimaryKey("id", ColumnType.Int)
-            .AddColumn("username", ColumnType.VarChar(32).NotNull())
-            .AddColumn("email", ColumnType.VarChar(255).Nullable());
+        installer.Table("users")    
+            .CreateWithPrimaryKey("id", ColumnType.Int())
+            .CreateColumn("username", ColumnType.VarChar(32).NotNull())
+            .CreateColumn("email", ColumnType.VarChar(255).Nullable());
     }
 }
 ```
@@ -38,10 +38,10 @@ More details on column types: [ColumnTypes.md](ColumnTypes.md)
 
 **Multi column primary keys:**
 
-The CreateWithPrimaryKey overload also accepts a PrimaryKey builder when you need composite keys:
+The `CreateWithPrimaryKey` overload also accepts a PrimaryKey builder when you need composite keys:
 
 ```csharp
-var pk = new PrimaryKey().AddColumn("tenant_id", ColumnType.Int).AddColumn("id", ColumnType.Int);
+var pk = new PrimaryKey().AddColumn("tenant_id", ColumnType.Int()).AddColumn("id", ColumnType.Int());
 installer.Table("users").CreateWithPrimaryKey(pk);
 ```
 
@@ -66,7 +66,7 @@ installer.Table("old_table").Drop();
 **Add a new column to an existing table:**
 
 ```csharp
-installer.Table("users").AddColumn("bio", ColumnType.VarChar(255).Nullable());
+installer.Table("users").CreateColumn("bio", ColumnType.VarChar(255).Nullable());
 ```
 
 **Change a column's type:**

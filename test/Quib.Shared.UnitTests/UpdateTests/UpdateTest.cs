@@ -13,8 +13,9 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         {
             install.Table("users")
                 .CreateWithPrimaryKey("username", ColumnType.VarChar(64))
-                .AddColumn("firstname", ColumnType.VarChar(64).NotNull())
-                .AddColumn("lastname", ColumnType.VarChar(64).NotNull());
+                .CreateColumn("firstname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("lastname", ColumnType.VarChar(64).NotNull())
+                .CreateColumn("login_count", ColumnType.Int().NotNull());
 
             await DB.InsertInto<UsersTable>()
                .AddRow((query, table) =>
@@ -41,7 +42,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
 
         Assert.Equal(1, updated);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
+        var users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
 
         Assert.Single(users);
         var user = users[0];
@@ -55,13 +56,13 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
             .AllRows()
             .With((row, table) =>
             {
-                row.Set(table.Firstname, "Bob");
+                row.Set(table.Firstname, SQL.Parameter("Bob"));
             })
             .Execute();
 
         Assert.Equal(1, updated);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
+        var users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
 
         Assert.Single(users);
         var user = users[0];
@@ -81,7 +82,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
 
         Assert.Equal(1, updated);
 
-        var users = await DB.SelectFrom<UsersTable>().Map(User.FromDbTable).FetchArray();
+        var users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
 
         Assert.Single(users);
         var user = users[0];
@@ -89,12 +90,45 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         Assert.Equal("Smith", user.Lastname);
     }
 
+    [Fact]
+    public async Task Update_WithComplexExpression_Works()
+    {
+        var updated = await DB.Update<UsersTable>()
+            .AllRows()
+            .With((row, table) =>
+            {
+                row.Set(table.LoginCount, table.LoginCount + 1);
+            })
+            .Execute();
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+        Assert.Equal(1, updated);
+
+        var users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
+        Assert.Single(users);
+        Assert.Equal(1, users[0].LoginCount);
+
+        // Second update
+        updated = await DB.Update<UsersTable>()
+            .AllRows()
+            .With((row, table) =>
+            {
+                row.Set(table.LoginCount, table.LoginCount + 2);
+            })
+            .Execute();
+
+        Assert.Equal(1, updated);
+
+        users = await DB.SelectFrom<UsersTable>().Map<UserMapping, User>().FetchArray();
+        Assert.Single(users);
+        Assert.Equal(3, users[0].LoginCount);
+    }
+
+
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
         public static UsersTable CreateQuery(DbTable table)
         {
@@ -104,6 +138,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         public DbColumn<DbText> Username => table.Column<DbText>("username");
         public DbColumn<DbText> Firstname => table.Column<DbText>("firstname");
         public DbColumn<DbText> Lastname => table.Column<DbText>("lastname");
+        public DbColumn<DbInt> LoginCount => table.Column<DbInt>("login_count");
     }
 
     private class User
@@ -111,18 +146,18 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         public required string Username { get; init; }
         public required string Firstname { get; init; }
         public required string Lastname { get; init; }
-
-        public static IReaderMapping<User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public required int LoginCount { get; init; }
     }
 
-    private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
+    private class UserMapping(IProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>
     {
 
-        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
         private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
         private readonly ProjectedValue<DbText> _firstname = query.Get(user.Firstname);
         private readonly ProjectedValue<DbText> _lastname = query.Get(user.Lastname);
+        private readonly ProjectedValue<DbInt> _loginCount = query.Get(user.LoginCount);
 
         public IProjectedValue[] ObjectIdentity => [];
 
@@ -132,7 +167,8 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
             {
                 Username = rs.Get(this._username),
                 Firstname = rs.Get(this._firstname),
-                Lastname = rs.Get(this._lastname)
+                Lastname = rs.Get(this._lastname),
+                LoginCount = rs.Get(this._loginCount)
             };
         }
 

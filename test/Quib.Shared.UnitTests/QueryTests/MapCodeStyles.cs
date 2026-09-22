@@ -42,11 +42,11 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
     }
 
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
     
 
         public static UsersTable CreateQuery(DbTable table)
@@ -58,9 +58,9 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
      
     }
 
-    private class UsersQuery(UsersTable user) : ISelectQueryFactory<UsersQuery>
+    private class UsersQuery(UsersTable user) : ISelectContext<UsersQuery>
     {
-        public static UsersQuery Factory(SelectQueryBuilder query) => new UsersQuery(query.From<UsersTable>());
+        public static UsersQuery CreateFrom(SelectQueryBuilder query) => new UsersQuery(query.From<UsersTable>());
 
         public UsersTable User => user;
 
@@ -71,10 +71,10 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         public required string Name { get; init; }
     }
 
-    private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMapping<User>, IReaderMappingFactory<UsersTable, User>
+    private class UserMapping(IProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>
     {
 
-        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
         private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
 

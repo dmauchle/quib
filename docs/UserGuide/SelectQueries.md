@@ -1,21 +1,21 @@
-# Select Queries — Strongly Typed API
+# SELECT Queries
 
 Start building SELECT queries based on a strongly typed schema class (see [SchemaDefinition.md](SchemaDefinition.md)).
 
 Key interfaces: 
 
-- `QueryFactory.SelectFromTable`
-- `QueryFactory.SelectFrom<T>`
+- `QueryFactory.SelectFromTable(string)`
+- `QueryFactory.SelectFrom<T>()`
 - `Quib.*.QueryBuilder` namespace
 
 
 With this example schema...
 
 ```csharp
-private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+public class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
 {
     public static string TableName => "users";
-    public static UsersTable Factory(DbTable table) => new UsersTable(table);
+    public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
     public DbColumn<DbInt> Id => table.Column<DbInt>("id");
     public DbColumn<DbText> Username => table.Column<DbText>("username");
@@ -26,14 +26,7 @@ private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
 You can start building a query in one of the following styles: 
 
 ```csharp
-public void Demo(QueryFactory db)
-{
-    db.SelectFrom<UsersTable>();  // Requires IDbTableFactory<UsersTable> with Factory method
-
-    db.SelectFrom(UsersTable.Factory);  // Use any method you like
-
-    db.SelectFrom(x => new UsersTable(x));  // Use a lambda to create the table instance
-}
+db.SelectFrom<UsersTable>();
 ```
 
 
@@ -72,11 +65,18 @@ Of course, you may use any [expression](Expressions.md) for the sorting.
 > Postgres NULL FIRST and NULL LAST clause. MySQL doesn't support it anyways.
 
 
-## Next Steps
+## Dynamic queries
 
-- **[ResultMappingTyped.md](ResultMappingTyped.md)** — execute the query and map results to domain objects
+You don't necessarily need a schema definition or domain model to build a query. You can also use the dynamic API:
+
+```csharp
+db.SelectFromTable("users")
+    .Where(x => x.Column<DbText>("city") == "New York")
+    .OrderBy(x => [ x.Column<DbText>("lastname") ]);
+```
 
 
 ## See also
 
+- **[ResultMapping.md](ResultMapping.md)** — execute the query and map results to domain objects
 - **[Expressions.md](Expressions.md)** — learn more about the SQL expressions for filtering

@@ -11,9 +11,9 @@ namespace Quib.Postgres18.Schema;
 #endif
 
 
-public interface IDbTableFactory<T> where T : IDbTable
+public interface IDbTable<T> where T : IDbTable
 {
-    public static abstract T Factory(DbTable table);
+    public static abstract T CreateFrom(DbTable table);
 }
 
 public interface IDbTable

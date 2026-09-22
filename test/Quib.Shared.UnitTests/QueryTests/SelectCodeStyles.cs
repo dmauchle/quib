@@ -34,11 +34,11 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     }
 
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
 
         public static UsersTable CreateQuery(DbTable table)
@@ -50,9 +50,9 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
 
     }
 
-    private class UsersQuery(UsersTable user) : ISelectQueryFactory<UsersQuery>
+    private class UsersQuery(UsersTable user) : ISelectContext<UsersQuery>
     {
-        public static UsersQuery Factory(SelectQueryBuilder query) => new UsersQuery(query.From<UsersTable>());
+        public static UsersQuery CreateFrom(SelectQueryBuilder query) => new UsersQuery(query.From<UsersTable>());
 
         public UsersTable User => user;
     }
@@ -114,7 +114,7 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     }
 
     [Fact]
-    public async Task ThroughQueryBuilder_WithISelectQueryFactory()
+    public async Task ThroughQueryBuilder_WithISelectQueryBuilder()
     {
         var rs = await DB
               .Select<UsersQuery>()
@@ -122,6 +122,17 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
               .FetchOne();
 
         Assert.Equal("Alice", rs.Result);
+    }
+
+    [Fact]
+    public async Task ThroughQueryBuilder_WithProjection()
+    {
+        var rs = await DB
+              .Select(query => SQL.Constant(3))
+              .Project((rs, x) => rs.Get(x))
+              .FetchOne((rs, x) => rs.Get(x));
+
+        Assert.Equal(3, rs.Result);
     }
 
     [Fact]

@@ -7,11 +7,11 @@ namespace Quib.UnitTests.SchemaTests;
 public class NullCheckExpressionTests(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)
 {
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
         public DbColumn<DbText> Name => table.Column<DbText>("name");
         public DbColumn<DbTextNullable> Email => table.Column<DbTextNullable>("email");
@@ -23,7 +23,7 @@ public class NullCheckExpressionTests(DatabaseFixture env, ITestOutputHelper log
         {
             installer.Table("users")
                 .CreateWithPrimaryKey("name", ColumnType.VarChar(64))
-                .AddColumn("email", ColumnType.VarChar(64).Nullable());
+                .CreateColumn("email", ColumnType.VarChar(64).Nullable());
         }
 
         await DB.InsertInto<UsersTable>()

@@ -4,4 +4,5 @@ global using Quib.MySql84.Schema;
 global using Quib.MySql84.QueryBuilder;
 global using Quib.MySql84.ORMapper;
 global using Quib.MySql84.Installer;
-global using static Quib.MySql84.Schema.Sort;
+global using Quib.MySql84.Types;
+global using static Quib.MySql84.QueryBuilder.Sort;

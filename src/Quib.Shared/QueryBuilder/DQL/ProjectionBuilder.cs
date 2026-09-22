@@ -10,7 +10,11 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-public sealed class ProjectionBuilder
+
+/// <summary>
+/// Builder for the projection clause of a select query. 
+/// </summary>
+public sealed class ProjectionBuilder : IProjectionBuilder
 {
 
     private readonly List<IProjectionClause> _projections = [];
@@ -20,7 +24,7 @@ public sealed class ProjectionBuilder
     }
 
     /// <summary>
-    /// Create and add a new projection clause.
+    /// Create and add a new projection clause. Use the return value e.g. to retrieve the value from the result set.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>

@@ -125,12 +125,12 @@ no matter if the DB type is nullable).
 Implement arithmetic operator overloads that are feasible for the type. Numeric types should have `+`, `-`, `*`, `/` and `%`. 
 Boolean types should have `&`, `|` and `!` operators. 
 
-String types should have no arithemtic operators. Concatenation will be handeled otherwise and should not be done with 
+String types should have no arithmetic operators. Concatenation will be handled otherwise and should not be done with 
 the `+` operator
 
 **For all operators:**
 
-All binary operators should have overloads with the left-value always beeing the db type and variations for the right value: 
+All binary operators should have overloads with the left-value always being the db type and variations for the right value: 
 
 - The same db type (e.g. `DbText` or `DbTextNullable`)
 - The nullable or not-null counterpart of the db type

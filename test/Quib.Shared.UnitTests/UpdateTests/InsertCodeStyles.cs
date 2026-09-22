@@ -52,7 +52,7 @@ public class InsertCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
     public async Task TypedAPIWithFactoryMethod()
     {
 
-        await DB.InsertInto(UsersTable.Factory).AddRow(UserMapping.Write, new User { Name = "Alice" }).Execute();
+        await DB.InsertInto(UsersTable.CreateFrom).AddRow(UserMapping.Write, new User { Name = "Alice" }).Execute();
 
         await AssertResult();
     }
@@ -71,11 +71,11 @@ public class InsertCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
 
 
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
 
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
         public static UsersTable CreateQuery(DbTable table)
         {
@@ -92,10 +92,10 @@ public class InsertCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
         public static IReaderMapping<User> FromDbTable(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
     }
 
-    private class UserMapping(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>, IWriterMapping<UsersTable, User>
+    private class UserMapping(IProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>, IWriterMapping<UsersTable, User>
     {
 
-        public static IReaderMapping<User> Factory(ProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
+        public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
         private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
 

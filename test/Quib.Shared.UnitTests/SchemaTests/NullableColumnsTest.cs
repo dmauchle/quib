@@ -38,7 +38,7 @@ public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : D
         {
             install.Table("users")
                 .CreateWithPrimaryKey("username", ColumnType.VarChar(64))
-                .AddColumn("nickname", ColumnType.VarChar(64).Nullable());
+                .CreateColumn("nickname", ColumnType.VarChar(64).Nullable());
         }
 
         var inserted = await DB.InsertIntoTable("users")
@@ -66,7 +66,7 @@ public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : D
         {
             install.Table("users")
                 .CreateWithPrimaryKey("username", ColumnType.VarChar(64))
-                .AddColumn("nickname", ColumnType.VarChar(64).NotNull());
+                .CreateColumn("nickname", ColumnType.VarChar(64).NotNull());
         }
 
         await Assert.ThrowsAnyAsync<System.Data.Common.DbException>(async () =>
@@ -88,7 +88,7 @@ public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : D
         {
             install.Table("users")
                 .CreateWithPrimaryKey("username", ColumnType.VarChar(64))
-                .AddColumn("nickname", ColumnType.VarChar(64).Nullable());
+                .CreateColumn("nickname", ColumnType.VarChar(64).Nullable());
         }
 
         var inserted = await DB.InsertIntoTable("users")

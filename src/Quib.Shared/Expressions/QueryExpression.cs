@@ -1,18 +1,23 @@
 ﻿#if MYSQL56
-namespace Quib.MySql56.Schema;
+namespace Quib.MySql56.Expressions;
 #elif MYSQL57
-namespace Quib.MySql57.Schema;
+namespace Quib.MySql57.Expressions;
 #elif MYSQL80
-namespace Quib.MySql80.Schema;
+namespace Quib.MySql80.Expressions;
 #elif MYSQL84
-namespace Quib.MySql84.Schema;
+namespace Quib.MySql84.Expressions;
 #elif POSTGRES18
-namespace Quib.Postgres18.Schema;
+namespace Quib.Postgres18.Expressions;
 #endif
 
 
 #pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 #pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+
+/// <summary>
+/// Base class for all expressions in a SQL query, including columns, parameters, operators and SQL functions. 
+/// Whenever possible <see cref="QueryExpression{T}"/> is used to denote the type of the expression.
+/// </summary>
 public abstract class QueryExpression : IQueryPart, ISortExpression
 {
 
@@ -45,7 +50,10 @@ public abstract class QueryExpression : IQueryPart, ISortExpression
 
 }
 
-
+/// <summary>
+/// Type safe variant of <see cref="QueryExpression"/>, denoting the type of the expression.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public abstract class QueryExpression<T> : QueryExpression, IQueryPart
     where T : IExpressionType
 {

@@ -47,8 +47,8 @@ the future, but it will be limited to the common features of all supported datab
 
 ## API Documentation
 
-- [Overview](UserGuide/Overview.md)
-- [Getting Started](UserGuide/GettingStarted.md)
+- [Overview](docs/UserGuide/Overview.md)
+- [Getting Started](docs/UserGuide/GettingStarted.md)
 
 
 ## Contributing

@@ -26,19 +26,19 @@ public class FetchCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTes
             .Execute();
     }
 
-    private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+    private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     {
         public static string TableName => "users";
-        public static UsersTable Factory(DbTable table) => new UsersTable(table);
+        public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
      
         public DbColumn<DbText> Name => table.Column<DbText>("name");
     }
 
     private record User(string Name);
 
-    private class UserMapping(ProjectionBuilder rs, UsersTable user) : IReaderMappingFactory<UsersTable, User>
+    private class UserMapping(IProjectionBuilder rs, UsersTable user) : IReaderMapping<UsersTable, User>
     {
-        public static IReaderMapping<User> Factory(ProjectionBuilder rs, UsersTable user) => new UserMapping(rs, user);
+        public static IReaderMapping<User> CreateFrom(IProjectionBuilder rs, UsersTable user) => new UserMapping(rs, user);
         
         public ProjectedValue<DbText> Name { get; } = rs.Get(user.Name);
 

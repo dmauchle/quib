@@ -6,37 +6,29 @@ schema layer when you want reusable, discoverable table/column definitions.
 Key interfaces:
 
 - `IDbTable` — wrapper around a query-time table instance that exposes typed column accessors
-- `IDbTableFactory<T>` — factory pattern used e.g. by `SelectFrom<T>()` to create typed table descriptors
+- `IDbTable<T>` — factory pattern used e.g. by `SelectFrom<T>()` to create typed table descriptors
 - `Quib.*.Schema` namespace
 
 
 Simple table declaration:
 
 ```csharp
-private class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
 {
     public static string TableName => "users";
-    public static UsersTable Factory(DbTable table) => new UsersTable(table);
+    public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
-    public DbColumn<DbInt> Id => table.Column<DbInt>("id");
-    public DbColumn<DbText> Username => table.Column<DbText>("username");
-    public DbColumn<DbText> Email => table.Column<DbText>("email");
+    public DbColumn<DbInt> Id => field ??= table.Column<DbInt>("id");
+    public DbColumn<DbText> Username => field ??= table.Column<DbText>("username");
+    public DbColumn<DbText> Email => field ??= table.Column<DbText>("email");
 }
 ```
 
-You can use it in one of the following styles with any of the `QueryFactory` methods: 
-
-```csharp
-public void Demo(QueryFactory db)
-{
-    db.SelectFrom<UsersTable>();  // Requires IDbTableFactory<UsersTable> with Factory method
-
-    db.SelectFrom(x => new UsersTable(x));  // Use a lambda to create the table instance
-}
-```
+Note the use of the `field ??=` pattern. This allows the column accesses to be cached and optimize performance.
 
 
-## Next Steps
+## See also
 
-- **[SelectQueriesTyped.md](SelectQueriesTyped.md)** — use your schema to build SELECT queries
-- **[UpdateQueriesTyped.md](UpdateQueriesTyped.md)** — use your schema to perform INSERT, UPDATE and DELETE operations
+- **[Expressions.md](Expressions.md)** — build WHERE clauses and other expressions
+- **[SelectQueries.md](SelectQueries.md)** — use your schema to build SELECT queries
+- **[UpdateQueries.md](UpdateQueries.md)** — use your schema to perform INSERT, UPDATE and DELETE operations

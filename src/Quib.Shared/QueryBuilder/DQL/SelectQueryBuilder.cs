@@ -62,9 +62,9 @@ public sealed class SelectQueryBuilder
         return accessor;
     }
 
-    public T From<T>() where T : IDbTable, IDbTableFactory<T>
+    public T From<T>() where T : IDbTable, IDbTable<T>
     {
-        return this.From(T.Factory);
+        return this.From(T.CreateFrom);
     }
 
     public T From<T>(Func<DbTable, T> tableFactory) where T : IDbTable
@@ -88,9 +88,9 @@ public sealed class SelectQueryBuilder
     }
 
     public JoinBuilder<T> InnerJoin<T>()
-      where T : IDbTable, IDbTableFactory<T>
+      where T : IDbTable, IDbTable<T>
     {
-        return this.InnerJoin(T.Factory);
+        return this.InnerJoin(T.CreateFrom);
     }
 
     public JoinBuilder<DbTable> LeftOuterJoin(string tablename)
@@ -108,9 +108,9 @@ public sealed class SelectQueryBuilder
     }
 
     public JoinBuilder<T> LeftOuterJoin<T>()
-      where T : IDbTable, IDbTableFactory<T>
+      where T : IDbTable, IDbTable<T>
     {
-        return this.LeftOuterJoin(T.Factory);
+        return this.LeftOuterJoin(T.CreateFrom);
     }
 
     public JoinBuilder<DbTable> RightOuterJoin(string tablename)
@@ -128,9 +128,9 @@ public sealed class SelectQueryBuilder
     }
 
     public JoinBuilder<T> RightOuterJoin<T>()
-      where T : IDbTable, IDbTableFactory<T>
+      where T : IDbTable, IDbTable<T>
     {
-        return this.RightOuterJoin(T.Factory);
+        return this.RightOuterJoin(T.CreateFrom);
     }
 
     internal void ToSql(QueryWriter query)

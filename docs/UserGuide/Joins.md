@@ -3,10 +3,10 @@
 Example schema with a foreign key relation, domain model and mapping
 
 ```csharp
-public class CompaniesTable(DbTable table) : IDbTable, IDbTableFactory<CompaniesTable>
+public class CompaniesTable(DbTable table) : IDbTable, IDbTable<CompaniesTable>
 {
     public static string TableName => "companies";
-    public static CompaniesTable Factory(DbTable table) => new CompaniesTable(table);
+    public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
     public DbColumn<DbInt> ID => table.Column<DbInt>("id");
     public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
@@ -19,9 +19,9 @@ public class Company
     public required string City { get; init; }
 }
 
-public class CompanyMapping(ProjectionBuilder rs, CompaniesTable company) : IReaderMappingFactory<CompaniesTable, Company>
+public class CompanyMapping(ProjectionBuilder rs, CompaniesTable company) : IReaderMapping<CompaniesTable, Company>
 {
-    public static IReaderMapping<Company> Factory(ProjectionBuilder rs, CompaniesTable company) => new CompanyMapping(rs, company);
+    public static IReaderMapping<Company> CreateFrom(ProjectionBuilder rs, CompaniesTable company) => new CompanyMapping(rs, company);
 
     private readonly ProjectedValue<DbText> _companyName = rs.Get(company.CompanyName);
     private readonly ProjectedValue<DbText> _city = rs.Get(company.City);
@@ -38,10 +38,10 @@ public class CompanyMapping(ProjectionBuilder rs, CompaniesTable company) : IRea
     }
 }
 
-public class EmployeesTable(DbTable table) : IDbTable, IDbTableFactory<EmployeesTable>
+public class EmployeesTable(DbTable table) : IDbTable, IDbTable<EmployeesTable>
 {
     public static string TableName => "employees";
-    public static EmployeesTable Factory(DbTable table) => new EmployeesTable(table);
+    public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
     public DbColumn<DbText> Name => table.Column<DbText>("name");
     public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
@@ -67,10 +67,10 @@ public class Employee
 }
 ```
 
-For reusable queries, we can define an `ISelectQueryFactory<T>`, which contains the joins and presents the joined tables:
+For reusable queries, we can define an `ISelectContext<T>`, which contains the joins and presents the joined tables:
 
 ```csharp
-public class EmployeesQuery(SelectQueryBuilder query) : ISelectQueryFactory<EmployeesQuery>
+public class EmployeesQuery(SelectQueryBuilder query) : ISelectContext<EmployeesQuery>
 {
     public static EmployeesQuery Factory(SelectQueryBuilder query) => new EmployeesQuery(query);
 
@@ -88,9 +88,9 @@ available.
 This mapping for this query can be defined as follows:
 
 ```csharp
-public class EmployeeMapping(ProjectionBuilder query, EmployeesQuery row) : IReaderMapping<Employee>, IReaderMappingFactory<EmployeesQuery, Employee>
+public class EmployeeMapping(ProjectionBuilder query, EmployeesQuery row) : IReaderMapping<Employee>, IReaderMapping<EmployeesQuery, Employee>
 {
-    public static IReaderMapping<Employee> Factory(ProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
+    public static IReaderMapping<Employee> CreateFrom(ProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
 
     public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
 

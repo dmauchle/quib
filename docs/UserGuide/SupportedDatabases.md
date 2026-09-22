@@ -1,9 +1,8 @@
 # Supported Databases
 
-Quib ships database- and version-specific packages. Pick the package that matches your database
-server and SQL dialect.
+Quib ships database- and version-specific packages. Pick the package that matches your database server and SQL dialect.
 
-Current packages (examples):
+Available packages:
 
 - Quib.MySql56 — MySQL 5.6
 - Quib.MySql57 — MySQL 5.7

@@ -2,3 +2,4 @@
 global using Quib.MySql56.Schema;
 global using Quib.MySql56.ORMapper;
 global using Quib.MySql56.Expressions;
+global using Quib.MySql56.Types;

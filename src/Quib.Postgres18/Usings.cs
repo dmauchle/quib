@@ -2,3 +2,4 @@
 global using Quib.Postgres18.Schema;
 global using Quib.Postgres18.ORMapper;
 global using Quib.Postgres18.Expressions;
+global using Quib.Postgres18.Types;

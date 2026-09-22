@@ -1,4 +1,4 @@
-# Result Mapping — Strongly Typed API
+# Result Mapping
 
 Retrieving results of SELECT queries consists of three steps:
 
@@ -8,8 +8,8 @@ Retrieving results of SELECT queries consists of three steps:
 
 Key interfaces: 
 
+- `IReaderMapping<TObj>`
 - `IReaderMapping<TQuery, TObj>`
-- `IReaderMappingFactory<TQuery, TObj>`
 - `Quib.*.ORMapper` namespace
 
 
@@ -19,10 +19,10 @@ Simple mapping from a users table to domain model:
 
 ```csharp
 // The table schema
-public class UsersTable(DbTable table) : IDbTable, IDbTableFactory<UsersTable>
+public class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
 {
     public static string TableName => "users";
-    public static UsersTable Factory(DbTable table) => new UsersTable(table);
+    public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
     public DbColumn<DbInt> Id => table.Column<DbInt>("id");
     public DbColumn<DbText> Username => table.Column<DbText>("username");
@@ -38,10 +38,10 @@ public class User
 }
 
 // The mapping from table schema to domain model, consists of two parts
-public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMappingFactory<UsersTable, User>
+public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>
 {
     // 1. Projection (builds the SELECT clause)
-    public static IReaderMapping<UsersTable, User> Factory(ProjectionBuilder query, UsersTable user) => new UserReader(query, user);
+    public static IReaderMapping<UsersTable, User> CreateFrom(ProjectionBuilder query, UsersTable user) => new UserReader(query, user);
 
     private readonly ProjectedValue<DbInt> _id = query.Get(user.Id);
     private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
@@ -63,16 +63,29 @@ public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMappi
 Then you can fetch the results in one of the following styles: 
 
 ```csharp
-public async Task Demo(QueryFactory db)
-{
-    // Use the factory type, requires IReaderMappingFactory
-    users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
-
-    // Use the factory method, only requires IReaderMapping
-    users = await db.SelectFrom<UsersTable>().Map(UserReader.Factory).FetchArray();
-
-    // Using a dynamic lambda, doesn't require any interface at all
-    users = await db.SelectFrom<UsersTable>().Project((rs, x) => new UserReader(rs, x)).FetchArray((rs, x) => x.Map(rs));
-}
+var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
 ```
 
+
+## Mapping to anonymous types
+
+You need to explicitely perform the projection and mapping step using two functions: 
+
+```csharp
+var users = await db.SelectFromTable("users")
+    .Project((rs, x) => new {
+        Id = rs.Get(x.Column<DbInt>("id")),
+        Username = rs.Get(x.Column<DbText>("username")),
+        Email = rs.Get(x.Column<DbText>("email"))
+    })
+    .FetchArray((rs, x) => new {
+        Id = rs.Get(x.Id),
+        Username = rs.Get(x.Username),
+        Email = rs.Get(x.Email)
+    });
+```
+
+
+## See also
+
+- [ResultFetching.md](ResultFetching.md) — about the available variants for fetching your result set.

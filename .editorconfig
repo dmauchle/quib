@@ -152,6 +152,8 @@ dotnet_diagnostic.IDE0017.severity = silent
 
 csharp_style_inlined_variable_declaration = true
 dotnet_diagnostic.IDE0018.severity = suggestion
+csharp_style_prefer_system_collection_initializers = false
+csharp_style_prefer_collection_expression = true
 dotnet_style_collection_initializer = true
 dotnet_diagnostic.IDE0028.severity = silent
 dotnet_style_prefer_auto_properties = true

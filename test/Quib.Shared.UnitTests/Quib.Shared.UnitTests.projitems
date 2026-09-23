@@ -21,6 +21,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\MySqlFixture.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\PostgresContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\PostgresFixture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\MigrationOrderingTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\MigrationTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\ColumnInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />

@@ -1,8 +1,8 @@
 
-# Installer API
+# Installer and Migrations API
 
 The Installer API provides a small, fluent DDL surface for creating and evolving your database schema from C# code. It 
-is thin wrapper over runtime SQL generation.
+is a thin wrapper over runtime SQL generation.
 
 It's a purely dynamic API and doesn't have any dependencies on your [Schema](SchemaDefinition.md). This is intentional
 and avoids breaking migrations when you change your (current) schema definitions.
@@ -10,12 +10,68 @@ and avoids breaking migrations when you change your (current) schema definitions
 Key interfaces: 
 
 - `DbInstaller`
+- `DbMigration`
 - `Quib.*.Installer` namespace
 
 
-## Create a table
+## Create migrations
 
-The following example creates a simple "users" table with an integer primary key and two text columns.
+Migrations are versioned scripts. The installer will keep track of the installed migrations. Scripts for already 
+installed versions won't be executed again on subsequent installations. 
+
+**Modules for migrations:**
+
+Migrations can be devieded into modules like "Catalog" or "Orders". Each module can have multiple versions (installer
+scripts). 
+
+A module can also depend on other modules. For example, the "Orders" module may depend on the "Catalog" module because 
+it needs to create a foreign key to the products table. The installer will make sure that the scripts are executed in
+the right order.
+
+Note 1: When requiring e.g. a "Version 2" of a module, the module's version must and will be exactly at version 2 (not 
+higher or lower). This is required because for example the products table may also be renamed in a later version. You
+must make sure that migration can be executed in your intended order. Otherwise the installer will throw an exception.
+When adding an install script that has a dependency on an other module, just look up the current version of that module.
+
+Note 2: You may also query or change data in your install scripts. Use the `db` (`QueryFactory`) object.
+
+```csharp
+internal sealed class OrderModule : IModuleMigration
+{
+    public static string ModuleName => "orders";
+
+    public static void Configure(ModuleMigration module)
+    {
+        module.AddVersion(1)
+            .Requires<CatalogModule>(version: 2)  // Requires the catalog module at version 2 for creating the foreign key
+            .With(async (install, db) =>
+            {
+                install.Table("orders")
+                    .CreateWithPrimaryKey("id", ColumnType.Int())
+                    .CreateColumn("product_id", ColumnType.Int().NotNull())
+                    .CreateColumn("quantity", ColumnType.Int().NotNull())
+                    .CreateForeignKey("order_product_fk", ["product_id"], "products", ["id"]);
+            });
+
+        module.AddVersion(2)
+            .With(async (install, db) =>
+            {
+                install.Table("orders")
+                    .CreateColumn("comment", ColumnType.VarChar(265).Nullable());
+
+                await db.UpdateTable("orders")
+                    .AllRows()
+                    .With((query, table) =>
+                    {
+                        query.Set(table.Column<DbText>("comment"), "No comment");
+                    })
+                    .Execute();
+            });
+    }
+}
+```
+
+**Run the migration with all modules of your application:**
 
 ```csharp
 using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionString))
@@ -24,13 +80,24 @@ using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionStrin
 
     using (var installer = new DbInstaller(connection))
     {
-        // Simple creation with primary key and additional columns
-        installer.Table("users")    
-            .CreateWithPrimaryKey("id", ColumnType.Int())
-            .CreateColumn("username", ColumnType.VarChar(32).NotNull())
-            .CreateColumn("email", ColumnType.VarChar(255).Nullable());
+        var migration = new DbMigration("dbversions");
+        migration.Add<Migrations.CatalogModule>();
+        migration.Add<Migrations.OrderModule>();
+        await installer.RunMigration(migration);
     }
 }
+```
+
+
+## Create a table
+
+The following example creates a simple "users" table with an integer primary key and two text columns.
+
+```csharp
+install.Table("users")    
+    .CreateWithPrimaryKey("id", ColumnType.Int())
+    .CreateColumn("username", ColumnType.VarChar(32).NotNull())
+    .CreateColumn("email", ColumnType.VarChar(255).Nullable());
 ```
 
 More details on column types: [ColumnTypes.md](ColumnTypes.md)
@@ -42,7 +109,7 @@ The `CreateWithPrimaryKey` overload also accepts a PrimaryKey builder when you n
 
 ```csharp
 var pk = new PrimaryKey().AddColumn("tenant_id", ColumnType.Int()).AddColumn("id", ColumnType.Int());
-installer.Table("users").CreateWithPrimaryKey(pk);
+install.Table("users").CreateWithPrimaryKey(pk);
 ```
 
 
@@ -51,13 +118,13 @@ installer.Table("users").CreateWithPrimaryKey(pk);
 **Rename a table:**
 
 ```csharp
-installer.Table("users").RenameTo("app_users");
+install.Table("users").RenameTo("app_users");
 ```
 
 **Drop a table:**
 
 ```csharp
-installer.Table("old_table").Drop();
+install.Table("old_table").Drop();
 ```
 
 
@@ -66,31 +133,31 @@ installer.Table("old_table").Drop();
 **Add a new column to an existing table:**
 
 ```csharp
-installer.Table("users").CreateColumn("bio", ColumnType.VarChar(255).Nullable());
+install.Table("users").CreateColumn("bio", ColumnType.VarChar(255).Nullable());
 ```
 
 **Change a column's type:**
 
 ```csharp
-installer.Table("users").Column("email").ChangeType(ColumnType.VarChar(512).Nullable());
+install.Table("users").Column("email").ChangeType(ColumnType.VarChar(512).Nullable());
 ```
 
 **Rename a column**
 
 ```csharp
-installer.Table("users").Column("username").RenameTo("user_name");
+install.Table("users").Column("username").RenameTo("user_name");
 ```
 
 Note: MySQL 5.6 and 5.7 do not support the RENAME COLUMN syntax. Use ChangeTo instead (renames and re-declares the column in a single statement):
 
 ```csharp
-installer.Table("users").Column("username").ChangeTo("user_name", ColumnType.VarChar(64).NotNull());
+install.Table("users").Column("username").ChangeTo("user_name", ColumnType.VarChar(64).NotNull());
 ```
 
 **Drop a column:**
 
 ```csharp
-installer.Table("users").Column("temp_col").Drop();
+install.Table("users").Column("temp_col").Drop();
 ```
 
 
@@ -100,13 +167,13 @@ installer.Table("users").Column("temp_col").Drop();
 
 ```csharp
 // Create fk_orders_user on orders(user_id) referencing users(id)
-installer.Table("orders").CreateForeignKey("fk_orders_user", new[] { "user_id" }, "users", new[] { "id" });
+install.Table("orders").CreateForeignKey("fk_orders_user", new[] { "user_id" }, "users", new[] { "id" });
 ```
 
 **Drop a foreign key:**
 
 ```csharp
-installer.Table("orders").DropForeignKey("fk_orders_user");
+install.Table("orders").DropForeignKey("fk_orders_user");
 ```
 
 
@@ -115,11 +182,16 @@ installer.Table("orders").DropForeignKey("fk_orders_user");
 **Create an index:**
 
 ```csharp
-installer.Table("users").CreateIndex("idx_users_username", "username");
+install.Table("users").CreateIndex("idx_users_username", "username");
 ```
 
 **Drop an index:**
 
 ```csharp
-installer.Table("users").DropIndex("idx_users_username");
+install.Table("users").DropIndex("idx_users_username");
 ```
+
+
+## See also
+
+- [ColumnTypes.md](ColumnTypes.md) — overview over the available column/database types

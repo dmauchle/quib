@@ -3,6 +3,7 @@ using CheatSheet.Schema;
 using Npgsql;
 using Quib.Postgres18;
 using Quib.Postgres18.Installer;
+using Migrations = CheatSheet.Migrations;
 using static Quib.Postgres18.QueryBuilder.Sort;
 
 
@@ -11,11 +12,10 @@ await connection.OpenAsync();
 
 using (var installer = new DbInstaller(connection))
 {
-    installer.Table("products")
-        .CreateWithPrimaryKey("id", ColumnType.Int())
-        .CreateColumn("product_name", ColumnType.VarChar(32).NotNull())
-        .CreateColumn("category_id", ColumnType.Int().NotNull())
-        .CreateColumn("price", ColumnType.Int().NotNull());
+    var migration = new DbMigration("dbversions");
+    migration.Add<Migrations.CatalogModule>();
+    migration.Add<Migrations.OrderModule>();
+    await installer.RunMigration(migration);
 }
 
 var db = new QueryFactory(connection);

@@ -33,8 +33,28 @@ public sealed class DbInstaller : IDisposable
         return new TableInstaller(_db, tablename);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="migration"></param>
+    /// <exception cref="MigrationException"></exception>
+    public async Task RunMigration(DbMigration migration)
+    {
+        var versionsTable = new VersionsTable(this, _db, migration.VersionsTable);
+        var initialVersions = await versionsTable.GetCurrentVersions();
+
+        var migrations = migration.CreateMigrationRun(initialVersions);
+        foreach (var version in migrations)
+        {
+            await version.Run(this, _db);
+            await versionsTable.SetCurrentVersion(version.ModuleName, version.Version);
+        }
+    }
+
     public void Dispose()
     {
 
     }
+
+    
 }

@@ -18,6 +18,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbTextNullable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNotNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNull.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Installer\MigrationException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\ModuleVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\VersionsTable.cs" />
+    <Compile Include="..\Quib.Shared\Installer\IModuleMigration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Installer\VersionMigration.cs" />
+    <Compile Include="..\Quib.Shared\Installer\ModuleMigration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)installer\DbMigration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ormapper\IProjectionBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\MappingExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\ISelectContext.cs" />
@@ -76,7 +83,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Types\IExpressionType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Installer\" />
     <Folder Include="$(MSBuildThisFileDirectory)Types\" />
   </ItemGroup>
 </Project>

@@ -16,17 +16,61 @@ Add the desired NuGet package to your project, for example
 Quib provides a fluent API for database migrations. So you don't have to use raw (and error prone)
 SQL files.
 
+For each module of your application, define a migration class that contains all updates of the database schema for that
+module: 
+
+```csharp
+internal sealed class OrderModule : IModuleMigration
+{
+    public static string ModuleName => "orders";
+
+    public static void Configure(ModuleMigration module)
+    {
+        module.AddVersion(1)
+            .Requires<CatalogModule>(version: 2)  // Requires the catalog module at version 2 for creating the foreign key
+            .With(async (install, db) =>
+            {
+                install.Table("orders")
+                    .CreateWithPrimaryKey("id", ColumnType.Int())
+                    .CreateColumn("product_id", ColumnType.Int().NotNull())
+                    .CreateColumn("quantity", ColumnType.Int().NotNull())
+                    .CreateForeignKey("order_product_fk", ["product_id"], "products", ["id"]);
+            });
+
+        module.AddVersion(2)
+            .With(async (install, db) =>
+            {
+                install.Table("orders")
+                    .CreateColumn("comment", ColumnType.VarChar(265).Nullable());
+
+                // You may also update data in the migration: 
+                await db.UpdateTable("orders")
+                    .AllRows()
+                    .With((query, table) =>
+                    {
+                        query.Set(table.Column<DbText>("comment"), "No comment");
+                    })
+                    .Execute();
+            });
+    }
+}
+```
+
+The installer will keep track of the installed migrations in a database table (e.g. `dbversions`). The version's 
+install script will only run when the particular version has not been installed yet.
+
+Run the migration with all modules of your application:
+
 ```csharp
 using var connection = new NpgsqlConnection("...");
 await connection.OpenAsync();
 
 using (var installer = new DbInstaller(connection))
 {
-    installer.Table("products")
-        .CreateWithPrimaryKey("id", ColumnType.Int())
-        .CreateColumn("product_name", ColumnType.VarChar(32).NotNull())
-        .CreateColumn("category_id", ColumnType.Int().NotNull())
-        .CreateColumn("price", ColumnType.Int().NotNull());
+    var migration = new DbMigration("dbversions");
+    migration.Add<Migrations.CatalogModule>();
+    migration.Add<Migrations.OrderModule>();
+    await installer.RunMigration(migration);
 }
 ```
 

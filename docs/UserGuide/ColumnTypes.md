@@ -12,8 +12,21 @@ install.Table("users")
 
 ## Available Column Types
 
+**MySQL**
+
 - `Int()` - 32-bit integer
-- `VarChar(length)` - Variable-length string with a maximum length of `length` (number of characters, not number of bytes)
+- `VarChar(length)` - variable-length string (number of characters, not number of bytes), max. 65,535 bytes (row size limit)
+- `ShortText()` - up to 65,535 bytes of text data. Separate from row size limit
+- `MediumText()` - up to 16 MB of text data
+- `LongText()` - up to 4 GB of text data
+
+**Postgres**
+
+- `Int()` - 32-bit integer
+- `VarChar(length)` - variable-length string (number of characters, not number of bytes), max 1 GB (value limit)
+- `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1GB text.
+- `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1GB text.
+- `LongText()` - up to 1 GB of text data (value limit)
 
 
 ## Character Set and Collation

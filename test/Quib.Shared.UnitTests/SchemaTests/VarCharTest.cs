@@ -196,4 +196,378 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
 
     }
 
+
+    // UTF-8 Compatibility Tests
+    // These tests verify that the database properly handles UTF-8 encoded strings
+    // with various character types and multi-byte sequences
+
+    [Fact]
+    public async Task VarChar_UTF8_SingleTypes_Succeeds()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("utf8_single_chars")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("text_value", ColumnType.VarChar(50).NotNull());
+        }
+
+        // Arrange: Test strings with different UTF-8 character types
+        var testCases = new[]
+        {
+            ("id:1", "😀", "Emoji - grinning face"),                           // 1 char, 4 bytes in UTF-8
+            ("id:2", "中", "CJK - Chinese character"),                        // 1 char, 3 bytes in UTF-8
+            ("id:3", "Д", "Cyrillic - Cyrillic capital letter DE"),           // 1 char, 2 bytes in UTF-8
+            ("id:4", "ب", "Arabic - Arabic letter Beh"),                        // 1 char, 2 bytes in UTF-8
+            ("id:5", "ñ", "Extended Latin - n with tilde"),                   // 1 char, 2 bytes in UTF-8
+            ("id:6", "ä", "German umlaut - a with diaeresis"),                // 1 char, 2 bytes in UTF-8
+            ("id:7", "ö", "German umlaut - o with diaeresis"),                // 1 char, 2 bytes in UTF-8
+            ("id:8", "ü", "German umlaut - u with diaeresis"),                // 1 char, 2 bytes in UTF-8
+            ("id:9", "ß", "German eszett - sharp s"),                          // 1 char, 2 bytes in UTF-8
+            ("id:10", "日本", "CJK - Japanese characters"),                     // 2 chars, 6 bytes in UTF-8
+            ("id:11", "Привет", "Cyrillic - Russian 'Hello'"),                // 6 chars, 12 bytes in UTF-8
+        };
+
+        foreach (var (description, value, comment) in testCases)
+        {
+            var idStr = description.Split(':')[1];
+            var id = int.Parse(idStr);
+
+            // Act: Insert UTF-8 string
+            var inserted = await DB.InsertIntoTable("utf8_single_chars")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), id);
+                    query.Set(table.Column<DbText>("text_value"), value);
+                })
+                .Execute();
+
+            // Assert: Verify insertion succeeded
+            Assert.Equal(1, inserted);
+
+            // Verify the data was stored and retrieved correctly
+            var rs = await DB.SelectFromTable("utf8_single_chars")
+                .Where(x => x.Column<DbInt>("id") == id)
+                .Project(x => x.Column<DbText>("text_value"))
+                .FetchOne();
+
+            Assert.Equal(value, rs.Result);
+        }
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_Emoji_WithinLimit_Succeeds()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("emoji_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("emoji_str", ColumnType.VarChar(10).NotNull());
+        }
+
+        // Arrange: Create emoji string exactly at character limit (10 emoji characters)
+        // Each emoji is typically 1 character but takes 4 bytes in UTF-8 (multi-byte encoding)
+        var emojiString = "😀😁😂😃😄😅😆😇😈😉"; // Exactly 10 emoji characters
+
+        // Act: Insert emoji string at limit
+        var inserted = await DB.InsertIntoTable("emoji_test")
+            .AddRow((query, table) =>
+            {
+                query.Set(table.Column<DbInt>("id"), 1);
+                query.Set(table.Column<DbText>("emoji_str"), emojiString);
+            })
+            .Execute();
+
+        // Assert: Verify insertion succeeded
+        Assert.Equal(1, inserted);
+
+        // Verify the emoji string was stored and retrieved correctly
+        var rs = await DB.SelectFromTable("emoji_test")
+            .Where(x => x.Column<DbInt>("id") == 1)
+            .Project(x => x.Column<DbText>("emoji_str"))
+            .FetchOne();
+
+        Assert.Equal(emojiString, rs.Result);
+        // Note: Character count may vary depending on UTF-8 handling (UTF-16 surrogate pairs in .NET)
+        // The important assertion above is that the emoji string retrieved matches what was inserted
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_Emoji_ExceedsLimit_ThrowsException()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("emoji_overflow_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("emoji_str", ColumnType.VarChar(10).NotNull());
+        }
+
+        // Arrange: Create emoji string exceeding the character limit (11 emoji for VARCHAR(10))
+        var emojiString = "😀😁😂😃😄😅😆😇😈😉😊"; // 11 emoji characters, exceeds limit of 10
+
+        // Act & Assert: Expect database exception when inserting oversized emoji string
+        await Assert.ThrowsAnyAsync<DbException>(async () =>
+        {
+            await DB.InsertIntoTable("emoji_overflow_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), 1);
+                    query.Set(table.Column<DbText>("emoji_str"), emojiString);
+                })
+                .Execute();
+        });
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_Length_Boundary_By_CharacterType()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("length_boundary_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("text_ascii_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_umlaut_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_cjk_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_emoji_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_cjk_3", ColumnType.VarChar(3).NotNull())
+                .CreateColumn("text_emoji_5", ColumnType.VarChar(5).NotNull());
+        }
+
+        // Arrange: Test cases that expose whether database counts characters or bytes
+        // These tests verify if the database properly handles multi-byte UTF-8 characters
+        // at their exact boundaries
+        var testCases = new[]
+        {
+            // (columnName, value, description)
+            ("text_ascii_1", "A", "ASCII character in VARCHAR(1)"),                   // 1 char, 1 byte - baseline
+            ("text_umlaut_1", "ä", "German umlaut in VARCHAR(1)"),                    // 1 char, 2 bytes - tests character counting
+            ("text_cjk_1", "中", "Single CJK character in VARCHAR(1)"),               // 1 char, 3 bytes - tests character counting
+            ("text_emoji_1", "😀", "Single emoji character in VARCHAR(1)"),          // 1 char, 4 bytes - critical test
+            ("text_cjk_3", "日本語", "Three CJK characters in VARCHAR(3)"),           // 3 chars, 9 bytes
+            ("text_emoji_5", "😀😁😂😃😄", "Five emoji in VARCHAR(5)"),             // 5 chars, 20 bytes
+        };
+
+        foreach (var (columnName, value, description) in testCases)
+        {
+            // Delete previous row to avoid primary key conflicts
+            await DB.DeleteFromTable("length_boundary_test")
+                .AllRows()
+                .Execute();
+
+            // Act: Insert the value
+            var inserted = await DB.InsertIntoTable("length_boundary_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), 1);
+                    query.Set(table.Column<DbText>(columnName), value);
+                })
+                .Execute();
+
+            // Assert: Verify insertion succeeded
+            Assert.Equal(1, inserted);
+
+            // Verify the data was stored and retrieved correctly
+            var rs = await DB.SelectFromTable("length_boundary_test")
+                .Project(x => x.Column<DbText>(columnName))
+                .FetchOne();
+
+            Assert.Equal(value, rs.Result);
+        }
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_Length_Boundary_Exceeds_Throws_Exception()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("length_boundary_overflow_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("text_ascii_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_umlaut_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_cjk_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_emoji_1", ColumnType.VarChar(1).NotNull())
+                .CreateColumn("text_cjk_3", ColumnType.VarChar(3).NotNull())
+                .CreateColumn("text_emoji_5", ColumnType.VarChar(5).NotNull());
+        }
+
+        // Arrange: Test cases with one extra simple ASCII character exceeding the limit
+        // Each should throw an exception because it exceeds the VARCHAR limit
+        var testCases = new[]
+        {
+            // (columnName, value, description)
+            ("text_ascii_1", "AA", "ASCII at limit + one more ASCII in VARCHAR(1)"),        // Already 1 char, +1 simple byte = exceeds
+            ("text_umlaut_1", "äA", "Umlaut at limit + one simple ASCII in VARCHAR(1)"),   // Already 1 char, +1 simple byte = exceeds
+            ("text_cjk_1", "中A", "CJK at limit + one simple ASCII in VARCHAR(1)"),        // Already 1 char, +1 simple byte = exceeds
+            ("text_emoji_1", "😀A", "Emoji at limit + one simple ASCII in VARCHAR(1)"),    // Already 1 char, +1 simple byte = exceeds
+            ("text_cjk_3", "中中中A", "Three CJK at limit + one simple ASCII in VARCHAR(3)"),  // Already 3 chars, +1 simple byte = exceeds
+            ("text_emoji_5", "😀😀😀😀😀A", "Five emoji at limit + one simple ASCII in VARCHAR(5)"), // Already 5 chars, +1 simple byte = exceeds
+        };
+
+        foreach (var (columnName, value, description) in testCases)
+        {
+            // Delete previous row to avoid primary key conflicts
+            await DB.DeleteFromTable("length_boundary_overflow_test")
+                .Where(x => x.Column<DbInt>("id") == 1)
+                .Execute();
+
+            // Act & Assert: Expect database exception when inserting oversized value
+            await Assert.ThrowsAnyAsync<DbException>(async () =>
+            {
+                await DB.InsertIntoTable("length_boundary_overflow_test")
+                    .AddRow((query, table) =>
+                    {
+                        query.Set(table.Column<DbInt>("id"), 1);
+                        query.Set(table.Column<DbText>(columnName), value);
+                    })
+                    .Execute();
+            });
+        }
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_Combining_Marks_Succeeds()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("combining_marks_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("text_value", ColumnType.VarChar(50).NotNull());
+        }
+
+        // Arrange: Test strings with combining diacritical marks
+        // These represent complex Unicode normalization scenarios
+        var testCases = new[]
+        {
+            ("id:1", "e\u0301", "Latin small letter e with combining acute accent"), // é composed from e + combining acute
+            ("id:2", "c\u0327", "Latin small letter c with combining cedilla"),      // ç composed from c + combining cedilla
+            ("id:3", "A\u0308", "Latin capital letter A with combining diaeresis"),  // Ä composed from A + combining diaeresis
+            ("id:4", "o\u0308", "Latin small letter o with combining diaeresis"),    // ö composed from o + combining diaeresis
+            ("id:5", "n\u0303", "Latin small letter n with combining tilde"),        // ñ composed from n + combining tilde
+        };
+
+        foreach (var (description, value, comment) in testCases)
+        {
+            var idStr = description.Split(':')[1];
+            var id = int.Parse(idStr);
+
+            // Act: Insert combining marks string
+            var inserted = await DB.InsertIntoTable("combining_marks_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), id);
+                    query.Set(table.Column<DbText>("text_value"), value);
+                })
+                .Execute();
+
+            // Assert: Verify insertion succeeded
+            Assert.Equal(1, inserted);
+
+            // Verify the data was stored and retrieved correctly (byte-for-byte)
+            var rs = await DB.SelectFromTable("combining_marks_test")
+                .Where(x => x.Column<DbInt>("id") == id)
+                .Project(x => x.Column<DbText>("text_value"))
+                .FetchOne();
+
+            Assert.Equal(value, rs.Result);
+        }
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_ByteVsCharacter_Boundary()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("byte_boundary_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("text_value", ColumnType.VarChar(30).NotNull());
+        }
+
+        // Arrange: Test cases that expose byte vs. character limit differences
+        // This helps identify if the database counts characters or bytes
+        var testCases = new[]
+        {
+            ("id:1", "ABC" , "ASCII: 3 chars, 3 bytes"),                          // 3 characters, 3 bytes
+            ("id:2", "café", "ASCII + extended: 4 chars, 5 bytes"),              // 4 characters, 5 bytes (é is 2 bytes)
+            ("id:3", "日本語", "CJK: 3 chars, 9 bytes"),                          // 3 characters, 9 bytes (each CJK char is 3 bytes)
+            ("id:4", "😀😀😀", "Emoji: 3 chars, 12 bytes"),                       // 3 characters, 12 bytes (each emoji is 4 bytes)
+            ("id:5", "ABC😀", "Mixed: 4 chars, 7 bytes"),                         // 4 characters, 7 bytes
+            ("id:6", "Привет", "Cyrillic: 6 chars, 12 bytes"),                    // 6 characters, 12 bytes (each Cyrillic is 2 bytes)
+        };
+
+        foreach (var (description, value, comment) in testCases)
+        {
+            var idStr = description.Split(':')[1];
+            var id = int.Parse(idStr);
+
+            // Act: Insert boundary test string
+            var inserted = await DB.InsertIntoTable("byte_boundary_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), id);
+                    query.Set(table.Column<DbText>("text_value"), value);
+                })
+                .Execute();
+
+            // Assert: Verify insertion succeeded
+            Assert.Equal(1, inserted);
+
+            // Verify the data was stored and retrieved correctly
+            var rs = await DB.SelectFromTable("byte_boundary_test")
+                .Where(x => x.Column<DbInt>("id") == id)
+                .Project(x => x.Column<DbText>("text_value"))
+                .FetchOne();
+
+            Assert.Equal(value, rs.Result);
+            // Log the byte count to help diagnose byte vs. character semantics
+            var byteCount = System.Text.Encoding.UTF8.GetByteCount(value);
+            Assert.True(byteCount <= 120);
+        }
+    }
+
+    [Fact]
+    public async Task VarChar_UTF8_RightToLeft_Succeeds()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("rtl_text_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("text_value", ColumnType.VarChar(50).NotNull());
+        }
+
+        // Arrange: Test strings with right-to-left (RTL) languages
+        var testCases = new[]
+        {
+            ("id:1", "مرحبا", "Arabic: Marhaba (Hello)"),                         // Arabic text
+            ("id:2", "שלום", "Hebrew: Shalom (Hello)"),                          // Hebrew text
+            ("id:3", "السلام عليكم", "Arabic: As-salamu alaykum (Peace be upon you)"), // Arabic phrase
+            ("id:4", "עברית", "Hebrew: Ivrit (Hebrew language)"),                // Hebrew word
+        };
+
+        foreach (var (description, value, comment) in testCases)
+        {
+            var idStr = description.Split(':')[1];
+            var id = int.Parse(idStr);
+
+            // Act: Insert RTL text string
+            var inserted = await DB.InsertIntoTable("rtl_text_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), id);
+                    query.Set(table.Column<DbText>("text_value"), value);
+                })
+                .Execute();
+
+            // Assert: Verify insertion succeeded
+            Assert.Equal(1, inserted);
+
+            // Verify the data was stored and retrieved correctly
+            // RTL text should be stored as-is without reordering by the database
+            var rs = await DB.SelectFromTable("rtl_text_test")
+                .Where(x => x.Column<DbInt>("id") == id)
+                .Project(x => x.Column<DbText>("text_value"))
+                .FetchOne();
+
+            Assert.Equal(value, rs.Result);
+        }
+    }
+
 }

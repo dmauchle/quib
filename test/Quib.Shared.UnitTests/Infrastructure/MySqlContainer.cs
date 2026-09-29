@@ -24,7 +24,9 @@ public class MySqlContainer : IAsyncLifetime
 
         _dbContainerCommands = [
             "--sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION",
-            "--max-allowed-packet=30000000"
+            "--max-allowed-packet=30000000",
+            "--character-set-server=latin1",  // Use a "bad" charset to ensure that the application code explicitly sets the desired charset for connections
+            "--collation-server=latin1_swedish_ci"
         ];
 
         this.DbHost = EnvironmentVariables.DOCKER_HOST ?? "127.0.0.1";

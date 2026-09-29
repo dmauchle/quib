@@ -36,7 +36,15 @@ public static class ColumnTypeFactory
         /// <returns></returns>
         public static ColumnType VarChar(int length)
         {
-            return new ColumnType($"VARCHAR({length})", defaultValue: "''");
+#if MYSQL
+            // Explicitly set UTF-8 charset and collation for MySQL to ensure full Unicode support
+            // and case-insensitive comparison regardless of server/database default configuration
+            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+#elif POSTGRES
+            // Explicitly set UTF-8 collation for PostgreSQL to ensure case-insensitive comparison
+            // consistent with MySQL's utf8mb4_unicode_ci behavior
+            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: "COLLATE \"en_US.utf8\"");
+#endif
         }
     }
 

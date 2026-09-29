@@ -28,6 +28,12 @@ public static class ColumnTypeFactory
             return new ColumnType($"INTEGER", defaultValue: "0");
         }
 
+        /// <summary>
+        /// MySQL: you must not exceed 65,535-byte row size limit (all columns), one character takes 4 bytes.<br />
+        /// Postgres: you must not exceed 1GB size limit for values, one character takes 4 bytes.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static ColumnType VarChar(int length)
         {
             return new ColumnType($"VARCHAR({length})", defaultValue: "''");

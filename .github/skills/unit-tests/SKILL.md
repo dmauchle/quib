@@ -75,6 +75,27 @@ Prefer consistency with neighboring tests over introducing new naming styles.
 - Keep tests small and focused on behavior, not implementation details.
 - Follow `.editorconfig` and `docs/CodingGuidelines.md`.
 
+## Exception Handling in Tests
+
+Always use any of the `Assert.Throws*` methods for expected exceptions. Do not use try-catch blocks in test methods.
+
+When expecting database exceptions across multiple DB providers:
+
+- **Always use `Assert.ThrowsAnyAsync<DbException>()`** instead of `Assert.ThrowsAsync<DbException>()`.
+- This handles provider-specific exceptions (MySqlException, PostgresException) that inherit from DbException.
+- `ThrowsAsync` requires an exact type match, while `ThrowsAnyAsync` accepts derived types.
+- Never use try-catch blocks; rely on xUnit's assertion methods.
+
+Example:
+```csharp
+await Assert.ThrowsAnyAsync<DbException>(async () =>
+{
+    await DB.InsertIntoTable("products")
+        .AddRow((query, table) => { /* ... */ })
+        .Execute();
+});
+```
+
 ## Verification Workflow
 
 After test changes:

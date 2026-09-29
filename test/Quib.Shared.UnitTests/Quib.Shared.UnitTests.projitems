@@ -14,7 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbTextNullableExpressionTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)expressiontests\DbTextExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbTextExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalTestConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DbTestBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\MySqlContainer.cs" />
@@ -47,8 +47,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\UpdateCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\InsertCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\UpdateTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)updatetests\InsertTest.cs" />
-    <Compile Include="..\Quib.Shared.UnitTests\infrastructure\DockerController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\InsertTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DockerController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\EnvironmentVariables.cs" />
   </ItemGroup>
 </Project>

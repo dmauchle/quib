@@ -1,7 +1,7 @@
 ﻿using Xunit.Abstractions;
 using Quib.UnitTests.Infrastructure;
 
-namespace Quib.UnitTests.SchemaTests;
+namespace Quib.UnitTests.ExpressionTests;
 
 [Collection(TestCollections.DATABASE)]
 public class DbTextExpressionTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)

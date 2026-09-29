@@ -1,7 +1,7 @@
 ﻿using Quib.UnitTests.Infrastructure;
 using Xunit.Abstractions;
 
-namespace Quib.UnitTests.SchemaTests;
+namespace Quib.UnitTests.ExpressionTests;
 
 [Collection(TestCollections.DATABASE)]
 public class NullCheckExpressionTests(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(env, log)

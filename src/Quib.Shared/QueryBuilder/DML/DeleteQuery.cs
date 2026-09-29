@@ -59,7 +59,7 @@ internal sealed class DeleteQuery<TQuery> : IDeleteQuery<TQuery>, IDeleteFiltere
     public IDeleteFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
         where TBool : struct, IExpressionType, IDbBool
     {
-        _builder.Filter(predicate(_accessor));
+        _builder.AddFilter(predicate(_accessor));
         return this;
     }
 

@@ -10,7 +10,7 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
+internal sealed class UpdateQueryBuilder : IUpdateQueryBuilder
 {
 
     private readonly List<(DbColumnForUpdate column, QueryExpression value)> _values;
@@ -23,7 +23,7 @@ public sealed class UpdateQueryBuilder : IUpdateQueryBuilder
         _values = [];
     }
 
-    public void Filter(QueryExpression filter)
+    internal void AddFilter(QueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }

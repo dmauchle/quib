@@ -25,8 +25,8 @@ public interface IUpdateFilterable<TQuery> : IQueryPart
 
 public interface IUpdateSettable<TQuery> : IQueryPart
 {
-    public IUpdateExecutable<TQuery> With(Action<UpdateQueryBuilder, TQuery> run);
-    public IUpdateExecutable<TQuery> With<TObj>(Action<UpdateQueryBuilder, TQuery, TObj> run, TObj obj);
+    public IUpdateExecutable<TQuery> With(Action<IUpdateQueryBuilder, TQuery> run);
+    public IUpdateExecutable<TQuery> With<TObj>(Action<IUpdateQueryBuilder, TQuery, TObj> run, TObj obj);
     public IUpdateExecutable<TQuery> With<TMapper, TObj>(TObj obj) where TMapper : IWriterMapping<TQuery, TObj>;
 }
 
@@ -66,17 +66,17 @@ internal sealed class UpdateQuery<TQuery> : IUpdateQuery<TQuery>, IUpdateFiltere
     public IUpdateFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
         where TBool : struct, IExpressionType, IDbBool
     {
-        _builder.Filter(predicate(_accessor));
+        _builder.AddFilter(predicate(_accessor));
         return this;
     }
 
-    public IUpdateExecutable<TQuery> With(Action<UpdateQueryBuilder, TQuery> run)
+    public IUpdateExecutable<TQuery> With(Action<IUpdateQueryBuilder, TQuery> run)
     {
         run(_builder, _accessor);
         return this;
     }
 
-    public IUpdateExecutable<TQuery> With<TObj>(Action<UpdateQueryBuilder, TQuery, TObj> run, TObj obj)
+    public IUpdateExecutable<TQuery> With<TObj>(Action<IUpdateQueryBuilder, TQuery, TObj> run, TObj obj)
     {
         run(_builder, _accessor, obj);
         return this;

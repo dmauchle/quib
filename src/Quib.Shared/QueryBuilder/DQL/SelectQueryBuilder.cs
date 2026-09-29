@@ -23,7 +23,7 @@ public sealed class SelectQueryBuilder
     {
     }
 
-    internal FromClause From(ITableOrSubquery table)
+    internal FromClause AddFromClause(ITableOrSubquery table)
     {
         var index = GetNextTableIndex();
         var from = new FromClause(table, new TableAlias(index));
@@ -31,7 +31,7 @@ public sealed class SelectQueryBuilder
         return from;
     }
 
-    internal JoinClause Join(ITableOrSubquery table, string joinType)
+    internal JoinClause AddJoinClause(ITableOrSubquery table, string joinType)
     {
         var index = GetNextTableIndex();
         var join = new JoinClause(joinType, table, new TableAlias(index));
@@ -44,12 +44,12 @@ public sealed class SelectQueryBuilder
         return (_from?.Count ?? 0) + (_joins?.Count ?? 0);
     }
 
-    internal void Filter(QueryExpression filter)
+    internal void AddFilter(QueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }
 
-    internal void OrderBy(ISortExpression[] sort)
+    internal void SetOrder(ISortExpression[] sort)
     {
         _sort = sort;
     }
@@ -57,7 +57,7 @@ public sealed class SelectQueryBuilder
     public DbTable FromTable(string tablename)
     {
         var table = new TableReference(tablename);
-        var from = this.From(table);
+        var from = this.AddFromClause(table);
         var accessor = new DbTable(from.Alias);
         return accessor;
     }
@@ -76,7 +76,7 @@ public sealed class SelectQueryBuilder
     public JoinBuilder<DbTable> InnerJoin(string tablename)
     {
         var table = new TableReference(tablename);
-        var join = this.Join(table, "INNER JOIN");
+        var join = this.AddJoinClause(table, "INNER JOIN");
         var accessor = new DbTable(join.Alias);
         return new JoinBuilder<DbTable>(join, accessor);
     }
@@ -96,7 +96,7 @@ public sealed class SelectQueryBuilder
     public JoinBuilder<DbTable> LeftOuterJoin(string tablename)
     {
         var table = new TableReference(tablename);
-        var join = this.Join(table, "LEFT OUTER JOIN");
+        var join = this.AddJoinClause(table, "LEFT OUTER JOIN");
         var accessor = new DbTable(join.Alias);
         return new JoinBuilder<DbTable>(join, accessor);
     }
@@ -116,7 +116,7 @@ public sealed class SelectQueryBuilder
     public JoinBuilder<DbTable> RightOuterJoin(string tablename)
     {
         var table = new TableReference(tablename);
-        var join = this.Join(table, "RIGHT OUTER JOIN");
+        var join = this.AddJoinClause(table, "RIGHT OUTER JOIN");
         var accessor = new DbTable(join.Alias);
         return new JoinBuilder<DbTable>(join, accessor);
     }

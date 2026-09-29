@@ -42,13 +42,13 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     public SelectQuery<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
         where TBool : struct, IExpressionType, IDbBool
     {
-        _builder.Filter(predicate(_accessor));
+        _builder.AddFilter(predicate(_accessor));
         return this;
     }
 
     public SelectQuery<TQuery> OrderBy(Func<TQuery, ISortExpression[]> sort)
     {
-        _builder.OrderBy(sort(_accessor));
+        _builder.SetOrder(sort(_accessor));
         return this;
     }
 

@@ -10,7 +10,7 @@ namespace Quib.MySql84.QueryBuilder;
 namespace Quib.Postgres18.QueryBuilder;
 #endif
 
-public sealed class DeleteQueryBuilder
+internal sealed class DeleteQueryBuilder
 {
 
     private readonly TableReference _table;
@@ -21,7 +21,7 @@ public sealed class DeleteQueryBuilder
         _table = table;
     }
 
-    public void Filter(QueryExpression filter)
+    internal void AddFilter(QueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }

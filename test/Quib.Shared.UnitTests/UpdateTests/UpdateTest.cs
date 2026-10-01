@@ -23,6 +23,7 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
                    query.Set(table.Username, "asmith");
                    query.Set(table.Firstname, "Alice");
                    query.Set(table.Lastname, "Smith");
+                   query.Set(table.LoginCount, 0);
                })
                .Execute();
         }

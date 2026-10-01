@@ -61,7 +61,7 @@ public sealed class NotNullColumnType : IColumnType
 
     internal string ToSql()
     {
-        return $"{_type.DbType} {_type.Options} NOT NULL DEFAULT {_type.DefaultValue}";
+        return $"{_type.DbType} {_type.Options} NOT NULL";
     }
 
     string IColumnType.ToSql()

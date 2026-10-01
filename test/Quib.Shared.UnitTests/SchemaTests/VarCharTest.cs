@@ -324,12 +324,12 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         {
             install.Table("length_boundary_test")
                 .CreateWithPrimaryKey("id", ColumnType.Int())
-                .CreateColumn("text_ascii_1", ColumnType.VarChar(1).NotNull())
-                .CreateColumn("text_umlaut_1", ColumnType.VarChar(1).NotNull())
-                .CreateColumn("text_cjk_1", ColumnType.VarChar(1).NotNull())
-                .CreateColumn("text_emoji_1", ColumnType.VarChar(1).NotNull())
-                .CreateColumn("text_cjk_3", ColumnType.VarChar(3).NotNull())
-                .CreateColumn("text_emoji_5", ColumnType.VarChar(5).NotNull());
+                .CreateColumn("text_ascii_1", ColumnType.VarChar(1).Nullable())
+                .CreateColumn("text_umlaut_1", ColumnType.VarChar(1).Nullable())
+                .CreateColumn("text_cjk_1", ColumnType.VarChar(1).Nullable())
+                .CreateColumn("text_emoji_1", ColumnType.VarChar(1).Nullable())
+                .CreateColumn("text_cjk_3", ColumnType.VarChar(3).Nullable())
+                .CreateColumn("text_emoji_5", ColumnType.VarChar(5).Nullable());
         }
 
         // Arrange: Test cases that expose whether database counts characters or bytes

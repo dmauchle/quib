@@ -64,6 +64,38 @@ public class NullCheckExpressionTests(DatabaseFixture env, ITestOutputHelper log
         Assert.Contains(rs, x => x.Name == "Bob" && x.HasEmail == false);
     }
 
+    // Comparing to a null literal is only prevented by nullable reference type checks (CS8625).
+    // Without them, it compiles, but must fail when building the expression.
+#nullable disable
+    [Fact]
+    public async Task EqualNull_WithoutNullableChecks_Throws()
+    {
+        // Null check in projection
+        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        {
+            await DB.SelectFrom<UsersTable>()
+                .Project((rs, user) => rs.Get(user.Email == null))
+                .FetchArray();
+        });
 
+        // Null check in where clause
+        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        {
+            await DB.SelectFrom<UsersTable>()
+                .Where(user => user.Name == null)
+                .Project(user => user.Name)
+                .FetchArray();
+        });
+
+        // Reversed null check in where clause
+        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        {
+            await DB.SelectFrom<UsersTable>()
+                .Where(user => null != user.Name)
+                .Project(user => user.Name)
+                .FetchArray();
+        });
+    }
+#nullable restore
 
 }

@@ -31,14 +31,20 @@ You can use the standard comparison operators in your expressions: `==`, `!=`, `
 db.SelectFrom<UsersTable>().Where(x => x.Credits > 100 & x.Company == "Google");
 ```
 
-Note that comparing to null is not supported due to ambiguity. You could achieve it with an explicit parameter call if you
-want. But note that this translates to `x.Company = NULL` in SQL, which is not the same as `x.Company IS NULL`!
+Comparing to null is not supported due to ambiguity. You could achieve it with an explicit parameter call if you want. 
+That translates to `x.Company = NULL` in SQL, which is not the same as `x.Company IS NULL`!
 
 ```csharp
-db.SelectFrom<UsersTable>().Project((rs, x) => rs.Get(x.Company == null));  // Compiler error!
+db.SelectFrom<UsersTable>().Project((rs, x) => rs.Get(x.Company == null));  // Compiler error or runtime exception!
 db.SelectFrom<UsersTable>().Project((rs, x) => rs.Get(x.Company == SQL.NullableParameter((string?)null)));  // => null 
 db.SelectFrom<UsersTable>().Project((rs, x) => rs.Get(x.Company.IsNull()));  // => true/false
 ```
+
+> Note: The compiler error for `x.Company == null` relies on nullable reference types (CS8625). It is only an error if 
+> your project enables `<Nullable>enable</Nullable>` and treats nullable warnings as errors 
+> (`<WarningsAsErrors>Nullable</WarningsAsErrors>`). Otherwise it is just a warning, or with nullable checks disabled, 
+> not reported at all. In those cases the code compiles, but throws an `ArgumentNullException` when the expression is 
+> built.
 
 
 ## Arithmetic operators

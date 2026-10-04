@@ -23,7 +23,7 @@ public class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
 }
 ```
 
-You can start building a query in one of the following styles: 
+You can start building a query like this: 
 
 ```csharp
 db.SelectFrom<UsersTable>();
@@ -35,10 +35,10 @@ db.SelectFrom<UsersTable>();
 ```csharp
 db.SelectFrom<UsersTable>()
     .Where(x => x.City == "New York")
-    .Where(x => x.Lastname == "Jones")
+    .Where(x => x.Lastname == "Jones");
 
 db.SelectFrom<UsersTable>()
-    .Where(x => x.City == "New York" | x.Lastname == "Jones" | x.Name == "Charlie")
+    .Where(x => x.City == "New York" | x.Lastname == "Jones" | x.Name == "Charlie");
 ```
 
 You can apply multiple filters. They will be combined with `AND` in the SQL query. 
@@ -51,7 +51,7 @@ Read [Expressions.md](Expressions.md) for more information about building the fi
 A few examples:
 
 ```csharp
-global using static Quib.Postgres18.Schema.Sort;
+global using static Quib.Postgres18.QueryBuilder.Sort;
 
 db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname ]);
 db.SelectFrom<UsersTable>().OrderBy(x => [ SQL.Sort(x.Lastname, ASC) ]);
@@ -62,7 +62,7 @@ db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname, x.Firstname ]);
 Of course, you may use any [expression](Expressions.md) for the sorting.
 
 > Note: sort order depends on the database and collation (also with NULL ordering). Currently, there's no support for 
-> Postgres NULL FIRST and NULL LAST clause. MySQL doesn't support it anyways.
+> Postgres NULLS FIRST and NULLS LAST clauses. MySQL doesn't support them anyway.
 
 
 ## Dynamic queries

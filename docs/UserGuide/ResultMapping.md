@@ -38,14 +38,16 @@ public class User
 }
 
 // The mapping from table schema to domain model, consists of two parts
-public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>
+public class UserReader(IProjectionBuilder query, UsersTable user) : IReaderMapping<UsersTable, User>
 {
     // 1. Projection (builds the SELECT clause)
-    public static IReaderMapping<UsersTable, User> CreateFrom(ProjectionBuilder query, UsersTable user) => new UserReader(query, user);
+    public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserReader(query, user);
 
     private readonly ProjectedValue<DbInt> _id = query.Get(user.Id);
     private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
     private readonly ProjectedValue<DbText> _email = query.Get(user.Email);
+
+    public IProjectedValue[] ObjectIdentity => [_id];
 
     // 2. Mapping the result (projections) to the domain model after fetching from the database
     public User Map(ResultReader rs)
@@ -60,7 +62,7 @@ public class UserReader(ProjectionBuilder query, UsersTable user) : IReaderMappi
 }
 ```
 
-Then you can fetch the results in one of the following styles: 
+Then you can fetch the results like this: 
 
 ```csharp
 var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray();
@@ -69,7 +71,7 @@ var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray
 
 ## Mapping to anonymous types
 
-You need to explicitely perform the projection and mapping step using two functions: 
+You need to explicitly perform the projection and mapping step using two functions: 
 
 ```csharp
 var users = await db.SelectFromTable("users")

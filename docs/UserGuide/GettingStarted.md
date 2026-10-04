@@ -13,7 +13,7 @@ Add the desired NuGet package to your project, for example
 
 ## Install (migrate) your database
 
-Quib provides a fluent API for database migrations. So you don't have to use raw (and error prone)
+Quib provides a fluent API for database migrations. So you don't have to use raw (and error-prone)
 SQL files.
 
 For each module of your application, define a migration class that contains all updates of the database schema for that
@@ -41,7 +41,7 @@ internal sealed class OrderModule : IModuleMigration
             .With(async (install, db) =>
             {
                 install.Table("orders")
-                    .CreateColumn("comment", ColumnType.VarChar(265).Nullable());
+                    .CreateColumn("comment", ColumnType.VarChar(255).Nullable());
 
                 // You may also update data in the migration: 
                 await db.UpdateTable("orders")
@@ -109,9 +109,9 @@ using Quib.Postgres18.ORMapper;
 using Quib.Postgres18.QueryBuilder;
 using Quib.Postgres18.Schema;
 
-internal class ProductsReader(ProjectionBuilder query, ProductsTable product) : IReaderMapping<Product>, IReaderMapping<ProductsTable, Product>
+internal class ProductsReader(IProjectionBuilder query, ProductsTable product) : IReaderMapping<Product>, IReaderMapping<ProductsTable, Product>
 {
-    static IReaderMapping<Product> IReaderMapping<ProductsTable, Product>.CreateFrom(ProjectionBuilder rs, ProductsTable query) => new ProductsReader(rs, query);
+    static IReaderMapping<Product> IReaderMapping<ProductsTable, Product>.CreateFrom(IProjectionBuilder rs, ProductsTable query) => new ProductsReader(rs, query);
 
     private readonly ProjectedValue<DbInt> _id = query.Get(product.ID);
     private readonly ProjectedValue<DbText> _productName = query.Get(product.ProductName);
@@ -157,7 +157,7 @@ var rs2 = await db.SelectFrom<ProductsTable>()
 Read [SelectQueries.md](SelectQueries.md), [ResultMapping.md](ResultMapping.md) and [ResultFetching.md](ResultFetching.md) 
 for more details.
 
-For a query with JOIN's: 
+For a query with JOINs: 
 
 ```csharp
 var rs3 = await db
@@ -214,7 +214,7 @@ internal class ProductsWriter : IWriterMapping<ProductsTable, Model.Product>
 }
 ```
 
-Insert a new user record:
+Insert a new product record:
 
 ```csharp
 var product = new Product

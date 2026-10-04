@@ -24,8 +24,8 @@ install.Table("users")
 
 - `Int()` - 32-bit integer
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max 1 GB (value limit)
-- `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1GB text.
-- `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1GB text.
+- `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1 GB text.
+- `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1 GB text.
 - `LongText()` - up to 1 GB of text data (value limit)
 
 
@@ -39,7 +39,7 @@ To ensure full compatibility and proper character collation, database-specific c
 
 **MySQL**
 
-Columns explicitely configure the `utf8mb4` character set and `utf8mb4_unicode_ci` collation by default.
+Columns explicitly configure the `utf8mb4` character set and `utf8mb4_unicode_ci` collation by default.
 
 To ensure full UTF-8 support in MySQL, you **must** configure your connection string with the `utf8mb4` charset. This is 
 essential for proper character handling:
@@ -52,5 +52,5 @@ using var connection = new MySqlConnection(connectionString);
 
 **Postgres**
 
-Columns explicitely configure the `en_US.utf8` collation by default. It's also case-insensitive for string comparisons. 
+Columns explicitly configure the `en_US.utf8` collation by default. It's also case-insensitive for string comparisons. 
 

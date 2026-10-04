@@ -1,4 +1,3 @@
-
 # Installer and Migrations API
 
 The Installer API provides a small, fluent DDL surface for creating and evolving your database schema from C# code. It 
@@ -21,7 +20,7 @@ installed versions won't be executed again on subsequent installations.
 
 **Modules for migrations:**
 
-Migrations can be devieded into modules like "Catalog" or "Orders". Each module can have multiple versions (installer
+Migrations can be divided into modules like "Catalog" or "Orders". Each module can have multiple versions (installer
 scripts). 
 
 A module can also depend on other modules. For example, the "Orders" module may depend on the "Catalog" module because 
@@ -30,8 +29,8 @@ the right order.
 
 Note 1: When requiring e.g. a "Version 2" of a module, the module's version must and will be exactly at version 2 (not 
 higher or lower). This is required because for example the products table may also be renamed in a later version. You
-must make sure that migration can be executed in your intended order. Otherwise the installer will throw an exception.
-When adding an install script that has a dependency on an other module, just look up the current version of that module.
+must make sure that migrations can be executed in your intended order. Otherwise the installer will throw an exception.
+When adding an install script that has a dependency on another module, just look up the current version of that module.
 
 Note 2: You may also query or change data in your install scripts. Use the `db` (`QueryFactory`) object.
 
@@ -57,7 +56,7 @@ internal sealed class OrderModule : IModuleMigration
             .With(async (install, db) =>
             {
                 install.Table("orders")
-                    .CreateColumn("comment", ColumnType.VarChar(265).Nullable());
+                    .CreateColumn("comment", ColumnType.VarChar(255).Nullable());
 
                 await db.UpdateTable("orders")
                     .AllRows()
@@ -74,7 +73,7 @@ internal sealed class OrderModule : IModuleMigration
 **Run the migration with all modules of your application:**
 
 ```csharp
-using (var connection = new Npgsql.NpgsqlConnection(_dbContainer.ConnectionString))
+using (var connection = new Npgsql.NpgsqlConnection("..."))
 {
     await connection.OpenAsync();
 
@@ -148,7 +147,7 @@ install.Table("users").Column("email").ChangeType(ColumnType.VarChar(512).Nullab
 install.Table("users").Column("username").RenameTo("user_name");
 ```
 
-Note: MySQL 5.6 and 5.7 do not support the RENAME COLUMN syntax. Use ChangeTo instead (renames and re-declares the column in a single statement):
+Note: MySQL 5.6 and 5.7 do not support the `RENAME COLUMN` syntax. Use `ChangeTo` instead (renames and re-declares the column in a single statement):
 
 ```csharp
 install.Table("users").Column("username").ChangeTo("user_name", ColumnType.VarChar(64).NotNull());
@@ -194,4 +193,4 @@ install.Table("users").DropIndex("idx_users_username");
 
 ## See also
 
-- [ColumnTypes.md](ColumnTypes.md) — overview over the available column/database types
+- [ColumnTypes.md](ColumnTypes.md) — overview of the available column/database types

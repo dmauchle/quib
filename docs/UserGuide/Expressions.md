@@ -2,7 +2,7 @@
 
 ## Use cases 
 
-Some use cases for SQL expressions (of course you may use it everywhere you would expect it):
+Some use cases for SQL expressions (of course you may use them anywhere you would expect them):
 
 ```csharp
 public class UsersTable(DbTable table) : IDbTable
@@ -10,16 +10,16 @@ public class UsersTable(DbTable table) : IDbTable
     public static string TableName => "users";
 
     public DbColumn<DbText> Email => table.Column<DbText>("email");
-    public QueryExpression<DbText> HasEmail => this.Email.IsNotNull();  // Expression on schemas, use it like a "view"
+    public QueryExpression<DbBool> HasEmail => this.Email.IsNotNull();  // Expression on schemas, use it like a "view"
 }
 ```
 
 ```csharp
 db.SelectFrom<UsersTable>()
-    .Where(x => x.Credits > 100 & x.Country == "Switzerland");  // Filter expressions
+    .Where(x => x.Credits > 100 & x.Country == "Switzerland")  // Filter expressions
     .Project((rs, x) => new { GoodCustomer = rs.Get(x.TotalOrders > 1000) });  // Projection expressions
 
-db.Update<UsersTable>().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();  // Update expressions
+db.Update<UsersTable>().AllRows().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();  // Update expressions
 ```
 
 
@@ -46,7 +46,7 @@ db.SelectFrom<UsersTable>().Project((rs, x) => rs.Get(x.Company.IsNull()));  // 
 On numerical types, you can use the following operators: `+`, `-`, `*`, `/`, `%`.
 
 ```csharp
-db.Update<UsersTable>().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();
+db.Update<UsersTable>().AllRows().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();
 ```
 
 On boolean types, you can use the following operators: `&`, `|`, `!`.

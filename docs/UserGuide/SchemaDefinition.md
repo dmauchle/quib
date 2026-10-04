@@ -24,7 +24,7 @@ private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
 }
 ```
 
-Note the use of the `field ??=` pattern. This allows the column accesses to be cached and optimize performance.
+Note the use of the `field ??=` pattern. This allows the column accesses to be cached, which improves performance.
 
 
 ## See also

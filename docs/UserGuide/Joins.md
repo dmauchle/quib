@@ -1,6 +1,6 @@
-# SELECT Query JOIN's
+# SELECT Query JOINs
 
-Example schema with a foreign key relation, domain model and mapping
+Example schema with a foreign key relation, domain model and mapping:
 
 ```csharp
 public class CompaniesTable(DbTable table) : IDbTable, IDbTable<CompaniesTable>
@@ -19,9 +19,9 @@ public class Company
     public required string City { get; init; }
 }
 
-public class CompanyMapping(ProjectionBuilder rs, CompaniesTable company) : IReaderMapping<CompaniesTable, Company>
+public class CompanyMapping(IProjectionBuilder rs, CompaniesTable company) : IReaderMapping<CompaniesTable, Company>
 {
-    public static IReaderMapping<Company> CreateFrom(ProjectionBuilder rs, CompaniesTable company) => new CompanyMapping(rs, company);
+    public static IReaderMapping<Company> CreateFrom(IProjectionBuilder rs, CompaniesTable company) => new CompanyMapping(rs, company);
 
     private readonly ProjectedValue<DbText> _companyName = rs.Get(company.CompanyName);
     private readonly ProjectedValue<DbText> _city = rs.Get(company.City);
@@ -72,25 +72,25 @@ For reusable queries, we can define an `ISelectContext<T>`, which contains the j
 ```csharp
 public class EmployeesQuery(SelectQueryBuilder query) : ISelectContext<EmployeesQuery>
 {
-    public static EmployeesQuery Factory(SelectQueryBuilder query) => new EmployeesQuery(query);
+    public static EmployeesQuery CreateFrom(SelectQueryBuilder query) => new EmployeesQuery(query);
 
     public EmployeesTable Employee => field ??= query.From<EmployeesTable>();
     public CompaniesTable Company => field ??= query.LeftOuterJoin<CompaniesTable>().On(c => c.ID == Employee.CompanyId);
 }
 ```
 
-Note the use of the `field ??=` pattern. This allows the joins only to be performed, when they're actually used in the
+Note the use of the `field ??=` pattern. This allows the joins to be performed only when they are actually used in the
 query.
 
-This example uses a `query.LeftOuterJoin<T>`. Of course, `query.RightOuterJoin<T>()` and `query.InnerJoin<T>()` are also 
+This example uses `query.LeftOuterJoin<T>()`. Of course, `query.RightOuterJoin<T>()` and `query.InnerJoin<T>()` are also 
 available.
 
-This mapping for this query can be defined as follows:
+The mapping for this query can be defined as follows:
 
 ```csharp
-public class EmployeeMapping(ProjectionBuilder query, EmployeesQuery row) : IReaderMapping<Employee>, IReaderMapping<EmployeesQuery, Employee>
+public class EmployeeMapping(IProjectionBuilder query, EmployeesQuery row) : IReaderMapping<Employee>, IReaderMapping<EmployeesQuery, Employee>
 {
-    public static IReaderMapping<Employee> CreateFrom(ProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
+    public static IReaderMapping<Employee> CreateFrom(IProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
 
     public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
 
@@ -127,7 +127,7 @@ If you just want a quick join, you can do it like this and use it e.g. to filter
 even in the result set:
 
 ```csharp
-var rs = await DB
+var rs = await db
     .SelectFrom<EmployeesTable>()
     .Select((query, employee) =>
     {

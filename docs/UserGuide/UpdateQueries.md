@@ -75,7 +75,7 @@ Key interfaces:
 - `QueryFactory.Update<T>()`
 
 
-Example for an updates using the declared mapping from the schema:
+Example of an update using the declared mapping from the schema:
 
 ```csharp
 var alice = new User { Id = 42, Username = "ajones", Email = "jones@example.com" };
@@ -86,7 +86,7 @@ var rowsUpdated = await db.Update<UsersTable>()
     .Execute();
 ```
 
-Example for an inline update. This is especially useful when you don't want to update all the columns:
+Example of an inline update. This is especially useful when you don't want to update all the columns:
 
 ```csharp
 var rowsUpdated = await db.Update<UsersTable>()
@@ -133,7 +133,7 @@ Key interfaces:
 - `QueryFactory.DeleteFrom<T>()`
 
 
-Example for a delete query using the declared mapping from the schema:
+Example of a delete query using the schema:
 
 ```csharp
 var rowsDeleted = await db.DeleteFrom<UsersTable>()

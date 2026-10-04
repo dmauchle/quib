@@ -14,6 +14,7 @@ play and the result set is mapped to your .NET classes.
 Your explicit schema definitions and domain models provide compile-time checking and avoid runtime errors (preferred).
 
 - [SchemaDefinition.md](SchemaDefinition.md) — describing tables and columns to ensure type safety and error checks
+- [Expressions.md](Expressions.md) — build filter, projection and update expressions
 - [SelectQueries.md](SelectQueries.md) — run SELECT queries
     - [ResultMapping.md](ResultMapping.md) — bring the results of your SELECT query to your domain model
     - [ResultFetching.md](ResultFetching.md) — various ways to fetch the results of your SELECT query
@@ -26,9 +27,9 @@ Your explicit schema definitions and domain models provide compile-time checking
 Update your database schema and run migrations.
 
 - [Installer.md](Installer.md) — run db migrations
-- [ColumnTypes.md](ColumnTypes.md) — overview over the available column/database types
+- [ColumnTypes.md](ColumnTypes.md) — overview of the available column/database types
 
 
 ## Supported Databases
 
-A fine selection of **Postgres** and **MySql** versions are currently supported. Read [SupportedDatabases.md](SupportedDatabases.md) for more details.
+A fine selection of **Postgres** and **MySQL** versions are currently supported. Read [SupportedDatabases.md](SupportedDatabases.md) for more details.

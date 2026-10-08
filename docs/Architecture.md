@@ -68,10 +68,49 @@ of SQL expressions reside in `Quib.Shared.Expressions`. Usage is typically throu
 or `SQL` factory class.
 
 
+## Column types vs. DB types
+
+Quib distinguishes between two kinds of datatypes:
+
+- **Column types**: The SQL types of the columns in the db schema like `VARCHAR(50)`, `TEXT` or `INTEGER`. They are 
+  only used by the Installer API (schema installation and migration). See "Column types" below.
+- **DB types**: The .NET marker types used by the query builder to make expressions type safe like `DbText` or `DbInt`. 
+  They reside in the `Quib.*.Types` namespace. See "DB types for expressions" below.
+
+The mapping is not one-to-one: one DB type can be used for multiple column types. E.g. `DbText` is used for `VARCHAR`, 
+`TEXT`, `MEDIUMTEXT`, `LONGTEXT` etc. When adding a new datatype, check both sides and add the column type and/or DB type 
+as needed. Prefer reusing an existing DB type if it fits the column type.
+
+
+## Column types
+
+Column types are created by factory methods in `ColumnTypeFactory` (/src/Quib.Shared/Installer/ColumnTypeFactory.cs) and 
+used like `ColumnType.VarChar(50)`. Use the existing methods as a reference.
+
+Where a column type differs between databases (type name, options, limits, availability), the factory method is 
+distinguished per database with compiler directives (`#if MYSQL` / `#elif POSTGRES`, or a version-specific symbol like 
+`MYSQL56` if needed).
+
+### Unit tests
+
+For every column type (or group of column types, see below), there should be a unit test file in 
+/test/Quib.Shared.UnitTests/SchemaTests like `VarCharTest`, `TextTest` or `IntTest`. The tests should cover:
+
+- The column type itself: creating the column, limits and database-specific behavior.
+- Writing and reading values with the corresponding DB type (not-null and nullable, including `NULL`): the setters in 
+  `UpdateQueryExtensions`, the `Get` methods in `ResultReader` and the fetch methods in `MappingExtensions`. Generic 
+  methods like `SetNull` don't need to be tested per type.
+
+A DB type used by multiple column types (e.g. `DbText` for `VARCHAR` and `TEXT`) is therefore tested in each of these 
+files. This duplication is intended. However, column types that only differ in size (e.g. `ShortText`, `MediumText` and 
+`LongText`) share a test file, and it is sufficient to test the read and write methods with one of them (e.g. `ShortText`).
+
+
 ## DB types for expressions
 
 DB types are marker types used to represent the SQL types in expressions like `DbText` or `DbInt`. They are used to ensure 
-type safety. They implement `IExpressionType` and `INotNullExpressionType`. All DB type structs reside in DbTypes.cs.
+type safety. They implement `IExpressionType` and `INotNullExpressionType`. All DB type structs reside in 
+/src/Quib.Shared/Types/DbTypes.cs.
 
 For every type there should be a corresponding nullable type like `DbTextNullable` or `DbIntNullable`. The nullable types 
 implement `IExpressionType` and `INullableExpressionType` in addition.
@@ -80,10 +119,13 @@ DB types have a corresponding .NET value type like `string` for `DbText`, `strin
 
 You can take `DbInt`and `DbText` as reference implementations. Assume these are correct. But they could be lacking features.
 
-### Fetch and mapping methods
+### Fetch, mapping and update methods
 
 - Add `Get` methods to the `ResultReader` class for every db type (and nullable). Use the existing methods as a reference.
 - Add fetch methods to the `MappingExtensions` class for every db type (and nullable). Use the existing methods as a reference.
+- Add setters to the `UpdateQueryExtensions` class for every db type (and nullable). Use the existing methods as a reference.
+
+These classes reside in /src/Quib.Shared/ORMapper. They are tested per column type (see "Column types" above).
 
 ### Factory methods
 
@@ -98,7 +140,8 @@ expressions for each db type:
 
 For every type (and its nullable counterpart), there should be extensions in the static `ExpressionExtensions` class. 
 Extensions for each type (and nullable) should be placed in individual files like `ExpressionExtensions.DbText.cs` or 
-`ExpressionExtensions.DbTextNullable.cs`.
+`ExpressionExtensions.DbTextNullable.cs`. New files must be added to /src/Quib.Shared/Quib.Shared.projitems, otherwise 
+they are not compiled.
 
 > **Note:** if expression implementations in /src/Quib.Shared/Expressions are missing, you can create them (see above). 
 But check first if an existing implementation can be used.
@@ -138,7 +181,7 @@ All binary operators should have overloads with the left-value always being the 
 
 ### Unit tests
 
-For every db type (including nullable), there should be a unit test file in /src/Quib.Shared.UnitTests/ExpressionTests. 
+For every db type (including nullable), there should be a unit test file in /test/Quib.Shared.UnitTests/ExpressionTests. 
 Examples are `DbTextExpressionTest` for `DbText`, `DbTextNullableExpressionTest` for `DbTextNullable` or 
 `DbIntExpressionTest` for `DbInt`. You can use all existing unit tests as reference.
 

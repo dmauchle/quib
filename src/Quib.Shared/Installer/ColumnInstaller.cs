@@ -33,9 +33,9 @@ public sealed class ColumnInstaller
     {
         string sql;
 #if MYSQL
-        sql = $"ALTER TABLE `{_tablename}` ADD COLUMN `{_columnname}` {type.ToSql()};";
+        sql = $"ALTER TABLE `{_tablename}` ADD COLUMN `{_columnname}` {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
 #elif POSTGRES
-        sql = $"ALTER TABLE \"{_tablename}\" ADD COLUMN \"{_columnname}\" {type.ToSql()};";
+        sql = $"ALTER TABLE \"{_tablename}\" ADD COLUMN \"{_columnname}\" {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
 #endif
         _db.ExecuteNonQuery(sql);
         return this;
@@ -66,9 +66,9 @@ public sealed class ColumnInstaller
     {
         string sql;
 #if MYSQL
-        sql = $"ALTER TABLE `{_tablename}` MODIFY `{_columnname}` {type.ToSql()};";
+        sql = $"ALTER TABLE `{_tablename}` MODIFY `{_columnname}` {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
 #elif POSTGRES
-        sql = $"ALTER TABLE \"{_tablename}\" ALTER COLUMN \"{_columnname}\" TYPE {type.ToSql()};";
+        sql = $"ALTER TABLE \"{_tablename}\" ALTER COLUMN \"{_columnname}\" TYPE {type.TypeWithOptions}, ALTER COLUMN \"{_columnname}\" {(type.IsNullable ? "DROP NOT NULL" : "SET NOT NULL")};";
 #endif
         _db.ExecuteNonQuery(sql);
         return this;
@@ -76,8 +76,7 @@ public sealed class ColumnInstaller
 
 #if !MYSQL56 && !MYSQL57
     /// <summary>
-    /// Execute DDL statement to rename column. Requires MySQL version 8+. For older versions, 
-    /// use <see cref="ChangeTo(string, ColumnType)"/> instead.
+    /// Execute DDL statement to rename column.
     /// </summary>
     /// <param name="newColumnName"></param>
     /// <returns></returns>
@@ -103,11 +102,13 @@ public sealed class ColumnInstaller
     public ColumnInstaller ChangeTo(string newColumnname, IColumnType type)
     {
 #if MYSQL
-        var sql = $"ALTER TABLE `{_tablename}` CHANGE `{_columnname}` `{newColumnname}` {type.ToSql()};";
+        var sql = $"ALTER TABLE `{_tablename}` CHANGE `{_columnname}` `{newColumnname}` {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
         _db.ExecuteNonQuery(sql);
 #elif POSTGRES
         this.ChangeType(type);
-        this.RenameTo(newColumnname);
+        // Postgres fails when renaming a column to its current name
+        if (newColumnname != _columnname)
+            this.RenameTo(newColumnname);
 #endif
         return this;
     }

@@ -69,10 +69,132 @@ public class ColumnInstallerTest(DatabaseFixture env, ITestOutputHelper log) : D
         }
     }
 
-    [Fact(Skip = "Need more types first.")]
+    [Fact]
     public async Task ChangeType_Works()
     {
-        throw new NotImplementedException("Need more types first.");
+        var name = "ci_change_type";
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            var table = install.Table(name)
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("price", ColumnType.Int().NotNull());
+
+            await DB.InsertIntoTable(name)
+                .AddRow((query, t) =>
+                {
+                    query.Set(t.Column<DbInt>("id"), 1);
+                    query.Set(t.Column<DbInt>("price"), 42);
+                })
+                .Execute();
+
+            table.Column("price").ChangeType(ColumnType.Decimal(10, 2).NotNull());
+
+            var colCnt = await ScalarLong(
+#if MYSQL
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = '{name}' AND column_name = 'price' AND data_type = 'decimal' AND numeric_precision = 10 AND numeric_scale = 2 AND is_nullable = 'NO'"
+#elif POSTGRES
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = '{name}' AND column_name = 'price' AND data_type = 'numeric' AND numeric_precision = 10 AND numeric_scale = 2 AND is_nullable = 'NO'"
+#endif
+            );
+            Assert.Equal(1L, colCnt);
+
+            // Existing values are converted
+            var rs = await DB.SelectFromTable(name)
+                .Project(x => x.Column<DbDecimal>("price"))
+                .FetchOne();
+            Assert.Equal(42m, rs.Result);
+        }
+    }
+
+    [Fact]
+    public async Task ChangeType_ToNullable_Works()
+    {
+        var name = "ci_change_type_nullable";
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            var table = install.Table(name)
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("price", ColumnType.Int().NotNull());
+
+            table.Column("price").ChangeType(ColumnType.Decimal(10, 2).Nullable());
+
+            var colCnt = await ScalarLong(
+#if MYSQL
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = '{name}' AND column_name = 'price' AND data_type = 'decimal' AND is_nullable = 'YES'"
+#elif POSTGRES
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = '{name}' AND column_name = 'price' AND data_type = 'numeric' AND is_nullable = 'YES'"
+#endif
+            );
+            Assert.Equal(1L, colCnt);
+        }
+    }
+
+    [Fact]
+    public async Task ChangeTo_Works()
+    {
+        var name = "ci_change_to";
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            var table = install.Table(name)
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("price", ColumnType.Int().NotNull());
+
+            await DB.InsertIntoTable(name)
+                .AddRow((query, t) =>
+                {
+                    query.Set(t.Column<DbInt>("id"), 1);
+                    query.Set(t.Column<DbInt>("price"), 42);
+                })
+                .Execute();
+
+            table.Column("price").ChangeTo("amount", ColumnType.Decimal(10, 2).NotNull());
+
+            var oldCnt = await ScalarLong(
+#if MYSQL
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = '{name}' AND column_name = 'price'"
+#elif POSTGRES
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = '{name}' AND column_name = 'price'"
+#endif
+            );
+            var newCnt = await ScalarLong(
+#if MYSQL
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = '{name}' AND column_name = 'amount' AND data_type = 'decimal' AND numeric_precision = 10 AND numeric_scale = 2 AND is_nullable = 'NO'"
+#elif POSTGRES
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = '{name}' AND column_name = 'amount' AND data_type = 'numeric' AND numeric_precision = 10 AND numeric_scale = 2 AND is_nullable = 'NO'"
+#endif
+            );
+            Assert.Equal(0L, oldCnt);
+            Assert.Equal(1L, newCnt);
+
+            // Existing values are converted
+            var rs = await DB.SelectFromTable(name)
+                .Project(x => x.Column<DbDecimal>("amount"))
+                .FetchOne();
+            Assert.Equal(42m, rs.Result);
+        }
+    }
+
+    [Fact]
+    public async Task ChangeTo_WithSameName_ChangesType()
+    {
+        var name = "ci_change_to_same";
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            var table = install.Table(name)
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("price", ColumnType.Int().NotNull());
+
+            table.Column("price").ChangeTo("price", ColumnType.Decimal(10, 2).Nullable());
+
+            var colCnt = await ScalarLong(
+#if MYSQL
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = '{name}' AND column_name = 'price' AND data_type = 'decimal' AND is_nullable = 'YES'"
+#elif POSTGRES
+                $"SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = '{name}' AND column_name = 'price' AND data_type = 'numeric' AND is_nullable = 'YES'"
+#endif
+            );
+            Assert.Equal(1L, colCnt);
+        }
     }
 
 #if MYSQL56 || MYSQL57

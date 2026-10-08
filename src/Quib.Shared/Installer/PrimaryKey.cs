@@ -33,7 +33,7 @@ public sealed class PrimaryKey
         if (_columns.Count == 0)
             throw new ArgumentException("Missing columns in primary key.");
 
-        return string.Join(", ", _columns.Select(f => $"{SqlSyntax.Identifier(f.ColumnName)} {f.Type.ToSql()}"));
+        return string.Join(", ", _columns.Select(f => $"{SqlSyntax.Identifier(f.ColumnName)} {f.Type.TypeWithOptions}"));
     }
 
     internal string KeyDefinitionToSql()

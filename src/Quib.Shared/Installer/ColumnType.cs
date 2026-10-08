@@ -13,7 +13,14 @@ namespace Quib.Postgres18.Installer;
 
 public interface IColumnType
 {
-    internal string ToSql();
+
+    /// <summary>
+    /// Type and options without nullability (e.g. Postgres requires it separately).
+    /// </summary>
+    internal string TypeWithOptions { get; }
+
+    internal bool IsNullable { get; }
+
 }
 
 public sealed class ColumnType : IColumnTypeFactory
@@ -59,15 +66,9 @@ public sealed class NotNullColumnType : IColumnType
     public string DbType => _type.DbType;
     public string? Options => _type.Options;
 
-    internal string ToSql()
-    {
-        return $"{_type.DbType} {_type.Options} NOT NULL";
-    }
+    public string TypeWithOptions => $"{_type.DbType} {_type.Options}";
 
-    string IColumnType.ToSql()
-    {
-        return this.ToSql();
-    }
+    public bool IsNullable => false;
 
 }
 
@@ -83,14 +84,9 @@ public sealed class NullableColumnType : IColumnType
     public string DbType => _type.DbType;
     public string? Options => _type.Options;
 
-    internal string ToSql()
-    {
-        return $"{_type.DbType} {_type.Options} NULL";
-    }
 
-    string IColumnType.ToSql()
-    {
-        return this.ToSql();
-    }
+    public string TypeWithOptions => $"{_type.DbType} {_type.Options}";
+
+    public bool IsNullable => true;
 
 }

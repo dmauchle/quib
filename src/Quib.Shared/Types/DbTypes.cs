@@ -26,3 +26,7 @@ public readonly struct DbBoolNullable : IExpressionType, INullableExpressionType
 public interface IDbUuid : IExpressionType { }
 public readonly struct DbUuid : IExpressionType, INotNullExpressionType, IDbUuid { }
 public readonly struct DbUuidNullable : IExpressionType, INullableExpressionType, IDbUuid { }
+
+public interface IDbDecimal : IExpressionType { }
+public readonly struct DbDecimal : IExpressionType, INotNullExpressionType, IDbDecimal { }
+public readonly struct DbDecimalNullable : IExpressionType, INullableExpressionType, IDbDecimal { }

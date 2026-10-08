@@ -134,4 +134,34 @@ public static class MappingExtensions
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
+    public static IAsyncEnumerable<decimal> FetchStream(this ProjectedQuery<ProjectedValue<DbDecimal>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<decimal[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDecimal>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<SingleQueryResult<decimal>> FetchOne(this ProjectedQuery<ProjectedValue<DbDecimal>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static IAsyncEnumerable<decimal?> FetchStream(this ProjectedQuery<ProjectedValue<DbDecimalNullable>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<decimal?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDecimalNullable>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<SingleQueryResult<decimal?>> FetchOne(this ProjectedQuery<ProjectedValue<DbDecimalNullable>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
+    }
+
 }

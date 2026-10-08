@@ -15,6 +15,7 @@ install.Table("users")
 **MySQL**
 
 - `Int()` - 32-bit integer
+- `Decimal(precision, scale)` - exact fixed-point number
 - `Bool()` - boolean, stored as `TINYINT(1)` (`BOOLEAN` is an alias).
 - `Uuid()` - UUID (.NET `Guid`), stored as `CHAR(36)` with `ascii` charset and `ascii_bin` collation (see below)
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max. 65,535 bytes (row size limit)
@@ -25,12 +26,36 @@ install.Table("users")
 **Postgres**
 
 - `Int()` - 32-bit integer
+- `Decimal(precision, scale)` - exact fixed-point number
 - `Bool()` - native boolean
 - `Uuid()` - native uuid (.NET `Guid`, 16 bytes)
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max 1 GB (value limit)
 - `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1 GB text.
 - `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1 GB text.
 - `LongText()` - up to 1 GB of text data (value limit)
+
+
+## Decimal
+
+Use `DbDecimal` / `DbDecimalNullable` in queries, the .NET type is `decimal`. `DECIMAL(precision, scale)` stores exact 
+values, so it's the right choice for money, e.g. `ColumnType.Decimal(19, 4)`.
+
+- `precision`: total number of digits, 1 - 28. Limited to 28, so every value of the column fits into a .NET `decimal`.
+- `scale`: number of digits after the decimal point, 0 - `precision`.
+
+Writing values that don't fit the column:
+
+- Too many decimals: the value is rounded to the scale (e.g. `1.235` → `1.24` in `DECIMAL(10,2)`).
+- Integer part too large: the database raises an error. MySQL only does this in strict mode (`STRICT_TRANS_TABLES`, 
+  default since 5.7). Otherwise it silently stores the largest value the column allows.
+
+Values are read with the scale of the column: `1.5m` comes back as `1.50m` from `DECIMAL(10,2)`. The values are equal, 
+but `ToString()` differs.
+
+Calculations can produce values larger or with more decimals than the column type (e.g. `SUM` or division). Results with 
+more than 28 decimals are rounded when read. Results exceeding the range of a .NET `decimal` throw an 
+`OverflowException`. Also, the scale of a division result differs between databases (MySQL: 4 more decimals than the 
+dividend, Postgres: at least 16 significant digits).
 
 
 ## UUID

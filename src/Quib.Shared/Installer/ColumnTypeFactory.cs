@@ -28,6 +28,22 @@ public static class ColumnTypeFactory
             return new ColumnType($"INTEGER", defaultValue: "0");
         }
 
+        /// <summary>
+        /// Exact fixed-point number, e.g. for money values.
+        /// </summary>
+        /// <param name="precision">Total number of digits (1 - 28).</param>
+        /// <param name="scale">Number of digits after the decimal point (0 - precision).</param>
+        /// <returns></returns>
+        public static ColumnType Decimal(int precision, int scale)
+        {
+            // Precision is limited to 28 digits, so every value of the column fits into a .NET decimal
+            ArgumentOutOfRangeException.ThrowIfLessThan(precision, 1);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(precision, 28);
+            ArgumentOutOfRangeException.ThrowIfNegative(scale);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(scale, precision);
+            return new ColumnType($"DECIMAL({precision},{scale})", defaultValue: "0");
+        }
+
         public static ColumnType Bool()
         {
             return new ColumnType($"BOOLEAN", defaultValue: "FALSE");

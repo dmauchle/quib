@@ -25,6 +25,11 @@ public static partial class SQL
         return new Constant<DbInt>(value.ToString());
     }
 
+    public static QueryExpression<DbDecimal> Constant(decimal value)
+    {
+        return new Constant<DbDecimal>(value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+    }
+
     public static QueryExpression<DbBool> Constant(bool value)
     {
         return new Constant<DbBool>(value ? "true" : "false");
@@ -48,6 +53,16 @@ public static partial class SQL
     public static QueryExpression<DbIntNullable> NullableParameter(int? value)
     {
         return new QueryParameter<DbIntNullable>(value);
+    }
+
+    public static QueryExpression<DbDecimal> Parameter(decimal value)
+    {
+        return new QueryParameter<DbDecimal>(value);
+    }
+
+    public static QueryExpression<DbDecimalNullable> NullableParameter(decimal? value)
+    {
+        return new QueryParameter<DbDecimalNullable>(value);
     }
 
     public static QueryExpression<DbBool> Parameter(bool value)

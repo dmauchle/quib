@@ -6,6 +6,7 @@
 	<File Path="docs/Architecture.md" />
 	<File Path="docs/CodingGuidelines.md" />
     <File Path="README.md" />
+	<File Path="CLAUDE.md" />
   </Folder>
   <Folder Name="/examples/">
     <Project Path="examples/CheatSheet/CheatSheet.csproj" Id="f90aafa1-1c1d-47c1-83c4-ecf67a1ae2b1" />

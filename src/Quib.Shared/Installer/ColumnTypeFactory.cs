@@ -49,6 +49,39 @@ public static class ColumnTypeFactory
             return new ColumnType($"BOOLEAN", defaultValue: "FALSE");
         }
 
+        /// <summary>
+        /// Date without time.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType DateOnly()
+        {
+            return new ColumnType($"DATE", defaultValue: "'1970-01-01'");
+        }
+
+#if MYSQL
+
+        /// <summary>
+        /// Date and time with whole seconds, without time zone.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType DateTime()
+        {
+            return new ColumnType($"DATETIME", defaultValue: "'1970-01-01 00:00:00'");
+        }
+
+#elif POSTGRES
+
+        /// <summary>
+        /// Date and time with whole seconds, without time zone.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType DateTime()
+        {
+            return new ColumnType($"timestamp(0)", defaultValue: "'1970-01-01 00:00:00'");
+        }
+
+#endif
+
 #if MYSQL
 
         /// <summary>

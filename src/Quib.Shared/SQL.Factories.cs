@@ -96,4 +96,45 @@ public static partial class SQL
 #endif
     }
 
+    public static QueryExpression<DbDateOnly> Parameter(DateOnly value)
+    {
+        return new QueryParameter<DbDateOnly>(ToDbDateTime(value));
+    }
+
+    public static QueryExpression<DbDateOnlyNullable> NullableParameter(DateOnly? value)
+    {
+        return new QueryParameter<DbDateOnlyNullable>(value.HasValue ? ToDbDateTime(value.Value) : null);
+    }
+
+    public static QueryExpression<DbDateTime> Parameter(DateTime value)
+    {
+        return new QueryParameter<DbDateTime>(ToDbDateTime(value));
+    }
+
+    public static QueryExpression<DbDateTimeNullable> NullableParameter(DateTime? value)
+    {
+        return new QueryParameter<DbDateTimeNullable>(value.HasValue ? ToDbDateTime(value.Value) : null);
+    }
+
+    // Dates are passed as DateTime, as older drivers don't support DateOnly
+    private static DateTime ToDbDateTime(DateOnly value)
+    {
+        return ToDbDateTime(value.ToDateTime(TimeOnly.MinValue));
+    }
+
+    // Values are stored as local time (read back as DateTimeKind.Local), so UTC values are converted.
+    // Truncate to whole seconds (DBs would round instead) and drop the time zone (Npgsql rejects UTC values for timestamp columns)
+    private static DateTime ToDbDateTime(DateTime value)
+    {
+        if (value.Kind == DateTimeKind.Utc)
+            value = value.ToLocalTime();
+        // MySQL officially supports years 1000 - 9999 only, but silently accepts smaller values.
+        // Postgres is limited the same way for consistency (Npgsql would store DateTime.MinValue as -infinity).
+        // In order to stay consistent and on the safe side, we always limit to year 1000. 
+        if (value.Year < 1000)
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Dates are supported from year 1000 to 9999 only.");
+
+        return new DateTime(value.Ticks - (value.Ticks % TimeSpan.TicksPerSecond), DateTimeKind.Unspecified);
+    }
+
 }

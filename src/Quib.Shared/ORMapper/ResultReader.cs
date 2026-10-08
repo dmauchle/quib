@@ -211,4 +211,64 @@ public sealed class ResultReader
             return _reader.GetDecimal(field.Index);
     }
 
+    // Dates and date-times are read as DateTime, as older drivers don't support DateOnly
+
+    public DateOnly Get(ProjectedValue<DbDateOnly> field)
+    {
+        return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
+    }
+
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public DateOnly? GetNullable(ProjectedValue<DbDateOnly> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
+    }
+
+    public DateOnly? Get(ProjectedValue<DbDateOnlyNullable> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
+    }
+
+    public DateTime Get(ProjectedValue<DbDateTime> field)
+    {
+        return GetLocalDateTime(field.Index);
+    }
+
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public DateTime? GetNullable(ProjectedValue<DbDateTime> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return GetLocalDateTime(field.Index);
+    }
+
+    public DateTime? Get(ProjectedValue<DbDateTimeNullable> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return GetLocalDateTime(field.Index);
+    }
+
+    // Values are stored without time zone, so local time is assumed
+    private DateTime GetLocalDateTime(int index)
+    {
+        return DateTime.SpecifyKind(_reader.GetDateTime(index), DateTimeKind.Local);
+    }
+
 }

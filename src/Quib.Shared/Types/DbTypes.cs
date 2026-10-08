@@ -30,3 +30,11 @@ public readonly struct DbUuidNullable : IExpressionType, INullableExpressionType
 public interface IDbDecimal : IExpressionType { }
 public readonly struct DbDecimal : IExpressionType, INotNullExpressionType, IDbDecimal { }
 public readonly struct DbDecimalNullable : IExpressionType, INullableExpressionType, IDbDecimal { }
+
+public interface IDbDateOnly : IExpressionType { }
+public readonly struct DbDateOnly : IExpressionType, INotNullExpressionType, IDbDateOnly { }
+public readonly struct DbDateOnlyNullable : IExpressionType, INullableExpressionType, IDbDateOnly { }
+
+public interface IDbDateTime : IExpressionType { }
+public readonly struct DbDateTime : IExpressionType, INotNullExpressionType, IDbDateTime { }
+public readonly struct DbDateTimeNullable : IExpressionType, INullableExpressionType, IDbDateTime { }

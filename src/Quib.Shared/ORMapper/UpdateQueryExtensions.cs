@@ -80,4 +80,28 @@ public static class UpdateQueryExtensions
         query.Set(column, SQL.NullableParameter(value));
     }
 
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateOnly> column, DateOnly value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.Parameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateOnlyNullable> column, DateOnly? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.NullableParameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateTime> column, DateTime value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.Parameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateTimeNullable> column, DateTime? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.NullableParameter(value));
+    }
+
 }

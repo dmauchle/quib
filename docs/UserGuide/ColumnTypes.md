@@ -18,6 +18,8 @@ install.Table("users")
 - `Decimal(precision, scale)` - exact fixed-point number
 - `Bool()` - boolean, stored as `TINYINT(1)` (`BOOLEAN` is an alias).
 - `Uuid()` - UUID (.NET `Guid`), stored as `CHAR(36)` with `ascii` charset and `ascii_bin` collation (see below)
+- `DateOnly()` - date without time, stored as `DATE`, years 1000 - 9999
+- `DateTime()` - date and time with whole seconds, stored as `DATETIME`, years 1000 - 9999, without time zone
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max. 65,535 bytes (row size limit)
 - `ShortText()` - up to 65,535 bytes of text data. Separate from row size limit
 - `MediumText()` - up to 16 MB of text data
@@ -29,6 +31,8 @@ install.Table("users")
 - `Decimal(precision, scale)` - exact fixed-point number
 - `Bool()` - native boolean
 - `Uuid()` - native uuid (.NET `Guid`, 16 bytes)
+- `DateOnly()` - date without time, stored as `date`, years 1000 - 9999
+- `DateTime()` - date and time with whole seconds, stored as `timestamp(0)` (without time zone), years 1000 - 9999
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max 1 GB (value limit)
 - `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1 GB text.
 - `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1 GB text.
@@ -66,6 +70,36 @@ text/byte order, so version 7 UUIDs (`Guid.CreateVersion7()`) sort by creation t
 **MySQL** has no native UUID type. Quib stores UUIDs as text in the standard lowercase format 
 (`0192f3a1-5c2e-7a00-8000-0000000000ab`), using the compact `ascii` charset (36 bytes) and the binary, case-sensitive 
 `ascii_bin` collation. Values are human-readable in SQL tools. `BINARY(16)` storage is currently not supported.
+
+
+## DateOnly and DateTime
+
+Use `DbDateOnly` / `DbDateOnlyNullable` for `DateOnly()` columns, the .NET type is `DateOnly`. Use `DbDateTime` / 
+`DbDateTimeNullable` for `DateTime()` columns, the .NET type is `DateTime`.
+
+Date-times are stored without time zone and with whole seconds:
+
+- Writing: fractional seconds are truncated (not rounded), e.g. `12:00:00.9` → `12:00:00`. Values are stored as local 
+  time: `DateTimeKind.Utc` values are converted to local time, `Local` and `Unspecified` values are stored as is.
+- Reading: values are returned with `DateTimeKind.Local`. So every value comes back as the same point in time (apart 
+  from fractional seconds), as long as the reading application runs in the same time zone. E.g. `DateTime.UtcNow` 
+  comes back as the corresponding local time.
+
+Value range:
+
+- Years 1000 - 9999 are supported on all databases (MySQL's official range). Smaller values (e.g. `DateOnly.MinValue`, 
+  `DateTime.MinValue`) throw an `ArgumentOutOfRangeException` when used as parameter (writing or comparing), although 
+  the databases would accept them (Npgsql would store `MinValue` as `-infinity`).
+- `DateTime.MaxValue` is stored as `9999-12-31 23:59:59` (fractional seconds truncated).
+- Smaller values written by others (bypassing Quib) are still read without exception, as long as they fit into 
+  `DateOnly` / `DateTime` (years 1 - 9999).
+
+Values written by others that don't fit into `DateOnly` / `DateTime` at all can't be read (the driver throws):
+
+- **MySQL**: zero dates like `0000-00-00`. Strict mode (default since 5.7) prevents them from being stored. Otherwise, 
+  add `Convert Zero Datetime=True` to the connection string to read them as `MinValue`.
+- **Postgres**: BC dates and years after 9999. The special values `infinity` / `-infinity` are read as `MaxValue` / 
+  `MinValue` by Npgsql.
 
 
 ## Character Set and Collation

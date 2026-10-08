@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\SelectFilterTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\SelectCodeStyles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\BoolTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\IntTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\TextTest.cs" />

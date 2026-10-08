@@ -28,6 +28,11 @@ public static class ColumnTypeFactory
             return new ColumnType($"INTEGER", defaultValue: "0");
         }
 
+        public static ColumnType Bool()
+        {
+            return new ColumnType($"BOOLEAN", defaultValue: "FALSE");
+        }
+
 #if MYSQL
 
         /// <summary>

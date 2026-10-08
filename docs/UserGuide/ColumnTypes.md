@@ -15,6 +15,7 @@ install.Table("users")
 **MySQL**
 
 - `Int()` - 32-bit integer
+- `Bool()` - boolean, stored as `TINYINT(1)` (`BOOLEAN` is an alias).
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max. 65,535 bytes (row size limit)
 - `ShortText()` - up to 65,535 bytes of text data. Separate from row size limit
 - `MediumText()` - up to 16 MB of text data
@@ -23,6 +24,7 @@ install.Table("users")
 **Postgres**
 
 - `Int()` - 32-bit integer
+- `Bool()` - native boolean
 - `VarChar(length)` - variable-length string (number of characters, not number of bytes), max 1 GB (value limit)
 - `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1 GB text.
 - `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1 GB text.

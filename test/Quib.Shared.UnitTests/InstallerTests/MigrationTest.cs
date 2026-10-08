@@ -87,6 +87,51 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         }
     }
 
+    private class Customers : IModuleMigration
+    {
+        public static string ModuleName => "customers";
+
+        public static void Configure(ModuleMigration module)
+        {
+            module.AddVersion(1)
+                .With((_, _) => _record.AppendLine("customers:1"));
+        }
+    }
+
+    [Fact]
+    public async Task Migration_WithoutVersionsTable_RegistersFirstVersion()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            _record = new StringBuilder();
+            var migration = new DbMigration("dbversions");
+            migration.Add<Customers>();
+            await install.RunMigration(migration);
+
+            var output = _record.ToString();
+            log.WriteLine(output);
+
+            Assert.Contains("customers:1", output);
+
+            // Verify the first version is registered although the VersionsTable had to be created first
+            var registeredVersions = await DB.SelectFromTable("dbversions")
+                .Project((rs, table) => new
+                {
+                    ModuleName = rs.Get(table.Column<DbText>("module")),
+                    Version = rs.Get(table.Column<DbInt>("version"))
+                })
+                .FetchArray((rs, table) => new
+                {
+                    ModuleName = rs.Get(table.ModuleName),
+                    Version = rs.Get(table.Version)
+                });
+
+            var customersVersion = Assert.Single(registeredVersions);
+            Assert.Equal("customers", customersVersion.ModuleName);
+            Assert.Equal(1, customersVersion.Version);
+        }
+    }
+
     private class Inventory : IModuleMigration
     {
         public static string ModuleName => "inventory";
@@ -357,7 +402,7 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
     }
 
 
-  private class ModuleE : IModuleMigration
+    private class ModuleE : IModuleMigration
     {
         public static string ModuleName => "e";
 

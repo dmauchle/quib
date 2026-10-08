@@ -48,7 +48,8 @@ internal sealed class VersionsTable
         if (TableExists())
         {
             return _db.SelectFromTable(_tableName)
-                .Project((rs, table) => new {
+                .Project((rs, table) => new
+                {
                     ModuleName = rs.Get(Reference(table).ModuleName),
                     Version = rs.Get(Reference(table).Version)
                 })
@@ -70,24 +71,22 @@ internal sealed class VersionsTable
 
             _tableExists = true;
         }
-        else
-        {
-            var updated = await _db.UpdateTable(_tableName)
-                .Where(table => Reference(table).ModuleName == moduleName)
-                .With((query, table) => query.Set(Reference(table).Version, version))
-                .Execute();
 
-            if (updated == 0)
-            {
-                await _db.InsertIntoTable(_tableName)
-                    .AddRow((query, table) =>
-                    {
-                        query.Set(Reference(table).ModuleName, moduleName);
-                        query.Set(Reference(table).Version, version);
-                    })
-                    .Execute();
-            }
+        var updated = await _db.UpdateTable(_tableName)
+            .Where(table => Reference(table).ModuleName == moduleName)
+            .With((query, table) => query.Set(Reference(table).Version, version))
+            .Execute();
+
+        if (updated == 0)
+        {
+            await _db.InsertIntoTable(_tableName)
+                .AddRow((query, table) =>
+                {
+                    query.Set(Reference(table).ModuleName, moduleName);
+                    query.Set(Reference(table).Version, version);
+                })
+                .Execute();
         }
     }
-
+    
 }

@@ -114,4 +114,183 @@ public class IntTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(en
 
         Assert.Equal(zeroValue, rs.Result);
     }
+
+
+    // Fetch and update tests
+    // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
+    // and setters (UpdateQueryExtensions) for DbInt and DbIntNullable on INT columns.
+
+    private void CreateValuesTable()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("values_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("value", ColumnType.Int().NotNull())
+                .CreateColumn("value_nullable", ColumnType.Int().Nullable());
+        }
+    }
+
+    private async Task InsertValues(params (int id, int value, int? valueNullable)[] rows)
+    {
+        foreach (var (id, value, valueNullable) in rows)
+        {
+            await DB.InsertIntoTable("values_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), id);
+                    query.Set(table.Column<DbInt>("value"), value);
+                    query.Set(table.Column<DbIntNullable>("value_nullable"), valueNullable);
+                })
+                .Execute();
+        }
+    }
+
+    [Fact]
+    public async Task FetchOne_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 42, null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbInt>("value"))
+            .FetchOne();
+
+        Assert.True(rs.HasResult);
+        Assert.Equal(42, rs.Result);
+    }
+
+    [Fact]
+    public async Task FetchArray_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 42, null), (2, -7, null), (3, 0, null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbInt>("value"))
+            .FetchArray();
+
+        Assert.Equal([42, -7, 0], rs);
+    }
+
+    [Fact]
+    public async Task FetchStream_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 42, null), (2, -7, null), (3, 0, null));
+
+        var values = new List<int>();
+        var rs = DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbInt>("value"))
+            .FetchStream();
+        await foreach (var value in rs)
+            values.Add(value);
+
+        Assert.Equal([42, -7, 0], values);
+    }
+
+
+    [Fact]
+    public async Task FetchOneNullable_WithValue_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 0, 42));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbIntNullable>("value_nullable"))
+            .FetchOne();
+
+        Assert.True(rs.HasResult);
+        Assert.Equal(42, rs.Result);
+    }
+
+    [Fact]
+    public async Task FetchOneNullable_WithNull_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 0, null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbIntNullable>("value_nullable"))
+            .FetchOne();
+
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task FetchArray_WithValueAndNull_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 0, 42), (2, 0, null), (3, 0, -7));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbIntNullable>("value_nullable"))
+            .FetchArray();
+
+        Assert.Equal([42, null, -7], rs);
+    }
+
+    [Fact]
+    public async Task FetchStream_WithValueAndNull_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 0, 42), (2, 0, null), (3, 0, -7));
+
+        var values = new List<int?>();
+        var rs = DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbIntNullable>("value_nullable"))
+            .FetchStream();
+        await foreach (var value in rs)
+            values.Add(value);
+
+        Assert.Equal([42, null, -7], values);
+    }
+
+    [Fact]
+    public async Task Update_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 42, null));
+
+        var updated = await DB.UpdateTable("values_test")
+            .AllRows()
+            .With((row, x) => row.Set(x.Column<DbInt>("value"), -7))
+            .Execute();
+
+        Assert.Equal(1, updated);
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbInt>("value"))
+            .FetchOne();
+
+        Assert.Equal(-7, rs.Result);
+    }
+
+    [Fact]
+    public async Task UpdateNull_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues((1, 0, 42));
+
+        int? value = null;
+        var updated = await DB.UpdateTable("values_test")
+            .AllRows()
+            .With((row, x) => row.Set(x.Column<DbIntNullable>("value_nullable"), value))
+            .Execute();
+
+        Assert.Equal(1, updated);
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbIntNullable>("value_nullable"))
+            .FetchOne();
+
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
 }

@@ -22,3 +22,7 @@ public readonly struct DbIntNullable : IExpressionType, INullableExpressionType,
 public interface IDbBool : IExpressionType { }
 public readonly struct DbBool : IExpressionType, INotNullExpressionType, IDbBool { }
 public readonly struct DbBoolNullable : IExpressionType, INullableExpressionType, IDbBool { }
+
+public interface IDbUuid : IExpressionType { }
+public readonly struct DbUuid : IExpressionType, INotNullExpressionType, IDbUuid { }
+public readonly struct DbUuidNullable : IExpressionType, INullableExpressionType, IDbUuid { }

@@ -36,6 +36,31 @@ public static class ColumnTypeFactory
 #if MYSQL
 
         /// <summary>
+        /// UUID stored as CHAR(36) with ascii charset and ascii_bin collation.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType Uuid()
+        {
+            // ASCII charset (1 byte per character) and binary collation for compact storage and fast, byte-wise comparison
+            return new ColumnType($"CHAR(36)", defaultValue: "'00000000-0000-0000-0000-000000000000'", options: "CHARACTER SET ascii COLLATE ascii_bin");
+        }
+
+#elif POSTGRES
+
+        /// <summary>
+        /// Native UUID type (16 bytes).
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType Uuid()
+        {
+            return new ColumnType($"uuid", defaultValue: "'00000000-0000-0000-0000-000000000000'");
+        }
+
+#endif
+
+#if MYSQL
+
+        /// <summary>
         /// You must not exceed 65,535-byte row size limit (all columns), one character takes 4 bytes (MySQL).
         /// </summary>
         /// <param name="length"></param>

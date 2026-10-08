@@ -104,4 +104,34 @@ public static class MappingExtensions
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
+    public static IAsyncEnumerable<Guid> FetchStream(this ProjectedQuery<ProjectedValue<DbUuid>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<Guid[]> FetchArray(this ProjectedQuery<ProjectedValue<DbUuid>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<SingleQueryResult<Guid>> FetchOne(this ProjectedQuery<ProjectedValue<DbUuid>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static IAsyncEnumerable<Guid?> FetchStream(this ProjectedQuery<ProjectedValue<DbUuidNullable>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<Guid?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbUuidNullable>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<SingleQueryResult<Guid?>> FetchOne(this ProjectedQuery<ProjectedValue<DbUuidNullable>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
+    }
+
 }

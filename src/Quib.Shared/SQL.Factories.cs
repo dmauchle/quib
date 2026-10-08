@@ -60,4 +60,25 @@ public static partial class SQL
         return new QueryParameter<DbBoolNullable>(value);
     }
 
+
+    public static QueryExpression<DbUuid> Parameter(Guid value)
+    {
+#if MYSQL
+        // MySQL stores UUIDs as CHAR(36): pass the lowercase "D" format to keep text comparison and V7 sort order consistent ("D" would be the default anyway)
+        return new QueryParameter<DbUuid>(value.ToString("D"));
+#elif POSTGRES
+        return new QueryParameter<DbUuid>(value);
+#endif
+    }
+
+    public static QueryExpression<DbUuidNullable> NullableParameter(Guid? value)
+    {
+#if MYSQL
+        // MySQL stores UUIDs as CHAR(36): pass the lowercase "D" format to keep text comparison and V7 sort order consistent ("D" would be the default anyway)
+        return new QueryParameter<DbUuidNullable>(value?.ToString("D"));
+#elif POSTGRES
+        return new QueryParameter<DbUuidNullable>(value);
+#endif
+    }
+
 }

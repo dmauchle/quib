@@ -16,6 +16,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBoolNullable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbTextNullable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbUuid.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbUuidNullable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNotNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\IsNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\MigrationException.cs" />

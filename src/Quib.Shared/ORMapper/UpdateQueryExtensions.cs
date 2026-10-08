@@ -56,4 +56,16 @@ public static class UpdateQueryExtensions
         query.Set(column, SQL.NullableParameter(value));
     }
 
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbUuid> column, Guid value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.Parameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, DbColumn<DbUuidNullable> column, Guid? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.NullableParameter(value));
+    }
+
 }

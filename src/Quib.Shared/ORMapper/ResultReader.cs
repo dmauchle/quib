@@ -159,4 +159,30 @@ public sealed class ResultReader
             return _reader.GetBoolean(field.Index);
     }
 
+    public Guid Get(ProjectedValue<DbUuid> field)
+    {
+        return _reader.GetGuid(field.Index);
+    }
+
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public Guid? GetNullable(ProjectedValue<DbUuid> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetGuid(field.Index);
+    }
+
+    public Guid? Get(ProjectedValue<DbUuidNullable> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetGuid(field.Index);
+    }
+
 }

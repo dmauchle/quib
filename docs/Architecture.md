@@ -157,11 +157,18 @@ feasible for a specific type, please ask for confirmation.
 
 **Equality operators:**
 
-The equality operators against db type expressions (`QueryExpression`) are not needed as they are implemented in the 
-base class for all types.
+Equality operators between expressions of the same db type are implemented once in `QueryExpression<T>` and must not 
+be added per type. They're declared on the class (not as extension operators), because class operators take precedence 
+over extension operators and C# would fall back to reference equality otherwise. Comparing different db types 
+(e.g. `DbInt == DbText`) therefore doesn't compile, which is intended (it wouldn't make any sense and Postgres would 
+also throw an exception).
 
-But all types should have equality operators against the corresponding .NET value type (always the non-nullable .NET type, 
-no matter if the DB type is nullable).
+Each type must implement:
+
+- Equality operators against its nullable or not-null counterpart (e.g. `DbInt == DbIntNullable` and 
+  `DbIntNullable == DbInt`), returning `DbBoolNullable`.
+- Equality operators against the corresponding .NET value type (always the non-nullable .NET type, no matter if the 
+  DB type is nullable).
 
 **Arithmetic operators:**
 

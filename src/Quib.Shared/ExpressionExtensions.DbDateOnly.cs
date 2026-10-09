@@ -32,6 +32,16 @@ public static partial class ExpressionExtensions
             return new BinaryOperator<DbBool>(left, "!=", SQL.Parameter(right));
         }
 
+        public static QueryExpression<DbBoolNullable> operator ==(QueryExpression<DbDateOnly> left, QueryExpression<DbDateOnlyNullable> right)
+        {
+            return new BinaryOperator<DbBoolNullable>(left, "=", right);
+        }
+
+        public static QueryExpression<DbBoolNullable> operator !=(QueryExpression<DbDateOnly> left, QueryExpression<DbDateOnlyNullable> right)
+        {
+            return new BinaryOperator<DbBoolNullable>(left, "!=", right);
+        }
+
         public static QueryExpression<DbBool> operator <(QueryExpression<DbDateOnly> left, QueryExpression<DbDateOnly> right)
         {
             return new BinaryOperator<DbBool>(left, "<", right);

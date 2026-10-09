@@ -9,6 +9,7 @@
     <Import_RootNamespace>Quib.Shared.UnitTests</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\EqualityTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\NullCheckExpressionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolNullableExpressionTest.cs" />
@@ -65,4 +66,4 @@
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DockerController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\EnvironmentVariables.cs" />
   </ItemGroup>
-</Project>
+</Project>

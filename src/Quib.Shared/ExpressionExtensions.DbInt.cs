@@ -107,6 +107,16 @@ public static partial class ExpressionExtensions
             return new BinaryOperator<DbBool>(left, "!=", SQL.Parameter(right));
         }
 
+        public static QueryExpression<DbBoolNullable> operator ==(QueryExpression<DbInt> left, QueryExpression<DbIntNullable> right)
+        {
+            return new BinaryOperator<DbBoolNullable>(left, "=", right);
+        }
+
+        public static QueryExpression<DbBoolNullable> operator !=(QueryExpression<DbInt> left, QueryExpression<DbIntNullable> right)
+        {
+            return new BinaryOperator<DbBoolNullable>(left, "!=", right);
+        }
+
         public static QueryExpression<DbBool> operator <(QueryExpression<DbInt> left, QueryExpression<DbInt> right)
         {
             return new BinaryOperator<DbBool>(left, "<", right);

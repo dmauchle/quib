@@ -22,7 +22,7 @@ public abstract class QueryExpression : IQueryPart, ISortExpression
 {
 
     // This was intended to be an interface. Then the == operator would have to be declared as a static extension method on
-    // the interface. But with the operator beeing declared as extesion method, this expression: 
+    // the interface. But with the operator beeing declared as extesion method, this expression:
     // `DB.Select(x => x.Get(SQL.Parameter(true) == SQL.Parameter(true)))`
     // would not compile, because the compiler cannot infer the type of the expression. When we use an abstract class it works.
 
@@ -38,16 +38,6 @@ public abstract class QueryExpression : IQueryPart, ISortExpression
         this.ToSql(query);
     }
 
-    public static QueryExpression<DbBoolNullable> operator ==(QueryExpression left, QueryExpression right)
-    {
-        return new BinaryOperator<DbBoolNullable>(left, "=", right);
-    }
-    
-    public static QueryExpression<DbBoolNullable> operator !=(QueryExpression left, QueryExpression right)
-    {
-        return new BinaryOperator<DbBoolNullable>(left, "!=", right);
-    }
-
 }
 
 /// <summary>
@@ -57,6 +47,23 @@ public abstract class QueryExpression : IQueryPart, ISortExpression
 public abstract class QueryExpression<T> : QueryExpression, IQueryPart
     where T : IExpressionType
 {
+
+    // The == and != operators are declared on the class, not as extension operators. Class operators take precedence over
+    // extension operators. Otherwise C# would use reference equality (returning bool) for operands of the same type.
+    // Declared here and not on the non-generic base class, so only expressions of the same type can be compared. Different
+    // types (e.g. DbInt and DbText) don't compile (intentional, because it wouldn't make sense and Postgres would also
+    // throw an exception), as there's no matching operator and reference equality isn't allowed between unrelated classes.
+    // Not-null and nullable variants of a type are compared by extension operators.
+
+    public static QueryExpression<DbBoolNullable> operator ==(QueryExpression<T> left, QueryExpression<T> right)
+    {
+        return new BinaryOperator<DbBoolNullable>(left, "=", right);
+    }
+
+    public static QueryExpression<DbBoolNullable> operator !=(QueryExpression<T> left, QueryExpression<T> right)
+    {
+        return new BinaryOperator<DbBoolNullable>(left, "!=", right);
+    }
 
 }
 

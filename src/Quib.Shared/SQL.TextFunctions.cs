@@ -15,34 +15,24 @@ public static partial class SQL
 {
 
 
-    public static QueryExpression<DbText> Concat(QueryExpression<DbText> left, QueryExpression<DbText> right)
+    public static NotNullExpression<DbText> Concat(NotNullExpression<DbText> left, NotNullExpression<DbText> right)
     {
-        return new ConcatOperator<DbText>(left, right);
+        return new NotNullExpression<DbText>(new ConcatOperator(left.SQL, right.SQL));
     }
 
-    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbText> left, QueryExpression<DbTextNullable> right)
-    {
-        return new ConcatOperator<DbTextNullable>(left, right);
-    }
-
-    public static QueryExpression<DbText> Concat(QueryExpression<DbText> left, string right)
+    public static NotNullExpression<DbText> Concat(NotNullExpression<DbText> left, string right)
     {
         return Concat(left, SQL.Parameter(right));
     }
 
-    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbTextNullable> left, QueryExpression<DbTextNullable> right)
+    public static NullableExpression<DbText> Concat(NullableExpression<DbText> left, NullableExpression<DbText> right)
     {
-        return new ConcatOperator<DbTextNullable>(left, right);
+        return new NullableExpression<DbText>(new ConcatOperator(left.SQL, right.SQL));
     }
 
-    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbTextNullable> left, QueryExpression<DbText> right)
+    public static NullableExpression<DbText> Concat(NullableExpression<DbText> left, string right)
     {
-        return Concat(left, right.AsNullable());
-    }
-
-    public static QueryExpression<DbTextNullable> Concat(QueryExpression<DbTextNullable> left, string right)
-    {
-        return Concat(left, SQL.NullableParameter(right));
+        return Concat(left, SQL.Parameter(right));
     }
 
 

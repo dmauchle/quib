@@ -18,13 +18,21 @@ private class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     public static string TableName => "users";
     public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
-    public DbColumn<DbInt> Id => field ??= table.Column<DbInt>("id");
-    public DbColumn<DbText> Username => field ??= table.Column<DbText>("username");
-    public DbColumn<DbText> Email => field ??= table.Column<DbText>("email");
+    public NotNullColumn<DbInt> Id => field ??= table.Column<DbInt>("id");
+    public NotNullColumn<DbText> Username => field ??= table.Column<DbText>("username");
+    public NullableColumn<DbText> Email => field ??= table.NullableColumn<DbText>("email");
 }
 ```
 
 Note the use of the `field ??=` pattern. This allows the column accesses to be cached, which improves performance.
+
+The DB type (`DbInt`, `DbText`, ...) denotes the type of the column, the column class denotes its nullability: 
+
+- `NotNullColumn<T>` (created by `table.Column<T>()`) for NOT NULL columns
+- `NullableColumn<T>` (created by `table.NullableColumn<T>()`) for nullable columns
+
+The same applies to all expressions: `NotNullExpression<T>` and `NullableExpression<T>`. A not-null expression can be 
+used wherever a nullable expression is expected.
 
 
 ## See also

@@ -14,14 +14,14 @@ internal sealed class DeleteQueryBuilder
 {
 
     private readonly TableReference _table;
-    private List<QueryExpression>? _filters;
+    private List<IQueryExpression>? _filters;
 
     internal DeleteQueryBuilder(TableReference table)
     {
         _table = table;
     }
 
-    internal void AddFilter(QueryExpression filter)
+    internal void AddFilter(IQueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }

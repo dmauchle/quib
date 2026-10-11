@@ -16,7 +16,7 @@ public sealed class SelectQueryBuilder
 
     private List<FromClause>? _from;
     private List<JoinClause>? _joins;
-    private List<QueryExpression>? _filters;
+    private List<IQueryExpression>? _filters;
     private ISortExpression[]? _sort;
 
     internal SelectQueryBuilder()
@@ -44,7 +44,7 @@ public sealed class SelectQueryBuilder
         return (_from?.Count ?? 0) + (_joins?.Count ?? 0);
     }
 
-    internal void AddFilter(QueryExpression filter)
+    internal void AddFilter(IQueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }

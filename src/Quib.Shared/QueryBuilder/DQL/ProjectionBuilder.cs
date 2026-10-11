@@ -12,7 +12,7 @@ namespace Quib.Postgres18.QueryBuilder;
 
 
 /// <summary>
-/// Builder for the projection clause of a select query. 
+/// Builder for the SELECT clause of a query. 
 /// </summary>
 public sealed class ProjectionBuilder : IProjectionBuilder
 {
@@ -24,19 +24,26 @@ public sealed class ProjectionBuilder : IProjectionBuilder
     }
 
     /// <summary>
-    /// Create and add a new projection clause. Use the return value e.g. to retrieve the value from the result set.
+    /// Create and add a new SELECT field. Use the return value e.g. to retrieve the value from the result set.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public ProjectedValue<T> Get<T>(QueryExpression<T> value)
+    public NotNullProjection<T> Get<T>(NotNullExpression<T> value)
         where T : struct, IExpressionType
     {
-        var fieldIndex = _projections.Count;
-        var alias = new ProjectedValue<T>(fieldIndex);
-        var proj = new ProjectionClause<T>(value, alias);
-        _projections.Add(proj);
-        return alias;
+        var field = new NotNullProjection<T>(_projections.Count);
+        _projections.Add(new ProjectionClause(value.SQL, field.Alias));
+        return field;
+    }
+
+    /// <inheritdoc cref="Get{T}(NotNullExpression{T})"/>
+    public NullableProjection<T> Get<T>(NullableExpression<T> value)
+        where T : struct, IExpressionType
+    {
+        var field = new NullableProjection<T>(_projections.Count);
+        _projections.Add(new ProjectionClause(value.SQL, field.Alias));
+        return field;
     }
 
     internal IProjectionClause[] Build()

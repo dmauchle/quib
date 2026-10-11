@@ -11,20 +11,19 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed class ConcatOperator<T> : QueryExpression<T>
-    where T : struct, IExpressionType, IDbText
+internal sealed class ConcatOperator : IQueryExpression
 {
 
-    private readonly QueryExpression _left;
-    private readonly QueryExpression _right;
+    private readonly IQueryExpression _left;
+    private readonly IQueryExpression _right;
 
-    public ConcatOperator(QueryExpression left, QueryExpression right)
+    public ConcatOperator(IQueryExpression left, IQueryExpression right)
     {
         _left = left;
         _right = right;
     }
 
-    internal override void ToSql(QueryWriter query)
+    void IQueryPart.ToSql(QueryWriter query)
     {
 #if POSTGRES
         // PostgreSQL uses || operator for string concatenation

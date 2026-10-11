@@ -8,18 +8,11 @@ public class DbTextNullableExpressionTest(DatabaseFixture env, ITestOutputHelper
 {
 
     [Fact]
-    public async Task CastFromNull()
+    public async Task NullValue()
     {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Null.As<DbTextNullable>())).FetchOne();
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbText>())).FetchOne();
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
-    }
-
-    [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter("Hello").AsNullable())).FetchOne();
-        Assert.Equal("Hello", rs.Result);
     }
 
     [Fact]
@@ -50,7 +43,7 @@ public class DbTextNullableExpressionTest(DatabaseFixture env, ITestOutputHelper
     [Fact]
     public async Task ConcatOnNull()
     {
-        var left = SQL.Null.As<DbTextNullable>();
+        var left = SQL.Null<DbText>();
         var right = " World";
         var rs = await DB.SelectValues(x => x.Get(SQL.Concat(left, right))).FetchOne();
         Assert.Null(rs.Result);

@@ -13,6 +13,8 @@ namespace Quib.Postgres18.ORMapper;
 public interface IUpdateQueryBuilder
 {
 
-    public void Set<T>(DbColumn<T> column, QueryExpression<T> value) where T : struct, IExpressionType;
+    public void Set<T>(NotNullColumn<T> column, NotNullExpression<T> value) where T : struct, IExpressionType;
+
+    public void Set<T>(NullableColumn<T> column, NullableExpression<T> value) where T : struct, IExpressionType;
 
 }

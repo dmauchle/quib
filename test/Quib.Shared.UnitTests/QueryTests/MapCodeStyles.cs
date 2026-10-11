@@ -54,7 +54,7 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
             return new UsersTable(table);
         }
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
      
     }
 
@@ -76,9 +76,9 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
 
         public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
-        private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
+        private readonly NotNullProjection<DbText> _name = query.Get(user.Name);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public User Map(ResultReader rs)
         {

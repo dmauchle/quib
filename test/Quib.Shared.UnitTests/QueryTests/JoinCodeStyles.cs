@@ -12,9 +12,9 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         public static string TableName => "companies";
         public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
-        public DbColumn<DbInt> ID => table.Column<DbInt>("id");
-        public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
-        public DbColumn<DbText> City => table.Column<DbText>("city");
+        public NotNullColumn<DbInt> ID => table.Column<DbInt>("id");
+        public NotNullColumn<DbText> CompanyName => table.Column<DbText>("companyname");
+        public NotNullColumn<DbText> City => table.Column<DbText>("city");
     }
 
     private class EmployeesTable(DbTable table) : IDbTable, IDbTable<EmployeesTable>
@@ -22,8 +22,8 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
         public static string TableName => "employees";
         public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
-        public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
+        public NullableColumn<DbInt> CompanyId => table.NullableColumn<DbInt>("company_id");
     }
 
     private class EmployeesQuery(EmployeesTable employee, CompaniesTable company)
@@ -49,10 +49,10 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
 
         public static IReaderMapping<Employee> CreateFrom(IProjectionBuilder rs, EmployeesQuery query) => new EmployeeMapping(rs, query);
 
-        public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
+        public NotNullProjection<DbText> Name { get; } = query.Get(row.Employee.Name);
         public CompanyMapping Company { get; } = new CompanyMapping(query, row.Company);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public Employee Map(ResultReader rs)
         {
@@ -60,7 +60,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             return new Employee
             {
                 Name = rs.Get(Name),
-                Company = rs.IsDBNull(Company.CompanyName) ? null : Company.Map(rs)
+                Company = rs.MapNullable(Company)
             };
         }
     }
@@ -69,10 +69,10 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
     {
         public static IReaderMapping<Company> CreateFrom(IProjectionBuilder query, CompaniesTable user) => new CompanyMapping(query, user);
 
-        public ProjectedValue<DbText> CompanyName { get; } = query.Get(row.CompanyName);
-        public ProjectedValue<DbText> City { get; } = query.Get(row.City);
+        public NotNullProjection<DbText> CompanyName { get; } = query.Get(row.CompanyName);
+        public NotNullProjection<DbText> City { get; } = query.Get(row.City);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity { get; } = [query.Get(row.ID)];
 
         public Company Map(ResultReader rs)
         {
@@ -117,12 +117,12 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
-                query.Set(table.Column<DbIntNullable>("company_id"), 1);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 1);
             })
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Bob");
-                query.Set(table.Column<DbIntNullable>("company_id"), 2);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 2);
             })
             .AddRow((query, table) =>
             {
@@ -131,7 +131,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "David");
-                query.Set(table.Column<DbIntNullable>("company_id"), 1);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 1);
             })
             .Execute();
     }
@@ -147,7 +147,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(x =>
             {
                 var employees = x.FromTable("employees");
-                var companies = x.InnerJoin("companies").On(c => c.Column<DbInt>("id") == employees.Column<DbIntNullable>("company_id"));
+                var companies = x.InnerJoin("companies").On(c => c.Column<DbInt>("id") == employees.NullableColumn<DbInt>("company_id"));
                 return new
                 {
                     employee = employees,
@@ -230,7 +230,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(x =>
             {
                 var employees = x.FromTable("employees");
-                var companies = x.LeftOuterJoin("companies").On(c => c.Column<DbInt>("id") == employees.Column<DbIntNullable>("company_id"));
+                var companies = x.LeftOuterJoin("companies").On(c => c.Column<DbInt>("id") == employees.NullableColumn<DbInt>("company_id"));
                 return new
                 {
                     employee = employees,
@@ -246,8 +246,8 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .FetchArray((rs, x) => new
             {
                 Name = rs.Get(x.Name),
-                Company = rs.IsDBNull(x.Company) ? null : rs.Get(x.Company),
-                City = rs.IsDBNull(x.City) ? null : rs.Get(x.City)
+                Company = rs.GetNullable(x.Company),
+                City = rs.GetNullable(x.City)
             });
 
         Assert.Equal(4, rs.Length);
@@ -316,7 +316,7 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Select(x =>
             {
                 var company = x.FromTable("companies");
-                var employee = x.RightOuterJoin("employees").On(c => c.Column<DbIntNullable>("company_id") == company.Column<DbInt>("id"));
+                var employee = x.RightOuterJoin("employees").On(c => c.NullableColumn<DbInt>("company_id") == company.Column<DbInt>("id"));
                 return new
                 {
                     employee,
@@ -326,14 +326,14 @@ public class JoinCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTest
             .Project((rs, x) => new
             {
                 Name = rs.Get(x.employee.Column<DbText>("name")),
-                Company = rs.Get(x.company.Column<DbTextNullable>("companyname")),
-                City = rs.Get(x.company.Column<DbTextNullable>("city"))
+                Company = rs.Get(x.company.Column<DbText>("companyname")),
+                City = rs.Get(x.company.Column<DbText>("city"))
             })
             .FetchArray((rs, x) => new
             {
                 Name = rs.Get(x.Name),
-                Company = rs.Get(x.Company),
-                City = rs.Get(x.City)
+                Company = rs.GetNullable(x.Company),
+                City = rs.GetNullable(x.City)
             });
 
         Assert.Equal(4, rs.Length);

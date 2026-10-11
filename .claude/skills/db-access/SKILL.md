@@ -22,7 +22,7 @@ Do:
 - Prefer compile-time-safe, table/column-typed APIs over runtime string-based query construction.
 - Pick the Quib package matching the target database dialect and server version.
 - Implement schema changes via Quib migrations (`DbMigration`, `IModuleMigration`, module versions and dependencies).
-- Define typed table schemas (`IDbTable`, `DbColumn<TDbType>`) and keep column mappings explicit.
+- Define typed table schemas (`IDbTable`, `NotNullColumn<TDbType>`, `NullableColumn<TDbType>`) and keep column mappings explicit.
 - Use explicit reader mappings (`IReaderMapping`) for SELECT results, including join projections.
 - Use explicit writer mappings (`IWriterMapping`) for INSERT/UPDATE payload mapping.
 - Compose typed queries with Quib APIs (`SelectFrom`, `Select` + joins, `Where`, `OrderBy`, `InsertInto`, `Update`, `DeleteFrom`).

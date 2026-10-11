@@ -58,7 +58,7 @@ perform.
 - Whenever feasible, use structs to avoid heap allocations. But be aware of boxing. So in many cases, classes are the better choice.
 - When the type holds other classes, especially lists, heap allocation is anyway required, so struct might not be appropriate.
 - `IQueryPart` implementations may be structs if feasible, and no other interface prevents it.
-- `QueryExpression<T>` implementations should be classes, as they would have to be boxed in expression trees anyway.
+- `IQueryExpression` implementations should be classes, as they would have to be boxed in expression trees anyway.
 
 
 ## SQL expression builder
@@ -109,21 +109,33 @@ files. This duplication is intended. However, column types that only differ in s
 ## DB types for expressions
 
 DB types are marker types used to represent the SQL types in expressions like `DbText` or `DbInt`. They are used to ensure 
-type safety. They implement `IExpressionType` and `INotNullExpressionType`. All DB type structs reside in 
-/src/Quib.Shared/Types/DbTypes.cs.
+type safety. They implement `IExpressionType`. All DB type structs reside in /src/Quib.Shared/Types/DbTypes.cs.
 
-For every type there should be a corresponding nullable type like `DbTextNullable` or `DbIntNullable`. The nullable types 
-implement `IExpressionType` and `INullableExpressionType` in addition.
+DB types don't denote nullability. It's denoted by the expression class instead:
 
-DB types have a corresponding .NET value type like `string` for `DbText`, `string?` for `DbTextNullable` or `int` for `DbInt`.
+- `NotNullExpression<T>`: expression that never evaluates to NULL, e.g. `NotNullExpression<DbInt>`.
+- `NullableExpression<T>`: expression that may evaluate to NULL, e.g. `NullableExpression<DbInt>`.
+
+Note that not-null expressions may still become nullable for example when used in a LEFT JOIN.
+
+DB types have a corresponding .NET value type like `string` for `DbText` or `int` for `DbInt`. Nullable expressions 
+correspond to the nullable .NET type (`string?`, `int?`).
 
 You can take `DbInt`and `DbText` as reference implementations. Assume these are correct. But they could be lacking features.
 
+### Expression implementations
+
+The expression implementations in /src/Quib.Shared/Expressions (like `BinaryOperator`, `QueryParameter` or `Constant`) 
+are untyped and internal (implementing `IQueryExpression`). They are wrapped into a typed expression by passing them to 
+the constructor of `NotNullExpression<T>` or `NullableExpression<T>`. The untyped expression of a typed one is accessible 
+by its `SQL` property, e.g. `new NotNullExpression<DbInt>(new BinaryOperator(left.SQL, "+", right.SQL))`. So every 
+implementation exists only once, no matter the type and nullability.
+
 ### Fetch, mapping and update methods
 
-- Add `Get` methods to the `ResultReader` class for every db type (and nullable). Use the existing methods as a reference.
-- Add fetch methods to the `MappingExtensions` class for every db type (and nullable). Use the existing methods as a reference.
-- Add setters to the `UpdateQueryExtensions` class for every db type (and nullable). Use the existing methods as a reference.
+- Add `Get` methods to the `ResultReader` class for every db type (not-null and nullable). Use the existing methods as a reference.
+- Add fetch methods to the `MappingExtensions` class for every db type (not-null and nullable). Use the existing methods as a reference.
+- Add setters to the `UpdateQueryExtensions` class for every db type (not-null and nullable column). Use the existing methods as a reference.
 
 These classes reside in /src/Quib.Shared/ORMapper. They are tested per column type (see "Column types" above).
 
@@ -132,23 +144,19 @@ These classes reside in /src/Quib.Shared/ORMapper. They are tested per column ty
 In the static `SQL` class (/src/Quib.Shared/SQL.Factories.cs), there should be the following factory methods to create 
 expressions for each db type:
 
-- Parameter: `SQL.Parameter<T>(T value)` where T is the corresponding .NET value type of the db type.
-- Nullable parameter: `SQL.NullableParameter<T>(T? value)` where T is the corresponding .NET value type of the db type.
+- Parameter: `SQL.Parameter<T>(T value)` where T is the corresponding .NET value type of the db type. Returns a not-null expression.
+- Nullable parameter: `SQL.NullableParameter<T>(T? value)` where T is the corresponding .NET value type of the db type. Returns a nullable expression.
 - Constant: For numeric and boolean types only, create a `SQL.Constant<T>(T value)` where T is the corresponding .NET value type of the db type. The expression should be evaluated to the constant value in the SQL query like `1` or `true`.
 
 ### Expression extensions
 
-For every type (and its nullable counterpart), there should be extensions in the static `ExpressionExtensions` class. 
-Extensions for each type (and nullable) should be placed in individual files like `ExpressionExtensions.DbText.cs` or 
-`ExpressionExtensions.DbTextNullable.cs`. New files must be added to /src/Quib.Shared/Quib.Shared.projitems, otherwise 
-they are not compiled.
+For every type, there should be extensions in the static `ExpressionExtensions` class. Extensions for each type should 
+be placed in individual files like `ExpressionExtensions.DbText.cs`, with one extension block for `NotNullExpression<T>` 
+and one for `NullableExpression<T>`. New files must be added to /src/Quib.Shared/Quib.Shared.projitems, otherwise they 
+are not compiled.
 
 > **Note:** if expression implementations in /src/Quib.Shared/Expressions are missing, you can create them (see above). 
 But check first if an existing implementation can be used.
-
-**Cast methods:**
-
-- Not-null db types should have a `AsNullable()` extension method to convert to the nullable counterpart.
 
 **Comparison operators:**
 
@@ -157,18 +165,14 @@ feasible for a specific type, please ask for confirmation.
 
 **Equality operators:**
 
-Equality operators between expressions of the same db type are implemented once in `QueryExpression<T>` and must not 
-be added per type. They're declared on the class (not as extension operators), because class operators take precedence 
-over extension operators and C# would fall back to reference equality otherwise. Comparing different db types 
-(e.g. `DbInt == DbText`) therefore doesn't compile, which is intended (it wouldn't make any sense and Postgres would 
-also throw an exception).
+Equality operators between expressions of the same db type are implemented once in `NotNullExpression<T>` and 
+`NullableExpression<T>` and must not be added per type. They're declared on the class (not as extension operators), 
+because class operators take precedence over extension operators and C# would fall back to reference equality otherwise. 
+Comparing different db types (e.g. `DbInt == DbText`) therefore doesn't compile, which is intended (it wouldn't make any 
+sense and Postgres would also throw an exception).
 
-Each type must implement:
-
-- Equality operators against its nullable or not-null counterpart (e.g. `DbInt == DbIntNullable` and 
-  `DbIntNullable == DbInt`), returning `DbBoolNullable`.
-- Equality operators against the corresponding .NET value type (always the non-nullable .NET type, no matter if the 
-  DB type is nullable).
+All types should have equality operators against the corresponding .NET value type (always the non-nullable .NET type, 
+no matter if the expression is nullable).
 
 **Arithmetic operators:**
 
@@ -180,23 +184,27 @@ the `+` operator
 
 **For all operators:**
 
-All binary operators should have overloads with the left-value always being the db type and variations for the right value: 
+All binary operators should have overloads in both extension blocks (not-null and nullable), with the left value always 
+being the expression of the block and variations for the right value: 
 
-- The same db type (e.g. `DbText` or `DbTextNullable`)
-- The nullable or not-null counterpart of the db type
+- The same expression type (`NotNullExpression<T>` in the not-null block, `NullableExpression<T>` in the nullable block). 
+  The result is not-null in the not-null block and nullable in the nullable block.
 - The corresponding non-nullable .NET value type (should be converted to parameter). Accepting the nullable type here would make no sense because the operator always evaluates NULL in that case. If you still want to do it, use an explicit cast.
+
+Operators mixing not-null and nullable operands must not be added: C# picks the nullable operator, as the not-null 
+operand converts to its base class `NullableExpression<T>`. So the result is nullable, as expected.
 
 ### Unit tests
 
-For every db type (including nullable), there should be a unit test file in /test/Quib.Shared.UnitTests/ExpressionTests. 
-Examples are `DbTextExpressionTest` for `DbText`, `DbTextNullableExpressionTest` for `DbTextNullable` or 
-`DbIntExpressionTest` for `DbInt`. You can use all existing unit tests as reference.
+For every db type, there should be a unit test file for not-null and one for nullable expressions in 
+/test/Quib.Shared.UnitTests/ExpressionTests. Examples are `DbTextExpressionTest` and `DbTextNullableExpressionTest` for 
+`DbText`, or `DbIntExpressionTest` for `DbInt`. You can use all existing unit tests as reference.
 
 The unit tests should cover: 
 
-- All factory methods. Always test with all input variants. E.g. for `DbTextNullable` the input could be either a text or null.
-- All expression extensions. Always test with all input variants. E.g. `DbTextNullable` the input could be either a text or null.
-- For nullable DB types, test the existing `SQL.Null.As<T>()` cast method.
+- All factory methods. Always test with all input variants. E.g. for `SQL.NullableParameter` the input could be either a text or null.
+- All expression extensions. Always test with all input variants. E.g. for nullable expressions the input could be either a text or null.
+- For nullable expressions, test the existing `SQL.Null<T>()` factory method.
 
 Make sure the test methods are named and ordered in a comprehensive and consistent way. When ordering operator tests, 
 use strict grouping by operator and then parameter kind in this exact order: not-null parameter, nullable parameter with 

@@ -19,7 +19,7 @@ internal sealed class QueryWriter
 {
 
     private readonly StringBuilder _sb = new StringBuilder();
-    private readonly Dictionary<IQueryParameter, int> _parameters = new Dictionary<IQueryParameter, int>();
+    private readonly Dictionary<QueryParameter, int> _parameters = new Dictionary<QueryParameter, int>();
 
     public void Write(string str)
     {
@@ -37,7 +37,7 @@ internal sealed class QueryWriter
         part.ToSql(this);
     }
 
-    public void WriteParameter(IQueryParameter parameter)
+    public void WriteParameter(QueryParameter parameter)
     {
         if (!_parameters.TryGetValue(parameter, out var parameterIndex))
         {

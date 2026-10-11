@@ -32,7 +32,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
                 {
                     query.Set(table.Column<DbInt>("id"), id);
                     query.Set(table.Column<DbDateTime>("value"), value);
-                    query.Set(table.Column<DbDateTimeNullable>("value_nullable"), valueNullable);
+                    query.Set(table.NullableColumn<DbDateTime>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -86,7 +86,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
             .Project(x => x.Column<DbDateTime>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchOne();
 
         Assert.Equal(DateTimeKind.Local, rs.Result.Kind);
@@ -118,7 +118,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
             .Project(x => x.Column<DbDateTime>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchOne();
 
         // Same instant, independent of the time zone the tests run in
@@ -216,7 +216,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
             .Project(x => x.Column<DbDateTime>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchOne();
 
         Assert.Equal(new DateTime(950, 1, 1, 12, 34, 56), rs.Result);
@@ -226,7 +226,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
     // Fetch and update tests
     // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
-    // and setters (UpdateQueryExtensions) for DbDateTime and DbDateTimeNullable on DATETIME/timestamp columns.
+    // and setters (UpdateQueryExtensions) for DATETIME/timestamp columns.
 
     [Fact]
     public async Task FetchOne_Succeeds()
@@ -281,7 +281,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, _second));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -295,7 +295,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -310,7 +310,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchArray();
 
         Assert.Equal([_first, null, _third], rs);
@@ -325,7 +325,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         var values = new List<DateTime?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -362,13 +362,13 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         DateTime? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbDateTimeNullable>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbDateTime>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTimeNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);

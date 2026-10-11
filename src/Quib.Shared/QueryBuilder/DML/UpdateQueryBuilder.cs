@@ -13,9 +13,9 @@ namespace Quib.Postgres18.QueryBuilder;
 internal sealed class UpdateQueryBuilder : IUpdateQueryBuilder
 {
 
-    private readonly List<(DbColumnForUpdate column, QueryExpression value)> _values;
+    private readonly List<(DbColumnForWriting column, IQueryExpression value)> _values;
     private readonly TableReference _table;
-    private List<QueryExpression>? _filters;
+    private List<IQueryExpression>? _filters;
 
     internal UpdateQueryBuilder(TableReference table)
     {
@@ -23,16 +23,21 @@ internal sealed class UpdateQueryBuilder : IUpdateQueryBuilder
         _values = [];
     }
 
-    internal void AddFilter(QueryExpression filter)
+    internal void AddFilter(IQueryExpression filter)
     {
         (_filters ??= []).Add(filter);
     }
 
-    public void Set<T>(DbColumn<T> column, QueryExpression<T> value)
+    public void Set<T>(NotNullColumn<T> column, NotNullExpression<T> value)
         where T : struct, IExpressionType
     {
-        var updateColumn = column.ForUpdate();
-        _values.Add((updateColumn, value));
+        _values.Add((column.Writer, value.SQL));
+    }
+
+    public void Set<T>(NullableColumn<T> column, NullableExpression<T> value)
+        where T : struct, IExpressionType
+    {
+        _values.Add((column.Writer, value.SQL));
     }
 
     internal void ToSql(QueryWriter query)

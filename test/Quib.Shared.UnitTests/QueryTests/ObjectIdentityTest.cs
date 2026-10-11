@@ -12,9 +12,9 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
         public static string TableName => "companies";
         public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
-        public DbColumn<DbInt> ID => table.Column<DbInt>("id");
-        public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
-        public DbColumn<DbText> City => table.Column<DbText>("city");
+        public NotNullColumn<DbInt> ID => table.Column<DbInt>("id");
+        public NotNullColumn<DbText> CompanyName => table.Column<DbText>("companyname");
+        public NotNullColumn<DbText> City => table.Column<DbText>("city");
     }
 
     private class Company
@@ -25,10 +25,10 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
 
     private class CompanyMapping(ProjectionBuilder rs, CompaniesTable company, bool withKey) : IReaderMapping<Company>
     {
-        private readonly ProjectedValue<DbText> _companyName = rs.Get(company.CompanyName);
-        private readonly ProjectedValue<DbText> _city = rs.Get(company.City);
+        private readonly NotNullProjection<DbText> _companyName = rs.Get(company.CompanyName);
+        private readonly NotNullProjection<DbText> _city = rs.Get(company.City);
 
-        IProjectedValue[] IReaderMapping<Company>.ObjectIdentity { get; } = withKey ? [rs.Get(company.ID)] : [];
+        IProjectionField[] IReaderMapping<Company>.ObjectIdentity { get; } = withKey ? [rs.Get(company.ID)] : [];
 
         Company IReaderMapping<Company>.Map(ResultReader rs)
         {
@@ -45,8 +45,8 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
         public static string TableName => "employees";
         public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
-        public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
+        public NullableColumn<DbInt> CompanyId => table.NullableColumn<DbInt>("company_id");
     }
 
     private class EmployeesQuery(SelectQueryBuilder query) : ISelectContext<EmployeesQuery>
@@ -68,12 +68,12 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
     private class EmployeeMapping(ProjectionBuilder query, EmployeesQuery row, bool withKeys) : IReaderMapping<Employee>
     {
 
-        public ProjectedValue<DbText> Name { get; } = query.Get(row.Employee.Name);
-        public ProjectedValue<DbIntNullable> CompanyId { get; } = query.Get(row.Employee.CompanyId);
+        public NotNullProjection<DbText> Name { get; } = query.Get(row.Employee.Name);
+        public NullableProjection<DbInt> CompanyId { get; } = query.Get(row.Employee.CompanyId);
 
         public CompanyMapping Company { get; } = new CompanyMapping(query, row.Company, withKeys);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public Employee Map(ResultReader rs)
         {
@@ -119,12 +119,12 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
-                query.Set(table.Column<DbIntNullable>("company_id"), 1);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 1);
             })
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Bob");
-                query.Set(table.Column<DbIntNullable>("company_id"), 2);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 2);
             })
             .AddRow((query, table) =>
             {
@@ -133,7 +133,7 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "David");
-                query.Set(table.Column<DbIntNullable>("company_id"), 1);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 1);
             })
             .Execute();
     }

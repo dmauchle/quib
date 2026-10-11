@@ -46,7 +46,7 @@ public class SelectCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
             return new UsersTable(table);
         }
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
 
     }
 

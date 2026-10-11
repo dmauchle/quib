@@ -13,107 +13,112 @@ namespace Quib.Postgres18;
 public static partial class SQL
 {
 
-    public static readonly DbNull Null = DbNull.Value;
-
-    public static ISortExpression Sort(QueryExpression value, Sort direction)
+    public static NullableExpression<T> Null<T>()
+        where T : struct, IExpressionType
     {
-        return new SortClause(value, direction);
+        return new NullableExpression<T>(DbNull.Value);
     }
 
-    public static QueryExpression<DbInt> Constant(int value)
+    public static ISortExpression Sort<T>(NullableExpression<T> value, Sort direction)
+        where T : struct, IExpressionType
     {
-        return new Constant<DbInt>(value.ToString());
+        return new SortClause(value.SQL, direction);
     }
 
-    public static QueryExpression<DbDecimal> Constant(decimal value)
+    public static NotNullExpression<DbInt> Constant(int value)
     {
-        return new Constant<DbDecimal>(value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        return new NotNullExpression<DbInt>(new Constant(value.ToString()));
     }
 
-    public static QueryExpression<DbBool> Constant(bool value)
+    public static NotNullExpression<DbDecimal> Constant(decimal value)
     {
-        return new Constant<DbBool>(value ? "true" : "false");
+        return new NotNullExpression<DbDecimal>(new Constant(value.ToString(System.Globalization.CultureInfo.InvariantCulture)));
     }
 
-    public static QueryExpression<DbText> Parameter(string value)
+    public static NotNullExpression<DbBool> Constant(bool value)
     {
-        return new QueryParameter<DbText>(value);
+        return new NotNullExpression<DbBool>(new Constant(value ? "true" : "false"));
     }
 
-    public static QueryExpression<DbTextNullable> NullableParameter(string? value)
+    public static NotNullExpression<DbText> Parameter(string value)
     {
-        return new QueryParameter<DbTextNullable>(value);
+        return new NotNullExpression<DbText>(new QueryParameter(value));
     }
 
-    public static QueryExpression<DbInt> Parameter(int value)
+    public static NullableExpression<DbText> NullableParameter(string? value)
     {
-        return new QueryParameter<DbInt>(value);
+        return new NullableExpression<DbText>(new QueryParameter(value));
     }
 
-    public static QueryExpression<DbIntNullable> NullableParameter(int? value)
+    public static NotNullExpression<DbInt> Parameter(int value)
     {
-        return new QueryParameter<DbIntNullable>(value);
+        return new NotNullExpression<DbInt>(new QueryParameter(value));
     }
 
-    public static QueryExpression<DbDecimal> Parameter(decimal value)
+    public static NullableExpression<DbInt> NullableParameter(int? value)
     {
-        return new QueryParameter<DbDecimal>(value);
+        return new NullableExpression<DbInt>(new QueryParameter(value));
     }
 
-    public static QueryExpression<DbDecimalNullable> NullableParameter(decimal? value)
+    public static NotNullExpression<DbDecimal> Parameter(decimal value)
     {
-        return new QueryParameter<DbDecimalNullable>(value);
+        return new NotNullExpression<DbDecimal>(new QueryParameter(value));
     }
 
-    public static QueryExpression<DbBool> Parameter(bool value)
+    public static NullableExpression<DbDecimal> NullableParameter(decimal? value)
     {
-        return new QueryParameter<DbBool>(value);
+        return new NullableExpression<DbDecimal>(new QueryParameter(value));
     }
 
-    public static QueryExpression<DbBoolNullable> NullableParameter(bool? value)
+    public static NotNullExpression<DbBool> Parameter(bool value)
     {
-        return new QueryParameter<DbBoolNullable>(value);
+        return new NotNullExpression<DbBool>(new QueryParameter(value));
+    }
+
+    public static NullableExpression<DbBool> NullableParameter(bool? value)
+    {
+        return new NullableExpression<DbBool>(new QueryParameter(value));
     }
 
 
-    public static QueryExpression<DbUuid> Parameter(Guid value)
+    public static NotNullExpression<DbUuid> Parameter(Guid value)
     {
 #if MYSQL
         // MySQL stores UUIDs as CHAR(36): pass the lowercase "D" format to keep text comparison and V7 sort order consistent ("D" would be the default anyway)
-        return new QueryParameter<DbUuid>(value.ToString("D"));
+        return new NotNullExpression<DbUuid>(new QueryParameter(value.ToString("D")));
 #elif POSTGRES
-        return new QueryParameter<DbUuid>(value);
+        return new NotNullExpression<DbUuid>(new QueryParameter(value));
 #endif
     }
 
-    public static QueryExpression<DbUuidNullable> NullableParameter(Guid? value)
+    public static NullableExpression<DbUuid> NullableParameter(Guid? value)
     {
 #if MYSQL
         // MySQL stores UUIDs as CHAR(36): pass the lowercase "D" format to keep text comparison and V7 sort order consistent ("D" would be the default anyway)
-        return new QueryParameter<DbUuidNullable>(value?.ToString("D"));
+        return new NullableExpression<DbUuid>(new QueryParameter(value?.ToString("D")));
 #elif POSTGRES
-        return new QueryParameter<DbUuidNullable>(value);
+        return new NullableExpression<DbUuid>(new QueryParameter(value));
 #endif
     }
 
-    public static QueryExpression<DbDateOnly> Parameter(DateOnly value)
+    public static NotNullExpression<DbDateOnly> Parameter(DateOnly value)
     {
-        return new QueryParameter<DbDateOnly>(ToDbDateTime(value));
+        return new NotNullExpression<DbDateOnly>(new QueryParameter(ToDbDateTime(value)));
     }
 
-    public static QueryExpression<DbDateOnlyNullable> NullableParameter(DateOnly? value)
+    public static NullableExpression<DbDateOnly> NullableParameter(DateOnly? value)
     {
-        return new QueryParameter<DbDateOnlyNullable>(value.HasValue ? ToDbDateTime(value.Value) : null);
+        return new NullableExpression<DbDateOnly>(new QueryParameter(value.HasValue ? ToDbDateTime(value.Value) : null));
     }
 
-    public static QueryExpression<DbDateTime> Parameter(DateTime value)
+    public static NotNullExpression<DbDateTime> Parameter(DateTime value)
     {
-        return new QueryParameter<DbDateTime>(ToDbDateTime(value));
+        return new NotNullExpression<DbDateTime>(new QueryParameter(ToDbDateTime(value)));
     }
 
-    public static QueryExpression<DbDateTimeNullable> NullableParameter(DateTime? value)
+    public static NullableExpression<DbDateTime> NullableParameter(DateTime? value)
     {
-        return new QueryParameter<DbDateTimeNullable>(value.HasValue ? ToDbDateTime(value.Value) : null);
+        return new NullableExpression<DbDateTime>(new QueryParameter(value.HasValue ? ToDbDateTime(value.Value) : null));
     }
 
     // Dates are passed as DateTime, as older drivers don't support DateOnly

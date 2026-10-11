@@ -51,13 +51,6 @@ public class DbDecimalExpressionTest(DatabaseFixture env, ITestOutputHelper log)
     }
 
     [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(3.25m).AsNullable())).FetchOne();
-        Assert.Equal(3.25m, rs.Result);
-    }
-
-    [Fact]
     public async Task PlusParameterRight()
     {
         var left = SQL.Parameter(2.5m);

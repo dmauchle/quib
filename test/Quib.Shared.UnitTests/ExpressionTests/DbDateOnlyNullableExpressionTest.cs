@@ -11,18 +11,11 @@ public class DbDateOnlyNullableExpressionTest(DatabaseFixture env, ITestOutputHe
     private static readonly DateOnly _high = new(2026, 1, 1);
 
     [Fact]
-    public async Task CastFromNull()
+    public async Task NullValue()
     {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Null.As<DbDateOnlyNullable>())).FetchOne();
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbDateOnly>())).FetchOne();
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
-    }
-
-    [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(_low).AsNullable())).FetchOne();
-        Assert.Equal(_low, rs.Result);
     }
 
     [Fact]

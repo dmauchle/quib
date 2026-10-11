@@ -14,14 +14,16 @@ namespace Quib.Postgres18;
 public static partial class ExpressionExtensions
 {
 
-    public static QueryExpression<DbBool> IsNull(this QueryExpression value)
+    public static NotNullExpression<DbBool> IsNull<T>(this NullableExpression<T> value)
+        where T : struct, IExpressionType
     {
-        return new IsNull(value);
+        return new NotNullExpression<DbBool>(new IsNull(value.SQL));
     }
 
-    public static QueryExpression<DbBool> IsNotNull(this QueryExpression value)
+    public static NotNullExpression<DbBool> IsNotNull<T>(this NullableExpression<T> value)
+        where T : struct, IExpressionType
     {
-        return new IsNotNull(value);
+        return new NotNullExpression<DbBool>(new IsNotNull(value.SQL));
     }
 
 }

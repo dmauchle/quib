@@ -39,8 +39,8 @@ In addition to the planning steps of the `implement` skill:
 
 In addition to the implementation steps of the `implement` skill:
 
-- **New DB type**: Add the not-null type and its nullable counterpart, and for both of them all parts described in 
-  "DB types for expressions" (expression extensions, factory methods, fetch, mapping and update methods).
+- **New DB type**: Add the DB type and all parts described in "DB types for expressions" (expression extensions, 
+  factory methods, fetch, mapping and update methods), each for not-null and nullable expressions.
 - **New column type**: Add the factory method as described in "Column types".
 - **Unit tests**: Add tests for all added functionality, as described in the "Unit tests" subsections of both sections. 
   Follow the `unit-tests` skill (`.claude/skills/unit-tests/SKILL.md`).

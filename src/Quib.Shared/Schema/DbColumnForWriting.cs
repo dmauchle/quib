@@ -13,12 +13,12 @@ namespace Quib.Postgres18.Schema;
 /// <summary>
 /// Represents the LVALUE in a INSERT or UPDATE statement. Implements value equality.
 /// </summary>
-internal readonly record struct DbColumnForUpdate : IQueryPart
+internal record class DbColumnForWriting : IQueryPart
 {
     private readonly TableAlias _table;
     private readonly string _fieldname;
 
-    internal DbColumnForUpdate(TableAlias table, string fieldname)
+    internal DbColumnForWriting(TableAlias table, string fieldname)
     {
         _table = table;
         _fieldname = fieldname;

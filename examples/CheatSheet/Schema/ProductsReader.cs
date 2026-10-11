@@ -9,12 +9,12 @@ internal class ProductsReader(IProjectionBuilder query, ProductsTable product) :
 
     static IReaderMapping<Product> IReaderMapping<ProductsTable, Product>.CreateFrom(IProjectionBuilder rs, ProductsTable query) => new ProductsReader(rs, query);
 
-    private readonly ProjectedValue<DbInt> _id = query.Get(product.ID);
-    private readonly ProjectedValue<DbText> _productName = query.Get(product.ProductName);
-    private readonly ProjectedValue<DbInt> _categoryId = query.Get(product.CategoryId);
-    private readonly ProjectedValue<DbInt> _price = query.Get(product.Price);
+    private readonly NotNullProjection<DbInt> _id = query.Get(product.ID);
+    private readonly NotNullProjection<DbText> _productName = query.Get(product.ProductName);
+    private readonly NotNullProjection<DbInt> _categoryId = query.Get(product.CategoryId);
+    private readonly NotNullProjection<DbInt> _price = query.Get(product.Price);
 
-    IProjectedValue[] IReaderMapping<Product>.ObjectIdentity => [ _id ];
+    IProjectionField[] IReaderMapping<Product>.ObjectIdentity => [ _id ];
 
     Product IReaderMapping<Product>.Map(ResultReader rs)
     {

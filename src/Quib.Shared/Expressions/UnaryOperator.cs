@@ -11,20 +11,19 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed class UnaryOperator<T> : QueryExpression<T>
-    where T : struct, IExpressionType
+internal sealed class UnaryOperator : IQueryExpression
 {
 
-    private readonly QueryExpression<T> _operand;
+    private readonly IQueryExpression _operand;
     private readonly string _sqlOperator;
 
-    public UnaryOperator(string sqlOperator, QueryExpression<T> operand)
+    public UnaryOperator(string sqlOperator, IQueryExpression operand)
     {
         _operand = operand;
         _sqlOperator = sqlOperator;
     }
 
-    internal override void ToSql(QueryWriter query)
+    void IQueryPart.ToSql(QueryWriter query)
     {
         query.Write("(");
         query.Write(_sqlOperator);

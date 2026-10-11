@@ -11,18 +11,11 @@ public class DbDateTimeNullableExpressionTest(DatabaseFixture env, ITestOutputHe
     private static readonly DateTime _high = new(2026, 3, 14, 23, 59, 58);
 
     [Fact]
-    public async Task CastFromNull()
+    public async Task NullValue()
     {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Null.As<DbDateTimeNullable>())).FetchOne();
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbDateTime>())).FetchOne();
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
-    }
-
-    [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(_low).AsNullable())).FetchOne();
-        Assert.Equal(_low, rs.Result);
     }
 
     [Fact]

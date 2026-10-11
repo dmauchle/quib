@@ -31,7 +31,7 @@ public class FetchCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTes
         public static string TableName => "users";
         public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
      
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
     }
 
     private record User(string Name);
@@ -40,9 +40,9 @@ public class FetchCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTes
     {
         public static IReaderMapping<User> CreateFrom(IProjectionBuilder rs, UsersTable user) => new UserMapping(rs, user);
         
-        public ProjectedValue<DbText> Name { get; } = rs.Get(user.Name);
+        public NotNullProjection<DbText> Name { get; } = rs.Get(user.Name);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public User Map(ResultReader rs)
         {

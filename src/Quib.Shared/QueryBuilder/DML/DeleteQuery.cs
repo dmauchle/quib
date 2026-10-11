@@ -28,7 +28,7 @@ public interface IDeleteUnfiltered<TQuery> : IDeleteExecutable<TQuery>, IQueryPa
 
 public interface IDeleteFilterable<TQuery> : IQueryPart
 {
-    public IDeleteFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate) where TBool : struct, IExpressionType, IDbBool;
+    public IDeleteFiltered<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate);
 }
 
 public interface IDeleteExecutable<TQuery> : IQueryPart
@@ -56,10 +56,9 @@ internal sealed class DeleteQuery<TQuery> : IDeleteQuery<TQuery>, IDeleteFiltere
         return this;
     }
 
-    public IDeleteFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
-        where TBool : struct, IExpressionType, IDbBool
+    public IDeleteFiltered<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate)
     {
-        _builder.AddFilter(predicate(_accessor));
+        _builder.AddFilter(predicate(_accessor).SQL);
         return this;
     }
 

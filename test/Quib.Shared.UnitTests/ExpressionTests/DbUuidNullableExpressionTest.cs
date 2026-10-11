@@ -11,18 +11,11 @@ public class DbUuidNullableExpressionTest(DatabaseFixture env, ITestOutputHelper
     private static readonly Guid _high = Guid.Parse("0192f3a1-5c2e-7a00-8000-0000000000ff");
 
     [Fact]
-    public async Task CastFromNull()
+    public async Task NullValue()
     {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Null.As<DbUuidNullable>())).FetchOne();
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbUuid>())).FetchOne();
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
-    }
-
-    [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(_low).AsNullable())).FetchOne();
-        Assert.Equal(_low, rs.Result);
     }
 
     [Fact]

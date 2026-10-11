@@ -22,13 +22,6 @@ public class DbIntExpressionTest(DatabaseFixture env, ITestOutputHelper log) : D
     }
 
     [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(3).AsNullable())).FetchOne();
-        Assert.Equal(3, rs.Result);
-    }
-
-    [Fact]
     public async Task PlusParameterRight()
     {
         var left = SQL.Parameter(2);

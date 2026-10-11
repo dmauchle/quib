@@ -8,13 +8,6 @@ public class DbBoolExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
 {
 
     [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(true).AsNullable())).FetchOne();
-        Assert.True(rs.Result);
-    }
-
-    [Fact]
     public async Task ParameterTrue()
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(true))).FetchOne();

@@ -12,6 +12,7 @@ namespace Quib.Postgres18.QueryBuilder;
 
 /// <summary>
 /// Represents a part of the ORDER BY clause in a SQL query, like `column_name ASC` or `column_name DESC` or just `column_name`.
+/// Every <see cref="IQueryExpression"/> can be used as a sort expression (it also implements the interface).
 /// </summary>
 public interface ISortExpression : IQueryPart
 {
@@ -29,10 +30,10 @@ public enum Sort { ASC, DESC }
 internal class SortClause : ISortExpression, IQueryPart
 {
 
-    private readonly QueryExpression _value;
+    private readonly IQueryExpression _value;
     private readonly Sort _direction;
 
-    public SortClause(QueryExpression value, Sort direction)
+    public SortClause(IQueryExpression value, Sort direction)
     {
         _value = value;
         _direction = direction;

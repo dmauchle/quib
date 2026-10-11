@@ -10,27 +10,11 @@ namespace Quib.MySql84.Types;
 namespace Quib.Postgres18.Types;
 #endif
 
+
 /// <summary>
-/// A DB type of a <see cref="QueryExpression"/> like <see cref="DbInt"/>, <see cref="DbText"/> etc. We also distinguish 
-/// between nullable and not-nullable types. For example, <see cref="DbInt"/> is not-nullable, while <see cref="DbIntNullable"/> 
-/// is nullable. <see cref="INotNullExpressionType"/> and <see cref="INullableExpressionType"/> /// are used to distinguish 
-/// between them.
+/// A DB type of an expression like <see cref="DbInt"/>, <see cref="DbText"/> etc. The DB type doesn't denote nullability.
+/// It's expressed by the expression itself (<see cref="NotNullExpression{T}"/> or <see cref="NullableExpression{T}"/>).
 /// </summary>
 public interface IExpressionType
-{
-
-}
-
-/// <summary>
-/// I not-nullable <see cref="IExpressionType"/>.
-/// </summary>
-public interface INotNullExpressionType : IExpressionType
-{
-}
-
-/// <summary>
-/// I nullable <see cref="IExpressionType"/>.
-/// </summary>
-public interface INullableExpressionType : IExpressionType
 {
 }

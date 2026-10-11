@@ -13,92 +13,92 @@ namespace Quib.Postgres18.ORMapper;
 public static class UpdateQueryExtensions
 {
 
-    public static void SetNull<TQuery, TDbType>(this TQuery query, DbColumn<TDbType> column)
+    public static void SetNull<TQuery, TDbType>(this TQuery query, NullableColumn<TDbType> column)
         where TQuery : IUpdateQueryBuilder
-        where TDbType : struct, INullableExpressionType
+        where TDbType : struct, IExpressionType
     {
-        query.Set(column, SQL.Null.As<TDbType>());
+        query.Set(column, SQL.Null<TDbType>());
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbText> column, string value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbText> column, string value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbTextNullable> column, string? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbText> column, string? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbInt> column, int value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbInt> column, int value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbIntNullable> column, int? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbInt> column, int? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbBool> column, bool value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbBool> column, bool value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbBoolNullable> column, bool? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbBool> column, bool? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbUuid> column, Guid value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbUuid> column, Guid value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbUuidNullable> column, Guid? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbUuid> column, Guid? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbDecimal> column, decimal value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbDecimal> column, decimal value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbDecimalNullable> column, decimal? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbDecimal> column, decimal? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateOnly> column, DateOnly value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbDateOnly> column, DateOnly value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateOnlyNullable> column, DateOnly? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbDateOnly> column, DateOnly? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateTime> column, DateTime value)
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbDateTime> column, DateTime value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.Parameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, DbColumn<DbDateTimeNullable> column, DateTime? value)
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbDateTime> column, DateTime? value)
         where TQuery : IUpdateQueryBuilder
     {
         query.Set(column, SQL.NullableParameter(value));

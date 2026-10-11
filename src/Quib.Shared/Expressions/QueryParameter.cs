@@ -11,13 +11,7 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal interface IQueryParameter
-{
-    public object? Value { get; }
-}
-
-internal sealed class QueryParameter<T> : QueryExpression<T>, IQueryParameter
-    where T : struct, IExpressionType
+internal sealed class QueryParameter : IQueryExpression
 {
 
     private readonly object? _value;
@@ -27,9 +21,9 @@ internal sealed class QueryParameter<T> : QueryExpression<T>, IQueryParameter
         _value = value;
     }
 
-    object? IQueryParameter.Value => _value;
+    public object? Value => _value;
 
-    internal override void ToSql(QueryWriter query)
+    void IQueryPart.ToSql(QueryWriter query)
     {
         query.WriteParameter(this);
     }

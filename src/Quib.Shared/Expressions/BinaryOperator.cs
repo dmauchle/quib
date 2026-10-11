@@ -11,15 +11,14 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed class BinaryOperator<T> : QueryExpression<T>
-    where T : struct, IExpressionType
+internal sealed class BinaryOperator : IQueryExpression
 {
 
-    private readonly QueryExpression _left;
-    private readonly QueryExpression _right;
+    private readonly IQueryExpression _left;
+    private readonly IQueryExpression _right;
     private readonly string _sqlOperator;
 
-    public BinaryOperator(QueryExpression left, string sqlOperator, QueryExpression right)
+    public BinaryOperator(IQueryExpression left, string sqlOperator, IQueryExpression right)
     {
         // In case nullable compiler errors are turned off in the consuming project.
         ArgumentNullException.ThrowIfNull(left);
@@ -30,7 +29,7 @@ internal sealed class BinaryOperator<T> : QueryExpression<T>
         _sqlOperator = sqlOperator;
     }
 
-    internal override void ToSql(QueryWriter query)
+    void IQueryPart.ToSql(QueryWriter query)
     {
         query.Write("(");
         query.Write(_left);

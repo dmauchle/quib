@@ -41,7 +41,7 @@ install.Table("users")
 
 ## Decimal
 
-Use `DbDecimal` / `DbDecimalNullable` in queries, the .NET type is `decimal`. `DECIMAL(precision, scale)` stores exact 
+Use `DbDecimal` in queries, the .NET type is `decimal`. `DECIMAL(precision, scale)` stores exact 
 values, so it's the right choice for money, e.g. `ColumnType.Decimal(19, 4)`.
 
 - `precision`: total number of digits, 1 - 28. Limited to 28, so every value of the column fits into a .NET `decimal`.
@@ -64,7 +64,7 @@ dividend, Postgres: at least 16 significant digits).
 
 ## UUID
 
-Use `DbUuid` / `DbUuidNullable` in queries, the .NET type is `Guid`. Values are compared and sorted in their standard 
+Use `DbUuid` in queries, the .NET type is `Guid`. Values are compared and sorted in their standard 
 text/byte order, so version 7 UUIDs (`Guid.CreateVersion7()`) sort by creation time.
 
 **MySQL** has no native UUID type. Quib stores UUIDs as text in the standard lowercase format 
@@ -74,8 +74,8 @@ text/byte order, so version 7 UUIDs (`Guid.CreateVersion7()`) sort by creation t
 
 ## DateOnly and DateTime
 
-Use `DbDateOnly` / `DbDateOnlyNullable` for `DateOnly()` columns, the .NET type is `DateOnly`. Use `DbDateTime` / 
-`DbDateTimeNullable` for `DateTime()` columns, the .NET type is `DateTime`.
+Use `DbDateOnly` for `DateOnly()` columns, the .NET type is `DateOnly`. Use `DbDateTime` for `DateTime()` columns, 
+the .NET type is `DateTime`.
 
 Date-times are stored without time zone and with whole seconds:
 

@@ -120,7 +120,7 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
 
     // Fetch and update tests
     // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
-    // and setters (UpdateQueryExtensions) for DbDecimal and DbDecimalNullable on DECIMAL columns.
+    // and setters (UpdateQueryExtensions) for DECIMAL columns.
 
     private void CreateValuesTable()
     {
@@ -142,7 +142,7 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
                 {
                     query.Set(table.Column<DbInt>("id"), id);
                     query.Set(table.Column<DbDecimal>("value"), value);
-                    query.Set(table.Column<DbDecimalNullable>("value_nullable"), valueNullable);
+                    query.Set(table.NullableColumn<DbDecimal>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -201,7 +201,7 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         await InsertValues((1, 0m, 42.5m));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDecimalNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDecimal>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -215,7 +215,7 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         await InsertValues((1, 0m, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDecimalNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDecimal>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -230,7 +230,7 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDecimalNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDecimal>("value_nullable"))
             .FetchArray();
 
         Assert.Equal([42.5m, null, -7.25m], rs);
@@ -245,7 +245,7 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         var values = new List<decimal?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDecimalNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDecimal>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -282,13 +282,13 @@ public class DecimalTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         decimal? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbDecimalNullable>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbDecimal>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDecimalNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDecimal>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);

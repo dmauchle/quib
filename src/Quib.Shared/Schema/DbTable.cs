@@ -20,10 +20,16 @@ public readonly struct DbTable
         _alias = alias;
     }
 
-    public DbColumn<T> Column<T>(string fieldName)
+    public NotNullColumn<T> Column<T>(string fieldName)
         where T : struct, IExpressionType
     {
-        return new DbColumn<T>(_alias, fieldName);
+        return new NotNullColumn<T>(_alias, fieldName);
+    }
+
+    public NullableColumn<T> NullableColumn<T>(string fieldName)
+        where T : struct, IExpressionType
+    {
+        return new NullableColumn<T>(_alias, fieldName);
     }
 
 }

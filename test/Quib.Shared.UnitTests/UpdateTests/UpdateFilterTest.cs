@@ -13,9 +13,9 @@ public class UpdateFilterTest(DatabaseFixture env, ITestOutputHelper log) : DbTe
         public static string TableName => "users";
         public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
-        public DbColumn<DbText> Name => field ??= table.Column<DbText>("name");
-        public DbColumn<DbText> Lastname => field ??= table.Column<DbText>("lastname");
-        public DbColumn<DbTextNullable> City => field ??= table.Column<DbTextNullable>("city");
+        public NotNullColumn<DbText> Name => field ??= table.Column<DbText>("name");
+        public NotNullColumn<DbText> Lastname => field ??= table.Column<DbText>("lastname");
+        public NullableColumn<DbText> City => field ??= table.NullableColumn<DbText>("city");
     }
 
     protected override async ValueTask InitializeTestDatabase()

@@ -109,7 +109,7 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
     // Fetch and update tests
     // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
-    // and setters (UpdateQueryExtensions) for DbText and DbTextNullable on TEXT columns.
+    // and setters (UpdateQueryExtensions) for TEXT columns.
     // Only ShortText is tested, the other text column types use the same DB types.
 
     private void CreateValuesTable()
@@ -132,7 +132,7 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
                 {
                     query.Set(table.Column<DbInt>("id"), id);
                     query.Set(table.Column<DbText>("value"), value);
-                    query.Set(table.Column<DbTextNullable>("value_nullable"), valueNullable);
+                    query.Set(table.NullableColumn<DbText>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -191,7 +191,7 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         await InsertValues((1, "", "Alice 😀"));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbTextNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbText>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -205,7 +205,7 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         await InsertValues((1, "", null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbTextNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbText>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -220,7 +220,7 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbTextNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbText>("value_nullable"))
             .FetchArray();
 
         // Empty string and null must be distinguished
@@ -236,7 +236,7 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         var values = new List<string?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbTextNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbText>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -273,13 +273,13 @@ public class TextTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         string? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbTextNullable>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbText>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbTextNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbText>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);

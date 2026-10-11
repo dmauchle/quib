@@ -24,8 +24,7 @@ public sealed class ResultReader
         _mappingCache = new QueryMappingCache();
     }
 
-    public bool IsDBNull<T>(ProjectedValue<T> field)
-        where T : struct, IExpressionType
+    public bool IsDBNull(IProjectionField field)
     {
         return _reader.IsDBNull(field.Index);
     }
@@ -81,7 +80,7 @@ public sealed class ResultReader
         return newObj;
     }
 
-    public string Get(ProjectedValue<DbText> field)
+    public string Get(NotNullProjection<DbText> field)
     {
         return _reader.GetString(field.Index);
     }
@@ -91,7 +90,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public string? GetNullable(ProjectedValue<DbText> field)
+    public string? GetNullable(NotNullProjection<DbText> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -99,7 +98,7 @@ public sealed class ResultReader
             return _reader.GetString(field.Index);
     }
 
-    public string? Get(ProjectedValue<DbTextNullable> field)
+    public string? Get(NullableProjection<DbText> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -107,7 +106,7 @@ public sealed class ResultReader
             return _reader.GetString(field.Index);
     }
 
-    public int Get(ProjectedValue<DbInt> field)
+    public int Get(NotNullProjection<DbInt> field)
     {
         return _reader.GetInt32(field.Index);
     }
@@ -117,7 +116,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public int? GetNullable(ProjectedValue<DbInt> field)
+    public int? GetNullable(NotNullProjection<DbInt> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -125,7 +124,7 @@ public sealed class ResultReader
             return _reader.GetInt32(field.Index);
     }
 
-    public int? Get(ProjectedValue<DbIntNullable> field)
+    public int? Get(NullableProjection<DbInt> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -133,7 +132,7 @@ public sealed class ResultReader
             return _reader.GetInt32(field.Index);
     }
 
-    public bool Get(ProjectedValue<DbBool> field)
+    public bool Get(NotNullProjection<DbBool> field)
     {
         return _reader.GetBoolean(field.Index);
     }
@@ -143,7 +142,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public bool? GetNullable(ProjectedValue<DbBool> field)
+    public bool? GetNullable(NotNullProjection<DbBool> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -151,7 +150,7 @@ public sealed class ResultReader
             return _reader.GetBoolean(field.Index);
     }
 
-    public bool? Get(ProjectedValue<DbBoolNullable> field)
+    public bool? Get(NullableProjection<DbBool> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -159,7 +158,7 @@ public sealed class ResultReader
             return _reader.GetBoolean(field.Index);
     }
 
-    public Guid Get(ProjectedValue<DbUuid> field)
+    public Guid Get(NotNullProjection<DbUuid> field)
     {
         return _reader.GetGuid(field.Index);
     }
@@ -169,7 +168,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public Guid? GetNullable(ProjectedValue<DbUuid> field)
+    public Guid? GetNullable(NotNullProjection<DbUuid> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -177,7 +176,7 @@ public sealed class ResultReader
             return _reader.GetGuid(field.Index);
     }
 
-    public Guid? Get(ProjectedValue<DbUuidNullable> field)
+    public Guid? Get(NullableProjection<DbUuid> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -185,7 +184,7 @@ public sealed class ResultReader
             return _reader.GetGuid(field.Index);
     }
 
-    public decimal Get(ProjectedValue<DbDecimal> field)
+    public decimal Get(NotNullProjection<DbDecimal> field)
     {
         return _reader.GetDecimal(field.Index);
     }
@@ -195,7 +194,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public decimal? GetNullable(ProjectedValue<DbDecimal> field)
+    public decimal? GetNullable(NotNullProjection<DbDecimal> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -203,7 +202,7 @@ public sealed class ResultReader
             return _reader.GetDecimal(field.Index);
     }
 
-    public decimal? Get(ProjectedValue<DbDecimalNullable> field)
+    public decimal? Get(NullableProjection<DbDecimal> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -213,7 +212,7 @@ public sealed class ResultReader
 
     // Dates and date-times are read as DateTime, as older drivers don't support DateOnly
 
-    public DateOnly Get(ProjectedValue<DbDateOnly> field)
+    public DateOnly Get(NotNullProjection<DbDateOnly> field)
     {
         return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
     }
@@ -223,7 +222,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public DateOnly? GetNullable(ProjectedValue<DbDateOnly> field)
+    public DateOnly? GetNullable(NotNullProjection<DbDateOnly> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -231,7 +230,7 @@ public sealed class ResultReader
             return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
     }
 
-    public DateOnly? Get(ProjectedValue<DbDateOnlyNullable> field)
+    public DateOnly? Get(NullableProjection<DbDateOnly> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -239,7 +238,7 @@ public sealed class ResultReader
             return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
     }
 
-    public DateTime Get(ProjectedValue<DbDateTime> field)
+    public DateTime Get(NotNullProjection<DbDateTime> field)
     {
         return GetLocalDateTime(field.Index);
     }
@@ -249,7 +248,7 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public DateTime? GetNullable(ProjectedValue<DbDateTime> field)
+    public DateTime? GetNullable(NotNullProjection<DbDateTime> field)
     {
         if (this.IsDBNull(field))
             return null;
@@ -257,7 +256,7 @@ public sealed class ResultReader
             return GetLocalDateTime(field.Index);
     }
 
-    public DateTime? Get(ProjectedValue<DbDateTimeNullable> field)
+    public DateTime? Get(NullableProjection<DbDateTime> field)
     {
         if (this.IsDBNull(field))
             return null;

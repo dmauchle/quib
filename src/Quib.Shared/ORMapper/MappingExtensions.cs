@@ -14,212 +14,212 @@ namespace Quib.Postgres18.ORMapper;
 public static class MappingExtensions
 {
 
-    public static IAsyncEnumerable<string> FetchStream(this ProjectedQuery<ProjectedValue<DbText>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<string> FetchStream(this ProjectedQuery<NotNullProjection<DbText>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<string[]> FetchArray(this ProjectedQuery<ProjectedValue<DbText>> query, CancellationToken cancellationToken = default)
+    public static Task<string[]> FetchArray(this ProjectedQuery<NotNullProjection<DbText>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<string>> FetchOne(this ProjectedQuery<ProjectedValue<DbText>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<string>> FetchOne(this ProjectedQuery<NotNullProjection<DbText>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<string?> FetchStream(this ProjectedQuery<ProjectedValue<DbTextNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<string?> FetchStream(this ProjectedQuery<NullableProjection<DbText>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<string?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbTextNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<string?[]> FetchArray(this ProjectedQuery<NullableProjection<DbText>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<string?>> FetchOne(this ProjectedQuery<ProjectedValue<DbTextNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<string?>> FetchOne(this ProjectedQuery<NullableProjection<DbText>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<int> FetchStream(this ProjectedQuery<ProjectedValue<DbInt>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<int> FetchStream(this ProjectedQuery<NotNullProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<int[]> FetchArray(this ProjectedQuery<ProjectedValue<DbInt>> query, CancellationToken cancellationToken = default)
+    public static Task<int[]> FetchArray(this ProjectedQuery<NotNullProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<int>> FetchOne(this ProjectedQuery<ProjectedValue<DbInt>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<int>> FetchOne(this ProjectedQuery<NotNullProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<int?> FetchStream(this ProjectedQuery<ProjectedValue<DbIntNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<int?> FetchStream(this ProjectedQuery<NullableProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<int?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbIntNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<int?[]> FetchArray(this ProjectedQuery<NullableProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<int?>> FetchOne(this ProjectedQuery<ProjectedValue<DbIntNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<int?>> FetchOne(this ProjectedQuery<NullableProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<bool> FetchStream(this ProjectedQuery<ProjectedValue<DbBool>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<bool> FetchStream(this ProjectedQuery<NotNullProjection<DbBool>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<bool[]> FetchArray(this ProjectedQuery<ProjectedValue<DbBool>> query, CancellationToken cancellationToken = default)
+    public static Task<bool[]> FetchArray(this ProjectedQuery<NotNullProjection<DbBool>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<bool>> FetchOne(this ProjectedQuery<ProjectedValue<DbBool>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<bool>> FetchOne(this ProjectedQuery<NotNullProjection<DbBool>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<bool?> FetchStream(this ProjectedQuery<ProjectedValue<DbBoolNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<bool?> FetchStream(this ProjectedQuery<NullableProjection<DbBool>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<bool?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbBoolNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<bool?[]> FetchArray(this ProjectedQuery<NullableProjection<DbBool>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<bool?>> FetchOne(this ProjectedQuery<ProjectedValue<DbBoolNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<bool?>> FetchOne(this ProjectedQuery<NullableProjection<DbBool>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<Guid> FetchStream(this ProjectedQuery<ProjectedValue<DbUuid>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<Guid> FetchStream(this ProjectedQuery<NotNullProjection<DbUuid>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<Guid[]> FetchArray(this ProjectedQuery<ProjectedValue<DbUuid>> query, CancellationToken cancellationToken = default)
+    public static Task<Guid[]> FetchArray(this ProjectedQuery<NotNullProjection<DbUuid>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<Guid>> FetchOne(this ProjectedQuery<ProjectedValue<DbUuid>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<Guid>> FetchOne(this ProjectedQuery<NotNullProjection<DbUuid>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<Guid?> FetchStream(this ProjectedQuery<ProjectedValue<DbUuidNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<Guid?> FetchStream(this ProjectedQuery<NullableProjection<DbUuid>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<Guid?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbUuidNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<Guid?[]> FetchArray(this ProjectedQuery<NullableProjection<DbUuid>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<Guid?>> FetchOne(this ProjectedQuery<ProjectedValue<DbUuidNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<Guid?>> FetchOne(this ProjectedQuery<NullableProjection<DbUuid>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<decimal> FetchStream(this ProjectedQuery<ProjectedValue<DbDecimal>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<decimal> FetchStream(this ProjectedQuery<NotNullProjection<DbDecimal>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<decimal[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDecimal>> query, CancellationToken cancellationToken = default)
+    public static Task<decimal[]> FetchArray(this ProjectedQuery<NotNullProjection<DbDecimal>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<decimal>> FetchOne(this ProjectedQuery<ProjectedValue<DbDecimal>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<decimal>> FetchOne(this ProjectedQuery<NotNullProjection<DbDecimal>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<decimal?> FetchStream(this ProjectedQuery<ProjectedValue<DbDecimalNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<decimal?> FetchStream(this ProjectedQuery<NullableProjection<DbDecimal>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<decimal?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDecimalNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<decimal?[]> FetchArray(this ProjectedQuery<NullableProjection<DbDecimal>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<decimal?>> FetchOne(this ProjectedQuery<ProjectedValue<DbDecimalNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<decimal?>> FetchOne(this ProjectedQuery<NullableProjection<DbDecimal>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<DateOnly> FetchStream(this ProjectedQuery<ProjectedValue<DbDateOnly>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<DateOnly> FetchStream(this ProjectedQuery<NotNullProjection<DbDateOnly>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<DateOnly[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDateOnly>> query, CancellationToken cancellationToken = default)
+    public static Task<DateOnly[]> FetchArray(this ProjectedQuery<NotNullProjection<DbDateOnly>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<DateOnly>> FetchOne(this ProjectedQuery<ProjectedValue<DbDateOnly>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<DateOnly>> FetchOne(this ProjectedQuery<NotNullProjection<DbDateOnly>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<DateOnly?> FetchStream(this ProjectedQuery<ProjectedValue<DbDateOnlyNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<DateOnly?> FetchStream(this ProjectedQuery<NullableProjection<DbDateOnly>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<DateOnly?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDateOnlyNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<DateOnly?[]> FetchArray(this ProjectedQuery<NullableProjection<DbDateOnly>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<DateOnly?>> FetchOne(this ProjectedQuery<ProjectedValue<DbDateOnlyNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<DateOnly?>> FetchOne(this ProjectedQuery<NullableProjection<DbDateOnly>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<DateTime> FetchStream(this ProjectedQuery<ProjectedValue<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<DateTime> FetchStream(this ProjectedQuery<NotNullProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<DateTime[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static Task<DateTime[]> FetchArray(this ProjectedQuery<NotNullProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<DateTime>> FetchOne(this ProjectedQuery<ProjectedValue<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<DateTime>> FetchOne(this ProjectedQuery<NotNullProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<DateTime?> FetchStream(this ProjectedQuery<ProjectedValue<DbDateTimeNullable>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<DateTime?> FetchStream(this ProjectedQuery<NullableProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<DateTime?[]> FetchArray(this ProjectedQuery<ProjectedValue<DbDateTimeNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<DateTime?[]> FetchArray(this ProjectedQuery<NullableProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<DateTime?>> FetchOne(this ProjectedQuery<ProjectedValue<DbDateTimeNullable>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<DateTime?>> FetchOne(this ProjectedQuery<NullableProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }

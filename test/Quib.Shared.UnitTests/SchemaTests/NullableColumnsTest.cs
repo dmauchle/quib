@@ -45,14 +45,14 @@ public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : D
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("username"), "Jack");
-                query.SetNull(table.Column<DbTextNullable>("nickname"));
+                query.SetNull(table.NullableColumn<DbText>("nickname"));
             })
             .Execute();
 
         Assert.Equal(1, inserted);
 
         var rs = await DB.SelectFromTable("users")
-            .Project(x => x.Column<DbTextNullable>("nickname"))
+            .Project(x => x.NullableColumn<DbText>("nickname"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -75,7 +75,7 @@ public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : D
                 .AddRow((query, table) =>
                 {
                     query.Set(table.Column<DbText>("username"), "Jack");
-                    query.SetNull(table.Column<DbTextNullable>("nickname"));
+                    query.SetNull(table.NullableColumn<DbText>("nickname"));
                 })
                 .Execute();
         });
@@ -95,14 +95,14 @@ public class NullableColumnsTest(DatabaseFixture env, ITestOutputHelper log) : D
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("username"), "Jack");
-                query.Set(table.Column<DbTextNullable>("nickname"), "Fish");
+                query.Set(table.NullableColumn<DbText>("nickname"), "Fish");
             })
             .Execute();
 
         Assert.Equal(1, inserted);
 
         var rs = await DB.SelectFromTable("users")
-            .Project(x => x.Column<DbTextNullable>("nickname"))
+            .Project(x => x.NullableColumn<DbText>("nickname"))
             .FetchOne();
 
         Assert.Equal("Fish", rs.Result);

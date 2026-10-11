@@ -89,10 +89,10 @@ internal class ProductsTable(DbTable table) : IDbTable, IDbTable<ProductsTable>
     public static string TableName => "products";
     public static ProductsTable CreateFrom(DbTable table) => new ProductsTable(table);
 
-    public DbColumn<DbInt> ID => field ??= table.Column<DbInt>("id");
-    public DbColumn<DbText> ProductName => field ??= table.Column<DbText>("productname");
-    public DbColumn<DbInt> CategoryId => field ??= table.Column<DbInt>("categoryid");
-    public DbColumn<DbInt> Price => field ??= table.Column<DbInt>("price");
+    public NotNullColumn<DbInt> ID => field ??= table.Column<DbInt>("id");
+    public NotNullColumn<DbText> ProductName => field ??= table.Column<DbText>("productname");
+    public NotNullColumn<DbInt> CategoryId => field ??= table.Column<DbInt>("categoryid");
+    public NotNullColumn<DbInt> Price => field ??= table.Column<DbInt>("price");
 }
 
 ```
@@ -113,12 +113,12 @@ internal class ProductsReader(IProjectionBuilder query, ProductsTable product) :
 {
     static IReaderMapping<Product> IReaderMapping<ProductsTable, Product>.CreateFrom(IProjectionBuilder rs, ProductsTable query) => new ProductsReader(rs, query);
 
-    private readonly ProjectedValue<DbInt> _id = query.Get(product.ID);
-    private readonly ProjectedValue<DbText> _productName = query.Get(product.ProductName);
-    private readonly ProjectedValue<DbInt> _categoryId = query.Get(product.CategoryId);
-    private readonly ProjectedValue<DbInt> _price = query.Get(product.Price);
+    private readonly NotNullProjection<DbInt> _id = query.Get(product.ID);
+    private readonly NotNullProjection<DbText> _productName = query.Get(product.ProductName);
+    private readonly NotNullProjection<DbInt> _categoryId = query.Get(product.CategoryId);
+    private readonly NotNullProjection<DbInt> _price = query.Get(product.Price);
 
-    IProjectedValue[] IReaderMapping<Product>.ObjectIdentity => [ _id ];
+    IProjectionField[] IReaderMapping<Product>.ObjectIdentity => [ _id ];
 
     Product IReaderMapping<Product>.Map(ResultReader rs)
     {

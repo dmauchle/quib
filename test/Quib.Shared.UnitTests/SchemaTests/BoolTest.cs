@@ -1,4 +1,4 @@
-using Quib.UnitTests.Infrastructure;
+﻿using Quib.UnitTests.Infrastructure;
 using Xunit.Abstractions;
 
 namespace Quib.UnitTests.SchemaTests;
@@ -9,7 +9,7 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
     // Fetch and update tests
     // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
-    // and setters (UpdateQueryExtensions) for DbBool and DbBoolNullable on BOOLEAN columns.
+    // and setters (UpdateQueryExtensions) for BOOLEAN columns.
 
     private void CreateValuesTable()
     {
@@ -31,7 +31,7 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
                 {
                     query.Set(table.Column<DbInt>("id"), id);
                     query.Set(table.Column<DbBool>("value"), value);
-                    query.Set(table.Column<DbBoolNullable>("value_nullable"), valueNullable);
+                    query.Set(table.NullableColumn<DbBool>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -90,7 +90,7 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         await InsertValues((1, false, true));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbBoolNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbBool>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -104,7 +104,7 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         await InsertValues((1, false, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbBoolNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbBool>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -119,7 +119,7 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbBoolNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbBool>("value_nullable"))
             .FetchArray();
 
         Assert.Equal([true, null, false], rs);
@@ -134,7 +134,7 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         var values = new List<bool?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbBoolNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbBool>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -171,13 +171,13 @@ public class BoolTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         bool? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbBoolNullable>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbBool>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbBoolNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbBool>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);

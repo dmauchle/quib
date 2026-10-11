@@ -13,5 +13,9 @@ namespace Quib.Postgres18.ORMapper;
 
 public interface IProjectionBuilder
 {
-    public ProjectedValue<T> Get<T>(QueryExpression<T> value) where T : struct, IExpressionType;
+
+    public NotNullProjection<T> Get<T>(NotNullExpression<T> value) where T : struct, IExpressionType;
+
+    public NullableProjection<T> Get<T>(NullableExpression<T> value) where T : struct, IExpressionType;
+
 }

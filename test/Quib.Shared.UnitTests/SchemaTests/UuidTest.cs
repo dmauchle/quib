@@ -31,7 +31,7 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
                 {
                     query.Set(table.Column<DbInt>("id"), id);
                     query.Set(table.Column<DbUuid>("value"), value);
-                    query.Set(table.Column<DbUuidNullable>("value_nullable"), valueNullable);
+                    query.Set(table.NullableColumn<DbUuid>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -108,7 +108,7 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
     // Fetch and update tests
     // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
-    // and setters (UpdateQueryExtensions) for DbUuid and DbUuidNullable on UUID columns.
+    // and setters (UpdateQueryExtensions) for UUID columns.
 
     [Fact]
     public async Task FetchOne_Succeeds()
@@ -163,7 +163,7 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         await InsertValues((1, _first, _second));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbUuidNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbUuid>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -177,7 +177,7 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         await InsertValues((1, _first, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbUuidNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbUuid>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -192,7 +192,7 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbUuidNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbUuid>("value_nullable"))
             .FetchArray();
 
         Assert.Equal([_first, null, _third], rs);
@@ -207,7 +207,7 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         var values = new List<Guid?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbUuidNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbUuid>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -244,13 +244,13 @@ public class UuidTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         Guid? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbUuidNullable>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbUuid>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbUuidNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbUuid>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);

@@ -18,7 +18,7 @@ internal sealed class JoinClause : IQueryPart
     private readonly string _joinType;
     private readonly ITableOrSubquery _tableOrSubquery;
     private readonly TableAlias _alias;
-    private QueryExpression? _condition;
+    private IQueryExpression? _condition;
 
     public JoinClause(string joinType, ITableOrSubquery tableOrSubquery, TableAlias alias)
     {
@@ -29,7 +29,11 @@ internal sealed class JoinClause : IQueryPart
 
     public TableAlias Alias => _alias;
 
-    public void On(QueryExpression condition)
+    /// <summary>
+    /// Sets/replaces the ON condition for this join clause.
+    /// </summary>
+    /// <param name="condition"></param>
+    public void On(IQueryExpression condition)
     {
         _condition = condition;
     }

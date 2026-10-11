@@ -11,17 +11,17 @@ namespace Quib.Postgres18.Expressions;
 #endif
 
 
-internal sealed class IsNotNull : QueryExpression<DbBool>
+internal sealed class IsNotNull : IQueryExpression
 {
 
-    private readonly QueryExpression _value;
+    private readonly IQueryExpression _value;
 
-    public IsNotNull(QueryExpression value)
+    public IsNotNull(IQueryExpression value)
     {
         _value = value;
     }
 
-    internal override void ToSql(QueryWriter query)
+    void IQueryPart.ToSql(QueryWriter query)
     {
         query.Write("(");
         query.Write(_value);

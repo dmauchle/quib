@@ -14,90 +14,110 @@ namespace Quib.Postgres18;
 public static partial class ExpressionExtensions
 {
 
-    extension(QueryExpression<DbUuid> value)
+    extension(NotNullExpression<DbUuid> value)
     {
 
-        public QueryExpression<DbUuidNullable> AsNullable()
+        public static NotNullExpression<DbBool> operator ==(NotNullExpression<DbUuid> left, Guid right)
         {
-            return new ImplicitCast<DbUuidNullable>(value);
+            return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter(right).SQL));
         }
 
-        public static QueryExpression<DbBool> operator ==(QueryExpression<DbUuid> left, Guid right)
+        public static NotNullExpression<DbBool> operator !=(NotNullExpression<DbUuid> left, Guid right)
         {
-            return new BinaryOperator<DbBool>(left, "=", SQL.Parameter(right));
+            return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter(right).SQL));
         }
 
-        public static QueryExpression<DbBool> operator !=(QueryExpression<DbUuid> left, Guid right)
+        public static NotNullExpression<DbBool> operator <(NotNullExpression<DbUuid> left, NotNullExpression<DbUuid> right)
         {
-            return new BinaryOperator<DbBool>(left, "!=", SQL.Parameter(right));
+            return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "<", right.SQL));
         }
 
-        public static QueryExpression<DbBoolNullable> operator ==(QueryExpression<DbUuid> left, QueryExpression<DbUuidNullable> right)
-        {
-            return new BinaryOperator<DbBoolNullable>(left, "=", right);
-        }
-
-        public static QueryExpression<DbBoolNullable> operator !=(QueryExpression<DbUuid> left, QueryExpression<DbUuidNullable> right)
-        {
-            return new BinaryOperator<DbBoolNullable>(left, "!=", right);
-        }
-
-        public static QueryExpression<DbBool> operator <(QueryExpression<DbUuid> left, QueryExpression<DbUuid> right)
-        {
-            return new BinaryOperator<DbBool>(left, "<", right);
-        }
-
-        public static QueryExpression<DbBoolNullable> operator <(QueryExpression<DbUuid> left, QueryExpression<DbUuidNullable> right)
-        {
-            return new BinaryOperator<DbBoolNullable>(left, "<", right);
-        }
-
-        public static QueryExpression<DbBool> operator <(QueryExpression<DbUuid> left, Guid right)
+        public static NotNullExpression<DbBool> operator <(NotNullExpression<DbUuid> left, Guid right)
         {
             return left < SQL.Parameter(right);
         }
 
-        public static QueryExpression<DbBool> operator >(QueryExpression<DbUuid> left, QueryExpression<DbUuid> right)
+        public static NotNullExpression<DbBool> operator >(NotNullExpression<DbUuid> left, NotNullExpression<DbUuid> right)
         {
-            return new BinaryOperator<DbBool>(left, ">", right);
+            return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, ">", right.SQL));
         }
 
-        public static QueryExpression<DbBoolNullable> operator >(QueryExpression<DbUuid> left, QueryExpression<DbUuidNullable> right)
-        {
-            return new BinaryOperator<DbBoolNullable>(left, ">", right);
-        }
-
-        public static QueryExpression<DbBool> operator >(QueryExpression<DbUuid> left, Guid right)
+        public static NotNullExpression<DbBool> operator >(NotNullExpression<DbUuid> left, Guid right)
         {
             return left > SQL.Parameter(right);
         }
 
-        public static QueryExpression<DbBool> operator <=(QueryExpression<DbUuid> left, QueryExpression<DbUuid> right)
+        public static NotNullExpression<DbBool> operator <=(NotNullExpression<DbUuid> left, NotNullExpression<DbUuid> right)
         {
-            return new BinaryOperator<DbBool>(left, "<=", right);
+            return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "<=", right.SQL));
         }
 
-        public static QueryExpression<DbBoolNullable> operator <=(QueryExpression<DbUuid> left, QueryExpression<DbUuidNullable> right)
-        {
-            return new BinaryOperator<DbBoolNullable>(left, "<=", right);
-        }
-
-        public static QueryExpression<DbBool> operator <=(QueryExpression<DbUuid> left, Guid right)
+        public static NotNullExpression<DbBool> operator <=(NotNullExpression<DbUuid> left, Guid right)
         {
             return left <= SQL.Parameter(right);
         }
 
-        public static QueryExpression<DbBool> operator >=(QueryExpression<DbUuid> left, QueryExpression<DbUuid> right)
+        public static NotNullExpression<DbBool> operator >=(NotNullExpression<DbUuid> left, NotNullExpression<DbUuid> right)
         {
-            return new BinaryOperator<DbBool>(left, ">=", right);
+            return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, ">=", right.SQL));
         }
 
-        public static QueryExpression<DbBoolNullable> operator >=(QueryExpression<DbUuid> left, QueryExpression<DbUuidNullable> right)
+        public static NotNullExpression<DbBool> operator >=(NotNullExpression<DbUuid> left, Guid right)
         {
-            return new BinaryOperator<DbBoolNullable>(left, ">=", right);
+            return left >= SQL.Parameter(right);
         }
 
-        public static QueryExpression<DbBool> operator >=(QueryExpression<DbUuid> left, Guid right)
+    }
+
+    extension(NullableExpression<DbUuid> value)
+    {
+
+        public static NullableExpression<DbBool> operator ==(NullableExpression<DbUuid> left, Guid right)
+        {
+            return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter(right).SQL));
+        }
+
+        public static NullableExpression<DbBool> operator !=(NullableExpression<DbUuid> left, Guid right)
+        {
+            return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter(right).SQL));
+        }
+
+        public static NullableExpression<DbBool> operator <(NullableExpression<DbUuid> left, NullableExpression<DbUuid> right)
+        {
+            return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "<", right.SQL));
+        }
+
+        public static NullableExpression<DbBool> operator <(NullableExpression<DbUuid> left, Guid right)
+        {
+            return left < SQL.Parameter(right);
+        }
+
+        public static NullableExpression<DbBool> operator >(NullableExpression<DbUuid> left, NullableExpression<DbUuid> right)
+        {
+            return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, ">", right.SQL));
+        }
+
+        public static NullableExpression<DbBool> operator >(NullableExpression<DbUuid> left, Guid right)
+        {
+            return left > SQL.Parameter(right);
+        }
+
+        public static NullableExpression<DbBool> operator <=(NullableExpression<DbUuid> left, NullableExpression<DbUuid> right)
+        {
+            return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "<=", right.SQL));
+        }
+
+        public static NullableExpression<DbBool> operator <=(NullableExpression<DbUuid> left, Guid right)
+        {
+            return left <= SQL.Parameter(right);
+        }
+
+        public static NullableExpression<DbBool> operator >=(NullableExpression<DbUuid> left, NullableExpression<DbUuid> right)
+        {
+            return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, ">=", right.SQL));
+        }
+
+        public static NullableExpression<DbBool> operator >=(NullableExpression<DbUuid> left, Guid right)
         {
             return left >= SQL.Parameter(right);
         }

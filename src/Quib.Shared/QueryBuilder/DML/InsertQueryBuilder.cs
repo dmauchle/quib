@@ -13,24 +13,34 @@ namespace Quib.Postgres18.QueryBuilder;
 internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
 {
 
-    private readonly List<DbColumnForUpdate> _columns = [];
-    private readonly List<Dictionary<DbColumnForUpdate, QueryExpression>> _rows = [];
+    private readonly List<DbColumnForWriting> _columns = [];
+    private readonly List<Dictionary<DbColumnForWriting, IQueryExpression>> _rows = [];
     private readonly TableReference _table;
 
-    private Dictionary<DbColumnForUpdate, QueryExpression>? _currentRow = null;
+    private Dictionary<DbColumnForWriting, IQueryExpression>? _currentRow = null;
 
     internal InsertQueryBuilder(TableReference table)
     {
         _table = table;
     }
 
-    public void Set<T>(DbColumn<T> column, QueryExpression<T> value)
+    public void Set<T>(NotNullColumn<T> column, NotNullExpression<T> value)
         where T : struct, IExpressionType
     {
-        var updateColumn = column.ForUpdate();
+        Set(column.Writer, value.SQL);
+    }
+
+    public void Set<T>(NullableColumn<T> column, NullableExpression<T> value)
+        where T : struct, IExpressionType
+    {
+        Set(column.Writer, value.SQL);
+    }
+
+    private void Set(DbColumnForWriting updateColumn, IQueryExpression value)
+    {
         if (!_columns.Contains(updateColumn))
             _columns.Add(updateColumn);
-        _currentRow ??= new Dictionary<DbColumnForUpdate, QueryExpression>();
+        _currentRow ??= new Dictionary<DbColumnForWriting, IQueryExpression>();
         _currentRow[updateColumn] = value;
     }
 

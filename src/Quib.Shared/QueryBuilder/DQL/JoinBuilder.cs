@@ -29,10 +29,9 @@ public class JoinBuilder<TQuery>
         return new JoinBuilder<T>(_join, newAccessor);
     }
 
-    public TQuery On<TBool>(Func<TQuery, QueryExpression<TBool>> condition)
-        where TBool : struct, IExpressionType, IDbBool
+    public TQuery On(Func<TQuery, NullableExpression<DbBool>> condition)
     {
-        _join.On(condition(_accessor));
+        _join.On(condition(_accessor).SQL);
         return _accessor;
     }
 

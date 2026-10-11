@@ -8,7 +8,7 @@ internal class CategoriesTable(DbTable table) : IDbTable, IDbTable<CategoriesTab
     public static string TableName => "categories";
     public static CategoriesTable CreateFrom(DbTable table) => new CategoriesTable(table);
 
-    public DbColumn<DbInt> ID => field ??= table.Column<DbInt>("id");
-    public DbColumn<DbText> CategoryName => field ??= table.Column<DbText>("categoryname");
-    public DbColumn<DbText> Description => field ??= table.Column<DbText>("description");
+    public NotNullColumn<DbInt> ID => field ??= table.Column<DbInt>("id");
+    public NotNullColumn<DbText> CategoryName => field ??= table.Column<DbText>("categoryname");
+    public NotNullColumn<DbText> Description => field ??= table.Column<DbText>("description");
 }

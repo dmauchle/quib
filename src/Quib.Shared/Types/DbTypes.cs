@@ -11,30 +11,16 @@ namespace Quib.Postgres18.Types;
 #endif
 
 
-public interface IDbText : IExpressionType { }
-public readonly struct DbText : IExpressionType, INotNullExpressionType, IDbText { }
-public readonly struct DbTextNullable : IExpressionType, INullableExpressionType, IDbText { }
+public readonly struct DbText : IExpressionType { }
 
-public interface IDbInt : IExpressionType { }
-public readonly struct DbInt : IExpressionType, INotNullExpressionType, IDbInt { }
-public readonly struct DbIntNullable : IExpressionType, INullableExpressionType, IDbInt { }
+public readonly struct DbInt : IExpressionType { }
 
-public interface IDbBool : IExpressionType { }
-public readonly struct DbBool : IExpressionType, INotNullExpressionType, IDbBool { }
-public readonly struct DbBoolNullable : IExpressionType, INullableExpressionType, IDbBool { }
+public readonly struct DbBool : IExpressionType { }
 
-public interface IDbUuid : IExpressionType { }
-public readonly struct DbUuid : IExpressionType, INotNullExpressionType, IDbUuid { }
-public readonly struct DbUuidNullable : IExpressionType, INullableExpressionType, IDbUuid { }
+public readonly struct DbUuid : IExpressionType { }
 
-public interface IDbDecimal : IExpressionType { }
-public readonly struct DbDecimal : IExpressionType, INotNullExpressionType, IDbDecimal { }
-public readonly struct DbDecimalNullable : IExpressionType, INullableExpressionType, IDbDecimal { }
+public readonly struct DbDecimal : IExpressionType { }
 
-public interface IDbDateOnly : IExpressionType { }
-public readonly struct DbDateOnly : IExpressionType, INotNullExpressionType, IDbDateOnly { }
-public readonly struct DbDateOnlyNullable : IExpressionType, INullableExpressionType, IDbDateOnly { }
+public readonly struct DbDateOnly : IExpressionType { }
 
-public interface IDbDateTime : IExpressionType { }
-public readonly struct DbDateTime : IExpressionType, INotNullExpressionType, IDbDateTime { }
-public readonly struct DbDateTimeNullable : IExpressionType, INullableExpressionType, IDbDateTime { }
+public readonly struct DbDateTime : IExpressionType { }

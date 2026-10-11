@@ -13,8 +13,8 @@ public class EqualityTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         public static string TableName => "users";
         public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
-        public DbColumn<DbTextNullable> Email => table.Column<DbTextNullable>("email");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
+        public NullableColumn<DbText> Email => table.NullableColumn<DbText>("email");
     }
 
     protected override async ValueTask InitializeTestDatabase()

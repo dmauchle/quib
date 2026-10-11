@@ -39,10 +39,9 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return new SelectQuery<TResult>(_con, _builder, selector(_builder, _accessor));
     }
 
-    public SelectQuery<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
-        where TBool : struct, IExpressionType, IDbBool
+    public SelectQuery<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate)
     {
-        _builder.AddFilter(predicate(_accessor));
+        _builder.AddFilter(predicate(_accessor).SQL);
         return this;
     }
 
@@ -59,7 +58,13 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         return new ProjectedQuery<TProj>(_con, proj, this, rs.Build());
     }
 
-    public ProjectedQuery<ProjectedValue<TProj>> Project<TProj>(Func<TQuery, QueryExpression<TProj>> selector)
+    public ProjectedQuery<NotNullProjection<TProj>> Project<TProj>(Func<TQuery, NotNullExpression<TProj>> selector)
+        where TProj : struct, IExpressionType
+    {
+        return this.Project((rs, x) => rs.Get(selector(x)));
+    }
+
+    public ProjectedQuery<NullableProjection<TProj>> Project<TProj>(Func<TQuery, NullableExpression<TProj>> selector)
         where TProj : struct, IExpressionType
     {
         return this.Project((rs, x) => rs.Get(selector(x)));

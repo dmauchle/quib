@@ -8,9 +8,9 @@ public class DbDecimalNullableExpressionTest(DatabaseFixture env, ITestOutputHel
 {
 
     [Fact]
-    public async Task CastFromNull()
+    public async Task NullValue()
     {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Null.As<DbDecimalNullable>())).FetchOne();
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbDecimal>())).FetchOne();
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
     }

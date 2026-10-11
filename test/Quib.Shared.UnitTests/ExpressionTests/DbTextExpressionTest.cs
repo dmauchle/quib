@@ -15,13 +15,6 @@ public class DbTextExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     }
 
     [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter("Hello").AsNullable())).FetchOne();
-        Assert.Equal("Hello", rs.Result);
-    }
-
-    [Fact]
     public async Task Concat()
     {
         var left = SQL.Parameter("Hello");

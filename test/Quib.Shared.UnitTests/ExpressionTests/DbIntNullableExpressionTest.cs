@@ -8,9 +8,9 @@ public class DbIntNullableExpressionTest(DatabaseFixture env, ITestOutputHelper 
 {
 
     [Fact]
-    public async Task CastFromNull()
+    public async Task NullValue()
     {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Null.As<DbIntNullable>())).FetchOne();
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbInt>())).FetchOne();
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
     }

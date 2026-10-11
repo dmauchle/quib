@@ -12,9 +12,9 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         public static string TableName => "companies";
         public static CompaniesTable CreateFrom(DbTable table) => new CompaniesTable(table);
 
-        public DbColumn<DbInt> ID => table.Column<DbInt>("id");
-        public DbColumn<DbText> CompanyName => table.Column<DbText>("companyname");
-        public DbColumn<DbText> City => table.Column<DbText>("city");
+        public NotNullColumn<DbInt> ID => table.Column<DbInt>("id");
+        public NotNullColumn<DbText> CompanyName => table.Column<DbText>("companyname");
+        public NotNullColumn<DbText> City => table.Column<DbText>("city");
     }
 
     private class EmployeesTable(DbTable table) : IDbTable, IDbTable<EmployeesTable>
@@ -22,8 +22,8 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
         public static string TableName => "employees";
         public static EmployeesTable CreateFrom(DbTable table) => new EmployeesTable(table);
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
-        public DbColumn<DbIntNullable> CompanyId => table.Column<DbIntNullable>("company_id");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
+        public NullableColumn<DbInt> CompanyId => table.NullableColumn<DbInt>("company_id");
     }
 
     private class Employee
@@ -40,11 +40,11 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
 
     private class EmployeeMapping(ProjectionBuilder query, EmployeesTable row, CompaniesTable company) : IReaderMapping<Employee>
     {
-        public ProjectedValue<DbText> Name { get; } = query.Get(row.Name);
-        public ProjectedValue<DbText> CompanyName { get; } = query.Get(company.CompanyName);
-        public ProjectedValue<DbText> City { get; } = query.Get(company.City);
+        public NotNullProjection<DbText> Name { get; } = query.Get(row.Name);
+        public NotNullProjection<DbText> CompanyName { get; } = query.Get(company.CompanyName);
+        public NotNullProjection<DbText> City { get; } = query.Get(company.City);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public Employee Map(ResultReader rs)
         {
@@ -93,12 +93,12 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Alice");
-                query.Set(table.Column<DbIntNullable>("company_id"), 1);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 1);
             })
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "Bob");
-                query.Set(table.Column<DbIntNullable>("company_id"), 2);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 2);
             })
             .AddRow((query, table) =>
             {
@@ -107,7 +107,7 @@ public class JoinTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase(e
             .AddRow((query, table) =>
             {
                 query.Set(table.Column<DbText>("name"), "David");
-                query.Set(table.Column<DbIntNullable>("company_id"), 1);
+                query.Set(table.NullableColumn<DbInt>("company_id"), 1);
             })
             .Execute();
     }

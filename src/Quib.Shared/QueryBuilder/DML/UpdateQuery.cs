@@ -20,7 +20,7 @@ public interface IUpdateQuery<TQuery> : IUpdateFilterable<TQuery>, IQueryPart
 
 public interface IUpdateFilterable<TQuery> : IQueryPart
 {
-    public IUpdateFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate) where TBool : struct, IExpressionType, IDbBool;
+    public IUpdateFiltered<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate);
 }
 
 public interface IUpdateSettable<TQuery> : IQueryPart
@@ -63,10 +63,9 @@ internal sealed class UpdateQuery<TQuery> : IUpdateQuery<TQuery>, IUpdateFiltere
         return this;
     }
 
-    public IUpdateFiltered<TQuery> Where<TBool>(Func<TQuery, QueryExpression<TBool>> predicate)
-        where TBool : struct, IExpressionType, IDbBool
+    public IUpdateFiltered<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate)
     {
-        _builder.AddFilter(predicate(_accessor));
+        _builder.AddFilter(predicate(_accessor).SQL);
         return this;
     }
 

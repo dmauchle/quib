@@ -32,7 +32,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
                 {
                     query.Set(table.Column<DbInt>("id"), id);
                     query.Set(table.Column<DbDateOnly>("value"), value);
-                    query.Set(table.Column<DbDateOnlyNullable>("value_nullable"), valueNullable);
+                    query.Set(table.NullableColumn<DbDateOnly>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -125,7 +125,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
             .Project(x => x.Column<DbDateOnly>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateOnlyNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateOnly>("value_nullable"))
             .FetchOne();
 
         Assert.Equal(new DateOnly(950, 1, 1), rs.Result);
@@ -135,7 +135,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
     // Fetch and update tests
     // These tests verify the getters (ResultReader), mapping extensions (MappingExtensions)
-    // and setters (UpdateQueryExtensions) for DbDateOnly and DbDateOnlyNullable on DATE columns.
+    // and setters (UpdateQueryExtensions) for DATE columns.
 
     [Fact]
     public async Task FetchOne_Succeeds()
@@ -190,7 +190,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, _second));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateOnlyNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateOnly>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -204,7 +204,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateOnlyNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateOnly>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -219,7 +219,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDateOnlyNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateOnly>("value_nullable"))
             .FetchArray();
 
         Assert.Equal([_first, null, _third], rs);
@@ -234,7 +234,7 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         var values = new List<DateOnly?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDateOnlyNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateOnly>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -271,13 +271,13 @@ public class DateOnlyTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         DateOnly? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbDateOnlyNullable>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbDateOnly>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateOnlyNullable>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateOnly>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);

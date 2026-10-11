@@ -18,13 +18,6 @@ public class DbDateOnlyExpressionTest(DatabaseFixture env, ITestOutputHelper log
     }
 
     [Fact]
-    public async Task AsNullable()
-    {
-        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(_low).AsNullable())).FetchOne();
-        Assert.Equal(_low, rs.Result);
-    }
-
-    [Fact]
     public async Task Equal_WithParameterRight_True()
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(_low) == SQL.Parameter(_low))).FetchOne();

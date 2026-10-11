@@ -7,11 +7,11 @@ internal class CategoriesReader(IProjectionBuilder rs, CategoriesTable table) : 
 {
     static IReaderMapping<Model.Category> IReaderMapping<CategoriesTable, Model.Category>.CreateFrom(IProjectionBuilder rs, CategoriesTable query) => new CategoriesReader(rs, query);
 
-    private readonly ProjectedValue<DbInt> _id = rs.Get(table.ID);
-    private readonly ProjectedValue<DbText> _categoryName = rs.Get(table.CategoryName);
-    private readonly ProjectedValue<DbText> _description = rs.Get(table.Description);
+    private readonly NotNullProjection<DbInt> _id = rs.Get(table.ID);
+    private readonly NotNullProjection<DbText> _categoryName = rs.Get(table.CategoryName);
+    private readonly NotNullProjection<DbText> _description = rs.Get(table.Description);
 
-    IProjectedValue[] IReaderMapping<Model.Category>.ObjectIdentity => [_id];
+    IProjectionField[] IReaderMapping<Model.Category>.ObjectIdentity => [_id];
 
     Model.Category IReaderMapping<Model.Category>.Map(ResultReader rs)
     {

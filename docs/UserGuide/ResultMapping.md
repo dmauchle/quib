@@ -24,9 +24,9 @@ public class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     public static string TableName => "users";
     public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
-    public DbColumn<DbInt> Id => table.Column<DbInt>("id");
-    public DbColumn<DbText> Username => table.Column<DbText>("username");
-    public DbColumn<DbText> Email => table.Column<DbText>("email");
+    public NotNullColumn<DbInt> Id => table.Column<DbInt>("id");
+    public NotNullColumn<DbText> Username => table.Column<DbText>("username");
+    public NotNullColumn<DbText> Email => table.Column<DbText>("email");
 }
 
 // The domain model
@@ -43,11 +43,11 @@ public class UserReader(IProjectionBuilder query, UsersTable user) : IReaderMapp
     // 1. Projection (builds the SELECT clause)
     public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserReader(query, user);
 
-    private readonly ProjectedValue<DbInt> _id = query.Get(user.Id);
-    private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
-    private readonly ProjectedValue<DbText> _email = query.Get(user.Email);
+    private readonly NotNullProjection<DbInt> _id = query.Get(user.Id);
+    private readonly NotNullProjection<DbText> _username = query.Get(user.Username);
+    private readonly NotNullProjection<DbText> _email = query.Get(user.Email);
 
-    public IProjectedValue[] ObjectIdentity => [_id];
+    public IProjectionField[] ObjectIdentity => [_id];
 
     // 2. Mapping the result (projections) to the domain model after fetching from the database
     public User Map(ResultReader rs)

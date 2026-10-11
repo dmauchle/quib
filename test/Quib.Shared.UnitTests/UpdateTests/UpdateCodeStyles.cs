@@ -86,7 +86,7 @@ public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
             return new UsersTable(table);
         }
 
-        public DbColumn<DbText> Name => table.Column<DbText>("name");
+        public NotNullColumn<DbText> Name => table.Column<DbText>("name");
     }
 
     private class User
@@ -101,9 +101,9 @@ public class UpdateCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
 
         public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
-        private readonly ProjectedValue<DbText> _name = query.Get(user.Name);
+        private readonly NotNullProjection<DbText> _name = query.Get(user.Name);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public User Map(ResultReader rs)
         {

@@ -136,10 +136,10 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
             return new UsersTable(table);
         }
 
-        public DbColumn<DbText> Username => table.Column<DbText>("username");
-        public DbColumn<DbText> Firstname => table.Column<DbText>("firstname");
-        public DbColumn<DbText> Lastname => table.Column<DbText>("lastname");
-        public DbColumn<DbInt> LoginCount => table.Column<DbInt>("login_count");
+        public NotNullColumn<DbText> Username => table.Column<DbText>("username");
+        public NotNullColumn<DbText> Firstname => table.Column<DbText>("firstname");
+        public NotNullColumn<DbText> Lastname => table.Column<DbText>("lastname");
+        public NotNullColumn<DbInt> LoginCount => table.Column<DbInt>("login_count");
     }
 
     private class User
@@ -155,12 +155,12 @@ public class UpdateTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
 
         public static IReaderMapping<User> CreateFrom(IProjectionBuilder query, UsersTable user) => new UserMapping(query, user);
 
-        private readonly ProjectedValue<DbText> _username = query.Get(user.Username);
-        private readonly ProjectedValue<DbText> _firstname = query.Get(user.Firstname);
-        private readonly ProjectedValue<DbText> _lastname = query.Get(user.Lastname);
-        private readonly ProjectedValue<DbInt> _loginCount = query.Get(user.LoginCount);
+        private readonly NotNullProjection<DbText> _username = query.Get(user.Username);
+        private readonly NotNullProjection<DbText> _firstname = query.Get(user.Firstname);
+        private readonly NotNullProjection<DbText> _lastname = query.Get(user.Lastname);
+        private readonly NotNullProjection<DbInt> _loginCount = query.Get(user.LoginCount);
 
-        public IProjectedValue[] ObjectIdentity => [];
+        public IProjectionField[] ObjectIdentity => [];
 
         public User Map(ResultReader rs)
         {

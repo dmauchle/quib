@@ -17,9 +17,9 @@ public class UsersTable(DbTable table) : IDbTable, IDbTable<UsersTable>
     public static string TableName => "users";
     public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
 
-    public DbColumn<DbInt> Id => table.Column<DbInt>("id");
-    public DbColumn<DbText> Username => table.Column<DbText>("username");
-    public DbColumn<DbText> Email => table.Column<DbText>("email");
+    public NotNullColumn<DbInt> Id => table.Column<DbInt>("id");
+    public NotNullColumn<DbText> Username => table.Column<DbText>("username");
+    public NotNullColumn<DbText> Email => table.Column<DbText>("email");
 }
 ```
 

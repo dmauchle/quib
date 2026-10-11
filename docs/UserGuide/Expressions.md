@@ -9,8 +9,8 @@ public class UsersTable(DbTable table) : IDbTable
 {
     public static string TableName => "users";
 
-    public DbColumn<DbText> Email => table.Column<DbText>("email");
-    public QueryExpression<DbBool> HasEmail => this.Email.IsNotNull();  // Expression on schemas, use it like a "view"
+    public NullableColumn<DbText> Email => table.NullableColumn<DbText>("email");
+    public NotNullExpression<DbBool> HasEmail => this.Email.IsNotNull();  // Expression on schemas, use it like a "view"
 }
 ```
 

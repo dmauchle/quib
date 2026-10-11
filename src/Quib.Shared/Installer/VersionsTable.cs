@@ -21,8 +21,8 @@ internal sealed class VersionsTable
     private class TableDefinition(DbTable table)
     {
 
-        public DbColumn<DbText> ModuleName => table.Column<DbText>("module");
-        public DbColumn<DbInt> Version => table.Column<DbInt>("version");
+        public NotNullColumn<DbText> ModuleName => table.Column<DbText>("module");
+        public NotNullColumn<DbInt> Version => table.Column<DbInt>("version");
 
     }
 

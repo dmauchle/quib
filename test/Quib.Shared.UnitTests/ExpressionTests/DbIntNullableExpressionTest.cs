@@ -196,6 +196,20 @@ public class DbIntNullableExpressionTest(DatabaseFixture env, ITestOutputHelper 
     }
 
     [Fact]
+    public async Task Divide_WithRemainder_Truncates()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter(7) / 2)).FetchOne();
+        Assert.Equal(3, rs.Result);
+    }
+
+    [Fact]
+    public async Task Divide_Negative_TruncatesTowardZero()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter(-7) / 2)).FetchOne();
+        Assert.Equal(-3, rs.Result);
+    }
+
+    [Fact]
     public async Task DivideOnNull()
     {
         var left = SQL.NullableParameter((int?)null);

@@ -158,6 +158,28 @@ public class DbLongExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     }
 
     [Fact]
+    public async Task Divide_WithRemainder_Truncates()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(7_000_000_001L) / 2L)).FetchOne();
+        Assert.Equal(3_500_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task Divide_Negative_TruncatesTowardZero()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(-7_000_000_001L) / 2L)).FetchOne();
+        Assert.Equal(-3_500_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task Divide_ComparedInDatabase_Truncates()
+    {
+        // Truncation happens in the database, not when reading the result
+        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(7L) / 2L == 3L)).FetchOne();
+        Assert.True(rs.Result);
+    }
+
+    [Fact]
     public async Task ModuloParameterRight()
     {
         var left = SQL.Parameter(5L);

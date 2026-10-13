@@ -17,4 +17,12 @@ internal static class SqlSyntax
         return $"{IDENTIFIER_QUOTE}{identifier}{IDENTIFIER_QUOTE}";
     }
 
+    /// <summary>
+    /// Integer division truncating toward zero (like C#).
+    /// </summary>
+    public static string IntegerDivision()
+    {
+        return "/";
+    }
+
 }

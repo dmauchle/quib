@@ -55,6 +55,12 @@ On numerical types, you can use the following operators: `+`, `-`, `*`, `/`, `%`
 db.Update<UsersTable>().AllRows().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();
 ```
 
+Division of integer types (`DbInt`, `DbLong`) is an integer division truncating toward zero, like in C# 
+(`7 / 2` = `3`, `-7 / 2` = `-3`), on all databases. On MySQL, it's translated to `DIV`, as MySQL's `/` would return 
+a decimal (`7 / 2` = `3.5`). Use `DbDecimal` if you need the fractional part.
+
+Division (and modulo) by zero behaves differently: Postgres raises an error, MySQL returns `NULL`.
+
 On boolean types, you can use the following operators: `&`, `|`, `!`.
 
 ```csharp

@@ -196,6 +196,20 @@ public class DbLongNullableExpressionTest(DatabaseFixture env, ITestOutputHelper
     }
 
     [Fact]
+    public async Task Divide_WithRemainder_Truncates()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter(7_000_000_001L) / 2L)).FetchOne();
+        Assert.Equal(3_500_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task Divide_Negative_TruncatesTowardZero()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter(-7_000_000_001L) / 2L)).FetchOne();
+        Assert.Equal(-3_500_000_000L, rs.Result);
+    }
+
+    [Fact]
     public async Task DivideOnNull()
     {
         var left = SQL.NullableParameter((long?)null);

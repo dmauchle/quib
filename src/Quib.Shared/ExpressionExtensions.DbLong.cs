@@ -49,7 +49,7 @@ public static partial class ExpressionExtensions
 
         public static NotNullExpression<DbLong> operator /(NotNullExpression<DbLong> left, NotNullExpression<DbLong> right)
         {
-            return new NotNullExpression<DbLong>(new BinaryOperator(left.SQL, "/", right.SQL));
+            return new NotNullExpression<DbLong>(new BinaryOperator(left.SQL, SqlSyntax.IntegerDivision(), right.SQL));
         }
 
         public static NotNullExpression<DbLong> operator /(NotNullExpression<DbLong> left, long right)
@@ -154,7 +154,7 @@ public static partial class ExpressionExtensions
 
         public static NullableExpression<DbLong> operator /(NullableExpression<DbLong> left, NullableExpression<DbLong> right)
         {
-            return new NullableExpression<DbLong>(new BinaryOperator(left.SQL, "/", right.SQL));
+            return new NullableExpression<DbLong>(new BinaryOperator(left.SQL, SqlSyntax.IntegerDivision(), right.SQL));
         }
 
         public static NullableExpression<DbLong> operator /(NullableExpression<DbLong> left, long right)

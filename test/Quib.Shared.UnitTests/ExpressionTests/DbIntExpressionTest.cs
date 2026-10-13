@@ -158,6 +158,28 @@ public class DbIntExpressionTest(DatabaseFixture env, ITestOutputHelper log) : D
     }
 
     [Fact]
+    public async Task Divide_WithRemainder_Truncates()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(7) / 2)).FetchOne();
+        Assert.Equal(3, rs.Result);
+    }
+
+    [Fact]
+    public async Task Divide_Negative_TruncatesTowardZero()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(-7) / 2)).FetchOne();
+        Assert.Equal(-3, rs.Result);
+    }
+
+    [Fact]
+    public async Task Divide_ComparedInDatabase_Truncates()
+    {
+        // Truncation happens in the database, not when reading the result
+        var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(7) / 2 == 3)).FetchOne();
+        Assert.True(rs.Result);
+    }
+
+    [Fact]
     public async Task ModuloParameterRight()
     {
         var left = SQL.Parameter(5);

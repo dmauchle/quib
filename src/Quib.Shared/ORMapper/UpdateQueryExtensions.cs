@@ -44,6 +44,18 @@ public static class UpdateQueryExtensions
         query.Set(column, SQL.NullableParameter(value));
     }
 
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbLong> column, long value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.Parameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbLong> column, long? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.NullableParameter(value));
+    }
+
     public static void Set<TQuery>(this TQuery query, NotNullColumn<DbBool> column, bool value)
         where TQuery : IUpdateQueryBuilder
     {

@@ -15,6 +15,8 @@ public readonly struct DbText : IExpressionType { }
 
 public readonly struct DbInt : IExpressionType { }
 
+public readonly struct DbLong : IExpressionType { }
+
 public readonly struct DbBool : IExpressionType { }
 
 public readonly struct DbUuid : IExpressionType { }

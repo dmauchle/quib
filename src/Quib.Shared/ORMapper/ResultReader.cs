@@ -132,6 +132,32 @@ public sealed class ResultReader
             return _reader.GetInt32(field.Index);
     }
 
+    public long Get(NotNullProjection<DbLong> field)
+    {
+        return _reader.GetInt64(field.Index);
+    }
+
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public long? GetNullable(NotNullProjection<DbLong> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetInt64(field.Index);
+    }
+
+    public long? Get(NullableProjection<DbLong> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetInt64(field.Index);
+    }
+
     public bool Get(NotNullProjection<DbBool> field)
     {
         return _reader.GetBoolean(field.Index);

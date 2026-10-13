@@ -15,6 +15,7 @@ install.Table("users")
 **MySQL**
 
 - `Int()` - 32-bit integer
+- `BigInt()` - 64-bit integer (.NET `long`)
 - `Decimal(precision, scale)` - exact fixed-point number
 - `Bool()` - boolean, stored as `TINYINT(1)` (`BOOLEAN` is an alias).
 - `Uuid()` - UUID (.NET `Guid`), stored as `CHAR(36)` with `ascii` charset and `ascii_bin` collation (see below)
@@ -28,6 +29,7 @@ install.Table("users")
 **Postgres**
 
 - `Int()` - 32-bit integer
+- `BigInt()` - 64-bit integer (.NET `long`)
 - `Decimal(precision, scale)` - exact fixed-point number
 - `Bool()` - native boolean
 - `Uuid()` - native uuid (.NET `Guid`, 16 bytes)

@@ -29,6 +29,15 @@ public static class ColumnTypeFactory
         }
 
         /// <summary>
+        /// 64-bit integer (.NET <see cref="long"/>).
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType BigInt()
+        {
+            return new ColumnType($"BIGINT", defaultValue: "0");
+        }
+
+        /// <summary>
         /// Exact fixed-point number, e.g. for money values.
         /// </summary>
         /// <param name="precision">Total number of digits (1 - 28).</param>

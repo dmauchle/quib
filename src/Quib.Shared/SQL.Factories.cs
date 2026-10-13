@@ -30,6 +30,11 @@ public static partial class SQL
         return new NotNullExpression<DbInt>(new Constant(value.ToString()));
     }
 
+    public static NotNullExpression<DbLong> Constant(long value)
+    {
+        return new NotNullExpression<DbLong>(new Constant(value.ToString()));
+    }
+
     public static NotNullExpression<DbDecimal> Constant(decimal value)
     {
         return new NotNullExpression<DbDecimal>(new Constant(value.ToString(System.Globalization.CultureInfo.InvariantCulture)));
@@ -58,6 +63,16 @@ public static partial class SQL
     public static NullableExpression<DbInt> NullableParameter(int? value)
     {
         return new NullableExpression<DbInt>(new QueryParameter(value));
+    }
+
+    public static NotNullExpression<DbLong> Parameter(long value)
+    {
+        return new NotNullExpression<DbLong>(new QueryParameter(value));
+    }
+
+    public static NullableExpression<DbLong> NullableParameter(long? value)
+    {
+        return new NullableExpression<DbLong>(new QueryParameter(value));
     }
 
     public static NotNullExpression<DbDecimal> Parameter(decimal value)

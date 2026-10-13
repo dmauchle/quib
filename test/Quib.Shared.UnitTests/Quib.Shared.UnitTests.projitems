@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBoolNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntNullableExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbLongNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbTextNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDecimalExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDecimalNullableExpressionTest.cs" />
@@ -36,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbLongExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\JoinCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\ObjectIdentityTest.cs" />
@@ -51,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\DateOnlyTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\DateTimeTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\IntTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\BigIntTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\TextTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\VarCharTest.cs" />

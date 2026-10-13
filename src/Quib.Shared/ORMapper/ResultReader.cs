@@ -238,9 +238,10 @@ public sealed class ResultReader
             return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
     }
 
-    public DateTime Get(NotNullProjection<DbDateTime> field)
+    public DateTime Get<TTimeZone>(NotNullProjection<DbDateTime<TTimeZone>> field)
+        where TTimeZone : IDateTimeStorage
     {
-        return GetLocalDateTime(field.Index);
+        return TTimeZone.FromDatabase(_reader.GetDateTime(field.Index));
     }
 
     /// <summary>
@@ -248,26 +249,22 @@ public sealed class ResultReader
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    public DateTime? GetNullable(NotNullProjection<DbDateTime> field)
+    public DateTime? GetNullable<TTimeZone>(NotNullProjection<DbDateTime<TTimeZone>> field)
+        where TTimeZone : IDateTimeStorage
     {
         if (this.IsDBNull(field))
             return null;
         else
-            return GetLocalDateTime(field.Index);
+            return TTimeZone.FromDatabase(_reader.GetDateTime(field.Index));
     }
 
-    public DateTime? Get(NullableProjection<DbDateTime> field)
+    public DateTime? Get<TTimeZone>(NullableProjection<DbDateTime<TTimeZone>> field)
+        where TTimeZone : IDateTimeStorage
     {
         if (this.IsDBNull(field))
             return null;
         else
-            return GetLocalDateTime(field.Index);
-    }
-
-    // Values are stored without time zone, so local time is assumed
-    private DateTime GetLocalDateTime(int index)
-    {
-        return DateTime.SpecifyKind(_reader.GetDateTime(index), DateTimeKind.Local);
+            return TTimeZone.FromDatabase(_reader.GetDateTime(field.Index));
     }
 
 }

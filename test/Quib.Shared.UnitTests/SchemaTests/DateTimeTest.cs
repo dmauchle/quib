@@ -23,7 +23,13 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         }
     }
 
-    private async Task InsertValues(params (int id, DateTime value, DateTime? valueNullable)[] rows)
+    private Task InsertValues(params (int id, DateTime value, DateTime? valueNullable)[] rows)
+    {
+        return InsertValues<LocalTime>(rows);
+    }
+
+    private async Task InsertValues<TTimeZone>(params (int id, DateTime value, DateTime? valueNullable)[] rows)
+        where TTimeZone : IDateTimeStorage
     {
         foreach (var (id, value, valueNullable) in rows)
         {
@@ -31,8 +37,8 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
                 .AddRow((query, table) =>
                 {
                     query.Set(table.Column<DbInt>("id"), id);
-                    query.Set(table.Column<DbDateTime>("value"), value);
-                    query.Set(table.NullableColumn<DbDateTime>("value_nullable"), valueNullable);
+                    query.Set(table.Column<DbDateTime<TTimeZone>>("value"), value);
+                    query.Set(table.NullableColumn<DbDateTime<TTimeZone>>("value_nullable"), valueNullable);
                 })
                 .Execute();
         }
@@ -56,8 +62,8 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _third, null), (2, _first, null), (3, _second, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .OrderBy(x => [x.Column<DbDateTime>("value")])
-            .Project(x => x.Column<DbDateTime>("value"))
+            .OrderBy(x => [x.Column<DbDateTime<LocalTime>>("value")])
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchArray();
 
         Assert.Equal([_first, _second, _third], rs);
@@ -70,7 +76,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first.AddMilliseconds(999), null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(_first, rs.Result);
@@ -83,10 +89,10 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, _second));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchOne();
 
         Assert.Equal(DateTimeKind.Local, rs.Result.Kind);
@@ -101,7 +107,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, now, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(now.AddTicks(-(now.Ticks % TimeSpan.TicksPerSecond)), rs.Result);
@@ -115,10 +121,10 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, utc, utc));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchOne();
 
         // Same instant, independent of the time zone the tests run in
@@ -135,7 +141,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, now, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(now.AddTicks(-(now.Ticks % TimeSpan.TicksPerSecond)), rs.Result.ToUniversalTime());
@@ -148,7 +154,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, DateTime.SpecifyKind(_first, DateTimeKind.Unspecified), null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(_first, rs.Result);
@@ -161,7 +167,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, DateTime.MaxValue, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(new DateTime(9999, 12, 31, 23, 59, 59), rs.Result);
@@ -199,7 +205,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, new DateTime(1000, 1, 1, 0, 0, 0), null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(new DateTime(1000, 1, 1, 0, 0, 0), rs.Result);
@@ -213,14 +219,115 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertRaw("INSERT INTO values_test (id, value, value_nullable) VALUES (1, '0950-01-01 12:34:56', '0950-01-01 12:34:56')");
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
         var rsNullable = await DB.SelectFromTable("values_test")
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchOne();
 
         Assert.Equal(new DateTime(950, 1, 1, 12, 34, 56), rs.Result);
         Assert.Equal(new DateTime(950, 1, 1, 12, 34, 56), rsNullable.Result);
+    }
+
+
+    // Date-time storage (time zone) tests
+    // The tests above use LocalTime (the same column can be used with either time zone).
+
+    [Fact]
+    public async Task Utc_Read_KindUtc()
+    {
+        CreateValuesTable();
+        await InsertValues<Utc>((1, _first, _second));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbDateTime<Utc>>("value"))
+            .FetchOne();
+        var rsNullable = await DB.SelectFromTable("values_test")
+            .Project(x => x.NullableColumn<DbDateTime<Utc>>("value_nullable"))
+            .FetchOne();
+
+        Assert.Equal(_first, rs.Result);
+        Assert.Equal(DateTimeKind.Utc, rs.Result.Kind);
+        Assert.Equal(_second, rsNullable.Result);
+        Assert.Equal(DateTimeKind.Utc, rsNullable.Result!.Value.Kind);
+    }
+
+    [Fact]
+    public async Task Utc_UtcNow_SameInstant()
+    {
+        CreateValuesTable();
+        var now = DateTime.UtcNow;
+        await InsertValues<Utc>((1, now, null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbDateTime<Utc>>("value"))
+            .FetchOne();
+
+        Assert.Equal(now.AddTicks(-(now.Ticks % TimeSpan.TicksPerSecond)), rs.Result);
+    }
+
+    [Fact]
+    public async Task Utc_Local_ConvertedToUtc()
+    {
+        CreateValuesTable();
+        var local = DateTime.SpecifyKind(_first, DateTimeKind.Local);
+        await InsertValues<Utc>((1, local, local));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbDateTime<Utc>>("value"))
+            .FetchOne();
+        var rsNullable = await DB.SelectFromTable("values_test")
+            .Project(x => x.NullableColumn<DbDateTime<Utc>>("value_nullable"))
+            .FetchOne();
+
+        // Same instant, independent of the time zone the tests run in
+        Assert.Equal(local.ToUniversalTime(), rs.Result);
+        Assert.Equal(local, rs.Result.ToLocalTime());
+        Assert.Equal(local, rsNullable.Result!.Value.ToLocalTime());
+    }
+
+    [Fact]
+    public async Task Utc_Unspecified_StoredAsIs()
+    {
+        CreateValuesTable();
+        await InsertValues<Utc>((1, DateTime.SpecifyKind(_first, DateTimeKind.Unspecified), null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbDateTime<Utc>>("value"))
+            .FetchOne();
+
+        Assert.Equal(_first, rs.Result);
+    }
+
+    [Fact]
+    public async Task Utc_StoredAsUtc()
+    {
+        CreateValuesTable();
+        var now = DateTime.Now;
+        await InsertValues<Utc>((1, now, null));
+
+        // Reading the stored value with the other time zone reveals the stored wall-clock time
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
+            .FetchOne();
+
+        var utc = now.ToUniversalTime();
+        Assert.Equal(utc.AddTicks(-(utc.Ticks % TimeSpan.TicksPerSecond)), DateTime.SpecifyKind(rs.Result, DateTimeKind.Utc));
+    }
+
+    [Fact]
+    public async Task Utc_Where_LocalValue_ConvertedToUtc()
+    {
+        CreateValuesTable();
+        var utc = DateTime.SpecifyKind(_first, DateTimeKind.Utc);
+        await InsertValues<Utc>((1, utc, null), (2, DateTime.SpecifyKind(_second, DateTimeKind.Utc), null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbDateTime<Utc>>("value") == utc.ToLocalTime())
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
     }
 
 
@@ -235,7 +342,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -250,7 +357,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchArray();
 
         Assert.Equal([_first, _second, _third], rs);
@@ -265,7 +372,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         var values = new List<DateTime>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -281,7 +388,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, _second));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -295,7 +402,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         await InsertValues((1, _first, null));
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
@@ -310,7 +417,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
         var rs = await DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchArray();
 
         Assert.Equal([_first, null, _third], rs);
@@ -325,7 +432,7 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         var values = new List<DateTime?>();
         var rs = DB.SelectFromTable("values_test")
             .OrderBy(x => [x.Column<DbInt>("id")])
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchStream();
         await foreach (var value in rs)
             values.Add(value);
@@ -341,13 +448,13 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
 
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.Column<DbDateTime>("value"), _second))
+            .With((row, x) => row.Set(x.Column<DbDateTime<LocalTime>>("value"), _second))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.Column<DbDateTime>("value"))
+            .Project(x => x.Column<DbDateTime<LocalTime>>("value"))
             .FetchOne();
 
         Assert.Equal(_second, rs.Result);
@@ -362,17 +469,93 @@ public class DateTimeTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBa
         DateTime? value = null;
         var updated = await DB.UpdateTable("values_test")
             .AllRows()
-            .With((row, x) => row.Set(x.NullableColumn<DbDateTime>("value_nullable"), value))
+            .With((row, x) => row.Set(x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"), value))
             .Execute();
 
         Assert.Equal(1, updated);
 
         var rs = await DB.SelectFromTable("values_test")
-            .Project(x => x.NullableColumn<DbDateTime>("value_nullable"))
+            .Project(x => x.NullableColumn<DbDateTime<LocalTime>>("value_nullable"))
             .FetchOne();
 
         Assert.True(rs.HasResult);
         Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task Utc_FetchArray_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues<Utc>((1, _first, null), (2, _second, null), (3, _third, null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbDateTime<Utc>>("value"))
+            .FetchArray();
+
+        Assert.Equal([_first, _second, _third], rs);
+        Assert.All(rs, x => Assert.Equal(DateTimeKind.Utc, x.Kind));
+    }
+
+    [Fact]
+    public async Task Utc_FetchStream_WithValueAndNull_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues<Utc>((1, _first, _first), (2, _first, null), (3, _first, _third));
+
+        var values = new List<DateTime?>();
+        var rs = DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.NullableColumn<DbDateTime<Utc>>("value_nullable"))
+            .FetchStream();
+        await foreach (var value in rs)
+            values.Add(value);
+
+        Assert.Equal([_first, null, _third], values);
+        Assert.Equal(DateTimeKind.Utc, values[0]!.Value.Kind);
+    }
+
+    [Fact]
+    public async Task Utc_FetchOneNullable_WithNull_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues<Utc>((1, _first, null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.NullableColumn<DbDateTime<Utc>>("value_nullable"))
+            .FetchOne();
+
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task Utc_Update_Succeeds()
+    {
+        CreateValuesTable();
+        await InsertValues<Utc>((1, _first, _first));
+
+        var local = DateTime.SpecifyKind(_second, DateTimeKind.Local);
+        var updated = await DB.UpdateTable("values_test")
+            .AllRows()
+            .With((row, x) =>
+            {
+                row.Set(x.Column<DbDateTime<Utc>>("value"), local);
+                row.Set(x.NullableColumn<DbDateTime<Utc>>("value_nullable"), (DateTime?)null);
+            })
+            .Execute();
+
+        Assert.Equal(1, updated);
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Project(x => x.Column<DbDateTime<Utc>>("value"))
+            .FetchOne();
+        var rsNullable = await DB.SelectFromTable("values_test")
+            .Project(x => x.NullableColumn<DbDateTime<Utc>>("value_nullable"))
+            .FetchOne();
+
+        Assert.Equal(local.ToUniversalTime(), rs.Result);
+        Assert.Null(rsNullable.Result);
     }
 
 }

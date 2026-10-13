@@ -111,28 +111,42 @@ public static partial class SQL
         return new NullableExpression<DbDateOnly>(new QueryParameter(value.HasValue ? ToDbDateTime(value.Value) : null));
     }
 
-    public static NotNullExpression<DbDateTime> Parameter(DateTime value)
+    /// <summary>
+    /// Date-time parameter. <typeparamref name="TTimeZone"/> defines the time zone the value is stored in, e.g.
+    /// <see cref="Utc"/> or <see cref="LocalTime"/>.
+    /// </summary>
+    public static NotNullExpression<DbDateTime<TTimeZone>> Parameter<TTimeZone>(DateTime value)
+        where TTimeZone : IDateTimeStorage
     {
-        return new NotNullExpression<DbDateTime>(new QueryParameter(ToDbDateTime(value)));
+        return new NotNullExpression<DbDateTime<TTimeZone>>(new QueryParameter(ToDbDateTime(TTimeZone.ToDatabase(value))));
     }
 
-    public static NullableExpression<DbDateTime> NullableParameter(DateTime? value)
+    /// <inheritdoc cref="Parameter{TTimeZone}(DateTime)"/>
+    public static NullableExpression<DbDateTime<TTimeZone>> NullableParameter<TTimeZone>(DateTime? value)
+        where TTimeZone : IDateTimeStorage
     {
-        return new NullableExpression<DbDateTime>(new QueryParameter(value.HasValue ? ToDbDateTime(value.Value) : null));
+        return new NullableExpression<DbDateTime<TTimeZone>>(new QueryParameter(value.HasValue ? ToDbDateTime(TTimeZone.ToDatabase(value.Value)) : null));
     }
 
-    // Dates are passed as DateTime, as older drivers don't support DateOnly
+    /// <summary>
+    /// Dates are passed as DateTime, as older drivers don't support DateOnly
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
     private static DateTime ToDbDateTime(DateOnly value)
     {
         return ToDbDateTime(value.ToDateTime(TimeOnly.MinValue));
     }
 
-    // Values are stored as local time (read back as DateTimeKind.Local), so UTC values are converted.
-    // Truncate to whole seconds (DBs would round instead) and drop the time zone (Npgsql rejects UTC values for timestamp columns)
+    /// <summary>
+    /// Expects the value in the time zone it's stored in (see <see cref="IDateTimeStorage">).
+    /// Truncate to whole seconds (DBs would round instead) and drop the time zone (Npgsql rejects UTC values for timestamp columns)
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private static DateTime ToDbDateTime(DateTime value)
     {
-        if (value.Kind == DateTimeKind.Utc)
-            value = value.ToLocalTime();
         // MySQL officially supports years 1000 - 9999 only, but silently accepts smaller values.
         // Postgres is limited the same way for consistency (Npgsql would store DateTime.MinValue as -infinity).
         // In order to stay consistent and on the safe side, we always limit to year 1000. 

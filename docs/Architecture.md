@@ -123,6 +123,20 @@ correspond to the nullable .NET type (`string?`, `int?`).
 
 You can take `DbInt`and `DbText` as reference implementations. Assume these are correct. But they could be lacking features.
 
+### Generic DB types
+
+A DB type may have a type parameter if the same column type can be interpreted in different ways. Example: 
+`DbDateTime<TTimeZone>`, where `TTimeZone` implements `IDateTimeStorage` (`Utc` or `LocalTime`) and defines the time zone of the 
+stored values. The type parameter converts the values (static abstract interface members), so expressions with 
+different type arguments can't be mixed. For generic DB types:
+
+- Expression extensions use generic extension blocks, e.g. `extension<TTimeZone>(NotNullExpression<DbDateTime<TTimeZone>> value)`.
+- `Get` methods, fetch methods and setters are generic methods with the same type parameter.
+- Factory methods need the type argument explicitly, e.g. `SQL.Parameter<Utc>(value)`, as it can't be inferred from 
+  the .NET value.
+- Unit tests cover all type arguments for conversions and reading/writing. Type independent behavior (operators) may be 
+  tested with one of them.
+
 ### Expression implementations
 
 The expression implementations in /src/Quib.Shared/Expressions (like `BinaryOperator`, `QueryParameter` or `Constant`) 

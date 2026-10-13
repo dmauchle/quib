@@ -194,32 +194,38 @@ public static class MappingExtensions
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<DateTime> FetchStream(this ProjectedQuery<NotNullProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<DateTime> FetchStream<TTimeZone>(this ProjectedQuery<NotNullProjection<DbDateTime<TTimeZone>>> query, CancellationToken cancellationToken = default)
+        where TTimeZone : IDateTimeStorage
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<DateTime[]> FetchArray(this ProjectedQuery<NotNullProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static Task<DateTime[]> FetchArray<TTimeZone>(this ProjectedQuery<NotNullProjection<DbDateTime<TTimeZone>>> query, CancellationToken cancellationToken = default)
+        where TTimeZone : IDateTimeStorage
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<DateTime>> FetchOne(this ProjectedQuery<NotNullProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<DateTime>> FetchOne<TTimeZone>(this ProjectedQuery<NotNullProjection<DbDateTime<TTimeZone>>> query, CancellationToken cancellationToken = default)
+        where TTimeZone : IDateTimeStorage
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static IAsyncEnumerable<DateTime?> FetchStream(this ProjectedQuery<NullableProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static IAsyncEnumerable<DateTime?> FetchStream<TTimeZone>(this ProjectedQuery<NullableProjection<DbDateTime<TTimeZone>>> query, CancellationToken cancellationToken = default)
+        where TTimeZone : IDateTimeStorage
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<DateTime?[]> FetchArray(this ProjectedQuery<NullableProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static Task<DateTime?[]> FetchArray<TTimeZone>(this ProjectedQuery<NullableProjection<DbDateTime<TTimeZone>>> query, CancellationToken cancellationToken = default)
+        where TTimeZone : IDateTimeStorage
     {
         return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
     }
 
-    public static Task<SingleQueryResult<DateTime?>> FetchOne(this ProjectedQuery<NullableProjection<DbDateTime>> query, CancellationToken cancellationToken = default)
+    public static Task<SingleQueryResult<DateTime?>> FetchOne<TTimeZone>(this ProjectedQuery<NullableProjection<DbDateTime<TTimeZone>>> query, CancellationToken cancellationToken = default)
+        where TTimeZone : IDateTimeStorage
     {
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }

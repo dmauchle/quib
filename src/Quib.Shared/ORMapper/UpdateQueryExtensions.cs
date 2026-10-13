@@ -92,16 +92,18 @@ public static class UpdateQueryExtensions
         query.Set(column, SQL.NullableParameter(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbDateTime> column, DateTime value)
+    public static void Set<TQuery, TTimeZone>(this TQuery query, NotNullColumn<DbDateTime<TTimeZone>> column, DateTime value)
         where TQuery : IUpdateQueryBuilder
+        where TTimeZone : IDateTimeStorage
     {
-        query.Set(column, SQL.Parameter(value));
+        query.Set(column, SQL.Parameter<TTimeZone>(value));
     }
 
-    public static void Set<TQuery>(this TQuery query, NullableColumn<DbDateTime> column, DateTime? value)
+    public static void Set<TQuery, TTimeZone>(this TQuery query, NullableColumn<DbDateTime<TTimeZone>> column, DateTime? value)
         where TQuery : IUpdateQueryBuilder
+        where TTimeZone : IDateTimeStorage
     {
-        query.Set(column, SQL.NullableParameter(value));
+        query.Set(column, SQL.NullableParameter<TTimeZone>(value));
     }
 
 }

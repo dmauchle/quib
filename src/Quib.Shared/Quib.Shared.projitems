@@ -87,6 +87,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryBuilder\DQL\SelectQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ORMapper\ResultReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Types\DbTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Types\IDateTimeStorage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Types\LocalTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Types\Utc.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Types\IExpressionType.cs" />
   </ItemGroup>
   <ItemGroup>

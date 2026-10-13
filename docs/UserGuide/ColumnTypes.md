@@ -74,16 +74,28 @@ text/byte order, so version 7 UUIDs (`Guid.CreateVersion7()`) sort by creation t
 
 ## DateOnly and DateTime
 
-Use `DbDateOnly` for `DateOnly()` columns, the .NET type is `DateOnly`. Use `DbDateTime` for `DateTime()` columns, 
-the .NET type is `DateTime`.
+Use `DbDateOnly` for `DateOnly()` columns, the .NET type is `DateOnly`. Use `DbDateTime<TTimeZone>` for `DateTime()` 
+columns, the .NET type is `DateTime`.
 
-Date-times are stored without time zone and with whole seconds:
+Date-times are stored without time zone and with whole seconds. Fractional seconds are truncated (not rounded) when 
+writing, e.g. `12:00:00.9` → `12:00:00`.
 
-- Writing: fractional seconds are truncated (not rounded), e.g. `12:00:00.9` → `12:00:00`. Values are stored as local 
-  time: `DateTimeKind.Utc` values are converted to local time, `Local` and `Unspecified` values are stored as is.
-- Reading: values are returned with `DateTimeKind.Local`. So every value comes back as the same point in time (apart 
-  from fractional seconds), as long as the reading application runs in the same time zone. E.g. `DateTime.UtcNow` 
-  comes back as the corresponding local time.
+As the column has no time zone, `TTimeZone` defines which time zone the stored values are in:
+
+- `DbDateTime<Utc>`: values are stored as UTC. `DateTimeKind.Local` values are converted to UTC, `Utc` and 
+  `Unspecified` values are stored as is. Values are read with `DateTimeKind.Utc`. Prefer it for points in time like 
+  `created_at`, as the stored values don't depend on the time zone of the application.
+- `DbDateTime<LocalTime>`: values are stored as local time of the application. `DateTimeKind.Utc` values are converted 
+  to local time, `Local` and `Unspecified` values are stored as is. Values are read with `DateTimeKind.Local`. So the 
+  values only represent the same point in time as long as all applications run in the same time zone.
+
+Values compared with a date-time expression (e.g. `x.CreatedAt > DateTime.Now`) are converted according to the time 
+zone of the expression. Expressions of different time zones (e.g. `DbDateTime<Utc>` and `DbDateTime<LocalTime>`) can't be 
+compared (compiler error). The time zone is not stored in the database: reading a column with a different time zone 
+than it was written with returns wrong values.
+
+Time zones themselves aren't supported, as MySQL has no date-time type with time zone. If you need them, store the 
+time zone in a separate column.
 
 Value range:
 

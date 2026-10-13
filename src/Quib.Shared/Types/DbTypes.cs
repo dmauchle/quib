@@ -23,4 +23,7 @@ public readonly struct DbDecimal : IExpressionType { }
 
 public readonly struct DbDateOnly : IExpressionType { }
 
-public readonly struct DbDateTime : IExpressionType { }
+/// <summary>
+/// Date and time without time zone. <typeparamref name="TTimeZone"/> defines the time zone the values are stored in.
+/// </summary>
+public readonly struct DbDateTime<TTimeZone> : IExpressionType where TTimeZone : IDateTimeStorage { }

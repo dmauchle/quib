@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbText.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbDecimal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbDouble.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbUuid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbDateOnly.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbDateTime.cs" />

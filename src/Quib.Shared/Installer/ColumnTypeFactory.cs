@@ -53,6 +53,30 @@ public static class ColumnTypeFactory
             return new ColumnType($"DECIMAL({precision},{scale})", defaultValue: "0");
         }
 
+#if MYSQL
+
+        /// <summary>
+        /// Double-precision floating point number (.NET <see cref="double"/>), without NaN and infinity.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType Double()
+        {
+            return new ColumnType($"DOUBLE", defaultValue: "0");
+        }
+
+#elif POSTGRES
+
+        /// <summary>
+        /// Double-precision floating point number (.NET <see cref="double"/>), without NaN and infinity.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType Double()
+        {
+            return new ColumnType($"DOUBLE PRECISION", defaultValue: "0");
+        }
+
+#endif
+
         public static ColumnType Bool()
         {
             return new ColumnType($"BOOLEAN", defaultValue: "FALSE");

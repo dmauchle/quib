@@ -17,6 +17,7 @@ install.Table("users")
 - `Int()` - 32-bit integer
 - `BigInt()` - 64-bit integer (.NET `long`)
 - `Decimal(precision, scale)` - exact fixed-point number
+- `Double()` - double-precision floating point number (.NET `double`), without NaN and infinity
 - `Bool()` - boolean, stored as `TINYINT(1)` (`BOOLEAN` is an alias).
 - `Uuid()` - UUID (.NET `Guid`), stored as `CHAR(36)` with `ascii` charset and `ascii_bin` collation (see below)
 - `DateOnly()` - date without time, stored as `DATE`, years 1000 - 9999
@@ -31,6 +32,7 @@ install.Table("users")
 - `Int()` - 32-bit integer
 - `BigInt()` - 64-bit integer (.NET `long`)
 - `Decimal(precision, scale)` - exact fixed-point number
+- `Double()` - double-precision floating point number (.NET `double`), without NaN and infinity
 - `Bool()` - native boolean
 - `Uuid()` - native uuid (.NET `Guid`, 16 bytes)
 - `DateOnly()` - date without time, stored as `date`, years 1000 - 9999
@@ -62,6 +64,19 @@ Calculations can produce values larger or with more decimals than the column typ
 more than 28 decimals are rounded when read. Results exceeding the range of a .NET `decimal` throw an 
 `OverflowException`. Also, the scale of a division result differs between databases (MySQL: 4 more decimals than the 
 dividend, Postgres: at least 16 significant digits).
+
+
+## Double
+
+Use `DbDouble` in queries, the .NET type is `double`. `Double()` stores 64-bit floating point numbers (`DOUBLE` on 
+MySQL, `DOUBLE PRECISION` on Postgres). Values aren't exact (`0.1 + 0.2` = `0.30000000000000004`), so use `Decimal()` 
+for money.
+
+- NaN and infinity are not supported, as MySQL can't store them. Passing them as parameter or constant throws an 
+  `ArgumentOutOfRangeException`. On Postgres, such values written by others (bypassing Quib) are still read as 
+  `double.NaN`, `double.PositiveInfinity` and `double.NegativeInfinity`.
+- Calculations exceeding the range (e.g. `double.MaxValue * 2`) raise a database error instead of returning infinity.
+- There's no modulo operator (`%`), as Postgres doesn't support it for floating point numbers.
 
 
 ## UUID

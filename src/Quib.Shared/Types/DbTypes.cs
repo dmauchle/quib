@@ -23,6 +23,8 @@ public readonly struct DbUuid : IExpressionType { }
 
 public readonly struct DbDecimal : IExpressionType { }
 
+public readonly struct DbDouble : IExpressionType { }
+
 public readonly struct DbDateOnly : IExpressionType { }
 
 /// <summary>

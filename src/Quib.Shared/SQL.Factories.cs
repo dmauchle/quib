@@ -40,6 +40,18 @@ public static partial class SQL
         return new NotNullExpression<DbDecimal>(new Constant(value.ToString(System.Globalization.CultureInfo.InvariantCulture)));
     }
 
+    public static NotNullExpression<DbDouble> Constant(double value)
+    {
+        var literal = ToDbDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture);
+#if MYSQL
+        // A literal without exponent would be DECIMAL, so the exponent is enforced
+        return new NotNullExpression<DbDouble>(new Constant(literal.Contains('E') ? literal : $"{literal}E0"));
+#elif POSTGRES
+        // A literal with fraction or exponent would be NUMERIC
+        return new NotNullExpression<DbDouble>(new Constant($"CAST({literal} AS DOUBLE PRECISION)"));
+#endif
+    }
+
     public static NotNullExpression<DbBool> Constant(bool value)
     {
         return new NotNullExpression<DbBool>(new Constant(value ? "true" : "false"));
@@ -83,6 +95,27 @@ public static partial class SQL
     public static NullableExpression<DbDecimal> NullableParameter(decimal? value)
     {
         return new NullableExpression<DbDecimal>(new QueryParameter(value));
+    }
+
+    public static NotNullExpression<DbDouble> Parameter(double value)
+    {
+        return new NotNullExpression<DbDouble>(DoubleParameter(ToDbDouble(value)));
+    }
+
+    public static NullableExpression<DbDouble> NullableParameter(double? value)
+    {
+        return new NullableExpression<DbDouble>(DoubleParameter(value.HasValue ? ToDbDouble(value.Value) : null));
+    }
+
+    private static IQueryExpression DoubleParameter(double? value)
+    {
+#if MYSQL
+        // The driver inlines the value as literal without exponent (e.g. 0.1), which MySQL treats as DECIMAL.
+        // Multiplying by a double constant enforces double arithmetic (e.g. for 0.1 + 0.2). NULL stays NULL.
+        return new BinaryOperator(new QueryParameter(value), "*", new Constant("1E0"));
+#elif POSTGRES
+        return new QueryParameter(value);
+#endif
     }
 
     public static NotNullExpression<DbBool> Parameter(bool value)
@@ -141,6 +174,20 @@ public static partial class SQL
         where TTimeZone : IDateTimeStorage
     {
         return new NullableExpression<DbDateTime<TTimeZone>>(new QueryParameter(value.HasValue ? ToDbDateTime(TTimeZone.ToDatabase(value.Value)) : null));
+    }
+
+    /// <summary>
+    /// MySQL doesn't support NaN and infinity (Postgres does). Rejected on all databases for consistency.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private static double ToDbDouble(double value)
+    {
+        if (!double.IsFinite(value))
+            throw new ArgumentOutOfRangeException(nameof(value), value, "NaN and infinity are not supported.");
+
+        return value;
     }
 
     /// <summary>

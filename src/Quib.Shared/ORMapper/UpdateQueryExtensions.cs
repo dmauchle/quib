@@ -92,6 +92,18 @@ public static class UpdateQueryExtensions
         query.Set(column, SQL.NullableParameter(value));
     }
 
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbDouble> column, double value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.Parameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbDouble> column, double? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.NullableParameter(value));
+    }
+
     public static void Set<TQuery>(this TQuery query, NotNullColumn<DbDateOnly> column, DateOnly value)
         where TQuery : IUpdateQueryBuilder
     {

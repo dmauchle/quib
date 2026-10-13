@@ -236,6 +236,32 @@ public sealed class ResultReader
             return _reader.GetDecimal(field.Index);
     }
 
+    public double Get(NotNullProjection<DbDouble> field)
+    {
+        return _reader.GetDouble(field.Index);
+    }
+
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public double? GetNullable(NotNullProjection<DbDouble> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetDouble(field.Index);
+    }
+
+    public double? Get(NullableProjection<DbDouble> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return _reader.GetDouble(field.Index);
+    }
+
     // Dates and date-times are read as DateTime, as older drivers don't support DateOnly
 
     public DateOnly Get(NotNullProjection<DbDateOnly> field)

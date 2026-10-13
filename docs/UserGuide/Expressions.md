@@ -49,7 +49,7 @@ db.SelectFrom<UsersTable>().Project((rs, x) => rs.Get(x.Company.IsNull()));  // 
 
 ## Arithmetic operators
 
-On numerical types, you can use the following operators: `+`, `-`, `*`, `/`, `%`.
+On numerical types, you can use the following operators: `+`, `-`, `*`, `/`, `%` (`%` not on `DbDouble`).
 
 ```csharp
 db.Update<UsersTable>().AllRows().With((row, x) => row.Set(x.Credits, x.Credits + 10)).Execute();

@@ -18,6 +18,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbTextNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDecimalExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDecimalNullableExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDoubleExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDoubleNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbUuidExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbUuidNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDateOnlyExpressionTest.cs" />
@@ -49,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\SelectCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\BoolTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\DecimalTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\DoubleTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\UuidTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\DateOnlyTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\DateTimeTest.cs" />

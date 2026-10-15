@@ -67,6 +67,33 @@ public class DbDoubleNullableExpressionTest(DatabaseFixture env, ITestOutputHelp
     }
 
     [Fact]
+    public async Task PlusWithInt()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left + right)).FetchOne();
+        Assert.Equal(0.1 + 2, rs.Result);
+    }
+
+    [Fact]
+    public async Task PlusWithNullableIntValue()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left + right)).FetchOne();
+        Assert.Equal(0.1 + 2, rs.Result);
+    }
+
+    [Fact]
+    public async Task PlusWithNullableIntNull()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left + right)).FetchOne();
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
     public async Task PlusOnNull()
     {
         var left = SQL.NullableParameter((double?)null);
@@ -107,6 +134,33 @@ public class DbDoubleNullableExpressionTest(DatabaseFixture env, ITestOutputHelp
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter(5d) - 3d)).FetchOne();
         Assert.Equal(2, rs.Result);
+    }
+
+    [Fact]
+    public async Task MinusWithInt()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left - right)).FetchOne();
+        Assert.Equal(0.1 - 2, rs.Result);
+    }
+
+    [Fact]
+    public async Task MinusWithNullableIntValue()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left - right)).FetchOne();
+        Assert.Equal(0.1 - 2, rs.Result);
+    }
+
+    [Fact]
+    public async Task MinusWithNullableIntNull()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left - right)).FetchOne();
+        Assert.Null(rs.Result);
     }
 
     [Fact]
@@ -153,6 +207,33 @@ public class DbDoubleNullableExpressionTest(DatabaseFixture env, ITestOutputHelp
     }
 
     [Fact]
+    public async Task MultiplyWithInt()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.Parameter(3);
+        var rs = await DB.SelectValues(x => x.Get(left * right)).FetchOne();
+        Assert.Equal(0.1 * 3, rs.Result);
+    }
+
+    [Fact]
+    public async Task MultiplyWithNullableIntValue()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.NullableParameter(3);
+        var rs = await DB.SelectValues(x => x.Get(left * right)).FetchOne();
+        Assert.Equal(0.1 * 3, rs.Result);
+    }
+
+    [Fact]
+    public async Task MultiplyWithNullableIntNull()
+    {
+        var left = SQL.NullableParameter(0.1);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left * right)).FetchOne();
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
     public async Task MultiplyOnNull()
     {
         var left = SQL.NullableParameter((double?)null);
@@ -193,6 +274,33 @@ public class DbDoubleNullableExpressionTest(DatabaseFixture env, ITestOutputHelp
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter(6d) / 3d)).FetchOne();
         Assert.Equal(2, rs.Result);
+    }
+
+    [Fact]
+    public async Task DivideWithInt()
+    {
+        var left = SQL.NullableParameter(7d);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left / right)).FetchOne();
+        Assert.Equal(3.5, rs.Result);
+    }
+
+    [Fact]
+    public async Task DivideWithNullableIntValue()
+    {
+        var left = SQL.NullableParameter(7d);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left / right)).FetchOne();
+        Assert.Equal(3.5, rs.Result);
+    }
+
+    [Fact]
+    public async Task DivideWithNullableIntNull()
+    {
+        var left = SQL.NullableParameter(7d);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left / right)).FetchOne();
+        Assert.Null(rs.Result);
     }
 
     [Fact]

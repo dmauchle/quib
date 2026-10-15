@@ -39,6 +39,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\TableInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InstallerTests\DatabaseInstallerTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbIntExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\CastTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbLongExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\FetchCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\JoinCodeStyles.cs" />

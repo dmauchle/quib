@@ -27,6 +27,11 @@ public static partial class ExpressionExtensions
             return left + SQL.Parameter(right);
         }
 
+        public static NotNullExpression<DbDouble> operator +(NotNullExpression<DbDouble> left, NotNullExpression<DbInt> right)
+        {
+            return new NotNullExpression<DbDouble>(new BinaryOperator(left.SQL, "+", right.SQL));
+        }
+
         public static NotNullExpression<DbDouble> operator -(NotNullExpression<DbDouble> left, NotNullExpression<DbDouble> right)
         {
             return new NotNullExpression<DbDouble>(new BinaryOperator(left.SQL, "-", right.SQL));
@@ -35,6 +40,11 @@ public static partial class ExpressionExtensions
         public static NotNullExpression<DbDouble> operator -(NotNullExpression<DbDouble> left, double right)
         {
             return left - SQL.Parameter(right);
+        }
+
+        public static NotNullExpression<DbDouble> operator -(NotNullExpression<DbDouble> left, NotNullExpression<DbInt> right)
+        {
+            return new NotNullExpression<DbDouble>(new BinaryOperator(left.SQL, "-", right.SQL));
         }
 
         public static NotNullExpression<DbDouble> operator *(NotNullExpression<DbDouble> left, NotNullExpression<DbDouble> right)
@@ -47,6 +57,11 @@ public static partial class ExpressionExtensions
             return left * SQL.Parameter(right);
         }
 
+        public static NotNullExpression<DbDouble> operator *(NotNullExpression<DbDouble> left, NotNullExpression<DbInt> right)
+        {
+            return new NotNullExpression<DbDouble>(new BinaryOperator(left.SQL, "*", right.SQL));
+        }
+
         public static NotNullExpression<DbDouble> operator /(NotNullExpression<DbDouble> left, NotNullExpression<DbDouble> right)
         {
             return new NotNullExpression<DbDouble>(new BinaryOperator(left.SQL, "/", right.SQL));
@@ -55,6 +70,11 @@ public static partial class ExpressionExtensions
         public static NotNullExpression<DbDouble> operator /(NotNullExpression<DbDouble> left, double right)
         {
             return left / SQL.Parameter(right);
+        }
+
+        public static NotNullExpression<DbDouble> operator /(NotNullExpression<DbDouble> left, NotNullExpression<DbInt> right)
+        {
+            return new NotNullExpression<DbDouble>(new BinaryOperator(left.SQL, "/", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator ==(NotNullExpression<DbDouble> left, double right)
@@ -122,6 +142,11 @@ public static partial class ExpressionExtensions
             return left + SQL.Parameter(right);
         }
 
+        public static NullableExpression<DbDouble> operator +(NullableExpression<DbDouble> left, NullableExpression<DbInt> right)
+        {
+            return new NullableExpression<DbDouble>(new BinaryOperator(left.SQL, "+", right.SQL));
+        }
+
         public static NullableExpression<DbDouble> operator -(NullableExpression<DbDouble> left, NullableExpression<DbDouble> right)
         {
             return new NullableExpression<DbDouble>(new BinaryOperator(left.SQL, "-", right.SQL));
@@ -130,6 +155,11 @@ public static partial class ExpressionExtensions
         public static NullableExpression<DbDouble> operator -(NullableExpression<DbDouble> left, double right)
         {
             return left - SQL.Parameter(right);
+        }
+
+        public static NullableExpression<DbDouble> operator -(NullableExpression<DbDouble> left, NullableExpression<DbInt> right)
+        {
+            return new NullableExpression<DbDouble>(new BinaryOperator(left.SQL, "-", right.SQL));
         }
 
         public static NullableExpression<DbDouble> operator *(NullableExpression<DbDouble> left, NullableExpression<DbDouble> right)
@@ -142,6 +172,11 @@ public static partial class ExpressionExtensions
             return left * SQL.Parameter(right);
         }
 
+        public static NullableExpression<DbDouble> operator *(NullableExpression<DbDouble> left, NullableExpression<DbInt> right)
+        {
+            return new NullableExpression<DbDouble>(new BinaryOperator(left.SQL, "*", right.SQL));
+        }
+
         public static NullableExpression<DbDouble> operator /(NullableExpression<DbDouble> left, NullableExpression<DbDouble> right)
         {
             return new NullableExpression<DbDouble>(new BinaryOperator(left.SQL, "/", right.SQL));
@@ -150,6 +185,11 @@ public static partial class ExpressionExtensions
         public static NullableExpression<DbDouble> operator /(NullableExpression<DbDouble> left, double right)
         {
             return left / SQL.Parameter(right);
+        }
+
+        public static NullableExpression<DbDouble> operator /(NullableExpression<DbDouble> left, NullableExpression<DbInt> right)
+        {
+            return new NullableExpression<DbDouble>(new BinaryOperator(left.SQL, "/", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator ==(NullableExpression<DbDouble> left, double right)

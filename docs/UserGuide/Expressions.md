@@ -70,6 +70,33 @@ db.SelectFrom<UsersTable>().Where(x => x.IsActive & !x.IsDeleted);
 String concatenation is not supported using an operator (`+`). Use `SQL.Concat()` instead.
 
 
+## Using numeric expressions as a different type
+
+The `As...()` methods use a numeric expression as a wider numeric type. They never fail, as every value fits into the 
+target type:
+
+| From | Methods |
+| --- | --- |
+| `DbInt` | `AsLong()`, `AsDouble()`, `AsDecimal()` |
+| `DbLong` | `AsDouble()`, `AsDecimal()` |
+| `DbDecimal` | `AsDouble()` |
+
+```csharp
+db.SelectFrom<OrdersTable>().Project((rs, x) => rs.Get(x.Quantity.AsDecimal()));  // read the INT column as decimal
+```
+
+`AsDouble()` may lose precision, as a double only has about 15-17 significant digits: on `DbLong` for values beyond 
+2^53 (about 9 * 10^15), on `DbDecimal` for values with more digits. That's the same as converting `long` or `decimal` 
+to `double` in C#.
+
+Use cases:
+
+- Combining expressions of different types where an operator or method expects the same type, e.g. comparisons 
+  (`x.TotalViews > x.Quantity.AsLong()`).
+- Changing how a calculation is done, e.g. avoiding an integer overflow (`x.Quantity.AsLong() * 1000000`) or the 
+  integer division (`x.Quantity.AsDouble() / 2` = `3.5` instead of `3`).
+
+
 ## Null Checks
 
 ```csharp

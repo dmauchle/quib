@@ -208,6 +208,21 @@ being the expression of the block and variations for the right value:
 Operators mixing not-null and nullable operands must not be added: C# picks the nullable operator, as the not-null 
 operand converts to its base class `NullableExpression<T>`. So the result is nullable, as expected.
 
+**Int operands:**
+
+As arithmetic with an int is very common, the arithmetic operators of all numeric types (except `DbInt` itself) also 
+accept a `DbInt` expression as right operand (in both extension blocks, same nullability as the block). The result has 
+the type of the left operand. These operators are tested in the expression test files of the left operand's db type.
+
+**Type conversions:**
+
+Operators don't mix db types. To use an expression as a different db type, add `As...()` methods (e.g. `AsLong()`) in 
+both extension blocks, keeping the nullability. `As...()` is only used for widening conversions that never fail, as 
+every value fits into the target type (e.g. `DbInt` to `DbLong`, `DbDouble` or `DbDecimal`). Precision loss is 
+acceptable, like in C# from `long` to `double` (e.g. `DbLong` or `DbDecimal` to `DbDouble`). Conversions that may 
+fail or truncate (narrowing) are not supported yet. If added, they should be named differently (e.g. `To...()`). All 
+conversions are tested in `CastTest` (/test/Quib.Shared.UnitTests/ExpressionTests), not in the test files of the db types.
+
 ### Unit tests
 
 For every db type, there should be a unit test file for not-null and one for nullable expressions in 
@@ -222,4 +237,5 @@ The unit tests should cover:
 
 Make sure the test methods are named and ordered in a comprehensive and consistent way. When ordering operator tests, 
 use strict grouping by operator and then parameter kind in this exact order: not-null parameter, nullable parameter with 
-value, nullable parameter with null, .NET value type.
+value, nullable parameter with null, .NET value type. For `DbInt` operands (see "Int operands"), the same variants 
+follow after the .NET value type: not-null int parameter, nullable int parameter with value, nullable int parameter with null.

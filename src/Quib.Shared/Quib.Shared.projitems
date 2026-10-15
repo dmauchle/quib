@@ -48,6 +48,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\ConcatOperator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\QueryParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\BinaryOperator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\Cast.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\Constant.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\DbNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\ColumnInstaller.cs" />

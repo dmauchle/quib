@@ -56,6 +56,33 @@ public class DbLongExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     }
 
     [Fact]
+    public async Task PlusIntParameterRight()
+    {
+        var left = SQL.Parameter(5_000_000_000L);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left + right)).FetchOne();
+        Assert.Equal(5_000_000_002L, rs.Result);
+    }
+
+    [Fact]
+    public async Task PlusNullableIntValue()
+    {
+        var left = SQL.Parameter(5_000_000_000L);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left + right)).FetchOne();
+        Assert.Equal(5_000_000_002L, rs.Result);
+    }
+
+    [Fact]
+    public async Task PlusNullableIntNull()
+    {
+        var left = SQL.Parameter(5_000_000_000L);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left + right)).FetchOne();
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
     public async Task MinusParameterRight()
     {
         var left = SQL.Parameter(5L);
@@ -87,6 +114,33 @@ public class DbLongExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(5L) - 3L)).FetchOne();
         Assert.Equal(2, rs.Result);
+    }
+
+    [Fact]
+    public async Task MinusIntParameterRight()
+    {
+        var left = SQL.Parameter(5_000_000_000L);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left - right)).FetchOne();
+        Assert.Equal(4_999_999_998L, rs.Result);
+    }
+
+    [Fact]
+    public async Task MinusNullableIntValue()
+    {
+        var left = SQL.Parameter(5_000_000_000L);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left - right)).FetchOne();
+        Assert.Equal(4_999_999_998L, rs.Result);
+    }
+
+    [Fact]
+    public async Task MinusNullableIntNull()
+    {
+        var left = SQL.Parameter(5_000_000_000L);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left - right)).FetchOne();
+        Assert.Null(rs.Result);
     }
 
     [Fact]
@@ -124,6 +178,33 @@ public class DbLongExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     }
 
     [Fact]
+    public async Task MultiplyIntParameterRight()
+    {
+        var left = SQL.Parameter(3_000_000_000L);
+        var right = SQL.Parameter(3);
+        var rs = await DB.SelectValues(x => x.Get(left * right)).FetchOne();
+        Assert.Equal(9_000_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task MultiplyNullableIntValue()
+    {
+        var left = SQL.Parameter(3_000_000_000L);
+        var right = SQL.NullableParameter(3);
+        var rs = await DB.SelectValues(x => x.Get(left * right)).FetchOne();
+        Assert.Equal(9_000_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task MultiplyNullableIntNull()
+    {
+        var left = SQL.Parameter(3_000_000_000L);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left * right)).FetchOne();
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
     public async Task DivideParameterRight()
     {
         var left = SQL.Parameter(6L);
@@ -155,6 +236,33 @@ public class DbLongExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(6L) / 3L)).FetchOne();
         Assert.Equal(2, rs.Result);
+    }
+
+    [Fact]
+    public async Task DivideIntParameterRight()
+    {
+        var left = SQL.Parameter(7_000_000_001L);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left / right)).FetchOne();
+        Assert.Equal(3_500_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task DivideNullableIntValue()
+    {
+        var left = SQL.Parameter(7_000_000_001L);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left / right)).FetchOne();
+        Assert.Equal(3_500_000_000L, rs.Result);
+    }
+
+    [Fact]
+    public async Task DivideNullableIntNull()
+    {
+        var left = SQL.Parameter(7_000_000_001L);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left / right)).FetchOne();
+        Assert.Null(rs.Result);
     }
 
     [Fact]
@@ -211,6 +319,33 @@ public class DbLongExpressionTest(DatabaseFixture env, ITestOutputHelper log) : 
     {
         var rs = await DB.SelectValues(x => x.Get(SQL.Parameter(5L) % 2L)).FetchOne();
         Assert.Equal(1, rs.Result);
+    }
+
+    [Fact]
+    public async Task ModuloIntParameterRight()
+    {
+        var left = SQL.Parameter(7_000_000_001L);
+        var right = SQL.Parameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left % right)).FetchOne();
+        Assert.Equal(1L, rs.Result);
+    }
+
+    [Fact]
+    public async Task ModuloNullableIntValue()
+    {
+        var left = SQL.Parameter(7_000_000_001L);
+        var right = SQL.NullableParameter(2);
+        var rs = await DB.SelectValues(x => x.Get(left % right)).FetchOne();
+        Assert.Equal(1L, rs.Result);
+    }
+
+    [Fact]
+    public async Task ModuloNullableIntNull()
+    {
+        var left = SQL.Parameter(7_000_000_001L);
+        var right = SQL.NullableParameter((int?)null);
+        var rs = await DB.SelectValues(x => x.Get(left % right)).FetchOne();
+        Assert.Null(rs.Result);
     }
 
     [Fact]

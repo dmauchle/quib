@@ -138,3 +138,18 @@ var rs = await db
     .Project(x => x.employee.Name)
     .FetchArray();
 ```
+
+
+## NULL with outer-joins
+
+Note that columns of outer-joined tables keep their not-null type (e.g. `NotNullColumn<DbText>`), although they are 
+`NULL` if there's no matching row (with `RightOuterJoin`, this applies to the columns of the `From` table). Reading 
+such a `NULL` value with `rs.Get(...)` throws an exception. Use `rs.MapNullable(...)` to map the joined table to an 
+object (it returns `null` if there's no matching row), or `rs.GetNullable(...)` to read single values:
+
+```csharp
+var rs = await db
+    .Select<EmployeesQuery>()
+    .Project((rs, x) => new { Name = rs.Get(x.Employee.Name), City = rs.Get(x.Company.City) })
+    .FetchArray((rs, x) => new { Name = rs.Get(x.Name), City = rs.GetNullable(x.City) });  // City is string?
+```

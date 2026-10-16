@@ -26,6 +26,10 @@ install.Table("users")
 - `ShortText()` - up to 65,535 bytes of text data. Separate from row size limit
 - `MediumText()` - up to 16 MB of text data
 - `LongText()` - up to 4 GB of text data
+- `VarBinary(length)` - variable-length binary data (number of bytes), max. 65,535 bytes (row size limit)
+- `ShortBinary()` - up to 65,535 bytes of binary data (`BLOB`). Separate from row size limit.
+- `MediumBinary()` - up to 16 MB of binary data (`MEDIUMBLOB`). Separate from row size limit.
+- `LongBinary()` - up to 4 GB of binary data (`LONGBLOB`). Separate from row size limit.
 
 **Postgres**
 
@@ -41,6 +45,9 @@ install.Table("users")
 - `ShortText()` - supposed to be in the KB-range, but Postgres only supports 1 GB text.
 - `MediumText()` - supposed to be in the MB-range, but Postgres only supports 1 GB text.
 - `LongText()` - up to 1 GB of text data (value limit)
+- `ShortBinary()` - supposed to be in the KB-range, but Postgres only supports 1 GB binary data.
+- `MediumBinary()` - supposed to be in the MB-range, but Postgres only supports 1 GB binary data.
+- `LongBinary()` - up to 1 GB of binary data (`BYTEA`, value limit)
 
 
 ## Decimal
@@ -156,3 +163,8 @@ using var connection = new MySqlConnection(connectionString);
 
 Columns explicitly configure the `en_US.utf8` collation by default. It's also case-insensitive for string comparisons. 
 
+
+## Binary data
+
+Use `DbBinary` for `VarBinary()`, `ShortBinary()`, `MediumBinary()` and `LongBinary()` columns, the .NET type is 
+`byte[]`. Values are stored as is, without padding or trimming (e.g. trailing zero bytes are kept).

@@ -44,6 +44,36 @@ public static class MappingExtensions
         return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
     }
 
+    public static IAsyncEnumerable<byte[]> FetchStream(this ProjectedQuery<NotNullProjection<DbBinary>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<byte[][]> FetchArray(this ProjectedQuery<NotNullProjection<DbBinary>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<SingleQueryResult<byte[]>> FetchOne(this ProjectedQuery<NotNullProjection<DbBinary>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static IAsyncEnumerable<byte[]?> FetchStream(this ProjectedQuery<NullableProjection<DbBinary>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<byte[]?[]> FetchArray(this ProjectedQuery<NullableProjection<DbBinary>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchArray((rs, x) => rs.Get(x), cancellationToken);
+    }
+
+    public static Task<SingleQueryResult<byte[]?>> FetchOne(this ProjectedQuery<NullableProjection<DbBinary>> query, CancellationToken cancellationToken = default)
+    {
+        return query.FetchOne((rs, x) => rs.Get(x), cancellationToken);
+    }
+
     public static IAsyncEnumerable<int> FetchStream(this ProjectedQuery<NotNullProjection<DbInt>> query, CancellationToken cancellationToken = default)
     {
         return query.FetchStream((rs, x) => rs.Get(x), cancellationToken);

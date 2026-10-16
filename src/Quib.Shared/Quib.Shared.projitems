@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbInt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbLong.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbText.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBinary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbBool.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbDecimal.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbDouble.cs" />

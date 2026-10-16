@@ -32,6 +32,18 @@ public static class UpdateQueryExtensions
         query.Set(column, SQL.NullableParameter(value));
     }
 
+    public static void Set<TQuery>(this TQuery query, NotNullColumn<DbBinary> column, byte[] value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.Parameter(value));
+    }
+
+    public static void Set<TQuery>(this TQuery query, NullableColumn<DbBinary> column, byte[]? value)
+        where TQuery : IUpdateQueryBuilder
+    {
+        query.Set(column, SQL.NullableParameter(value));
+    }
+
     public static void Set<TQuery>(this TQuery query, NotNullColumn<DbInt> column, int value)
         where TQuery : IUpdateQueryBuilder
     {

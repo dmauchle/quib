@@ -235,6 +235,76 @@ public static class ColumnTypeFactory
         }
 
 #endif
+
+#if MYSQL
+
+        /// <summary>
+        /// Variable-length binary data (number of bytes), max. 65,535 bytes (row size limit).
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static ColumnType VarBinary(int length)
+        {
+            return new ColumnType($"VARBINARY({length})", defaultValue: "''");
+        }
+
+        /// <summary>
+        /// Stores up to 65,535 bytes of binary data. Separate from row size limit.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType ShortBinary()
+        {
+            return new ColumnType($"BLOB", defaultValue: "''");
+        }
+
+        /// <summary>
+        /// Stores up to 16 MB of binary data.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType MediumBinary()
+        {
+            return new ColumnType($"MEDIUMBLOB", defaultValue: "''");
+        }
+
+        /// <summary>
+        /// Stores up to 4 GB of binary data.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType LongBinary()
+        {
+            return new ColumnType($"LONGBLOB", defaultValue: "''");
+        }
+
+#elif POSTGRES
+
+        /// <summary>
+        /// Alias for <see cref="LongBinary"/> (1 GB, Postgres doesn't have a short binary type).
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType ShortBinary()
+        {
+            return LongBinary();
+        }
+
+        /// <summary>
+        /// Alias for <see cref="LongBinary"/> (1 GB, Postgres doesn't have a medium binary type).
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType MediumBinary()
+        {
+            return LongBinary();
+        }
+
+        /// <summary>
+        /// Stores binary data up to 1GB per value.
+        /// </summary>
+        /// <returns></returns>
+        public static ColumnType LongBinary()
+        {
+            return new ColumnType($"BYTEA", defaultValue: "''");
+        }
+
+#endif
     }
 
 }

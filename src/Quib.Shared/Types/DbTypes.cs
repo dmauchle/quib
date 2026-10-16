@@ -13,17 +13,19 @@ namespace Quib.Postgres18.Types;
 
 public readonly struct DbText : IExpressionType { }
 
+public readonly struct DbBinary : IExpressionType { }
+
 public readonly struct DbInt : IExpressionType { }
 
 public readonly struct DbLong : IExpressionType { }
 
-public readonly struct DbBool : IExpressionType { }
-
-public readonly struct DbUuid : IExpressionType { }
-
 public readonly struct DbDecimal : IExpressionType { }
 
 public readonly struct DbDouble : IExpressionType { }
+
+public readonly struct DbBool : IExpressionType { }
+
+public readonly struct DbUuid : IExpressionType { }
 
 public readonly struct DbDateOnly : IExpressionType { }
 

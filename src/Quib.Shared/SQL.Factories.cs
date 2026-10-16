@@ -67,6 +67,26 @@ public static partial class SQL
         return new NullableExpression<DbText>(new QueryParameter(value));
     }
 
+    public static NotNullExpression<DbBinary> Parameter(byte[] value)
+    {
+        // In case nullable compiler errors are turned off in the consuming project.
+        ArgumentNullException.ThrowIfNull(value);
+
+        return new NotNullExpression<DbBinary>(new QueryParameter(value));
+    }
+
+    public static NullableExpression<DbBinary> NullableParameter(byte[]? value)
+    {
+#if MYSQL
+        // Depending on the driver state, a NULL parameter may be sent as text (utf8mb4). Comparing it with binary data
+        // fails then ("Cannot convert string ... from binary to utf8mb4"), so NULL is explicitly typed as binary.
+        // Non-null values are always sent as binary. Failure could have happened when running the full test suite.
+        if (value == null)
+            return new NullableExpression<DbBinary>(new Constant("CAST(NULL AS BINARY)"));
+#endif
+        return new NullableExpression<DbBinary>(new QueryParameter(value));
+    }
+
     public static NotNullExpression<DbInt> Parameter(int value)
     {
         return new NotNullExpression<DbInt>(new QueryParameter(value));

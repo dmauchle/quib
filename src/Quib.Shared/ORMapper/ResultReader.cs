@@ -106,6 +106,32 @@ public sealed class ResultReader
             return _reader.GetString(field.Index);
     }
 
+    public byte[] Get(NotNullProjection<DbBinary> field)
+    {
+        return (byte[])_reader.GetValue(field.Index);
+    }
+
+    /// <summary>
+    /// Use the method if the projection could be null, even if the column itself is not nullable (e.g. due to a join).
+    /// </summary>
+    /// <param name="field"></param>
+    /// <returns></returns>
+    public byte[]? GetNullable(NotNullProjection<DbBinary> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return (byte[])_reader.GetValue(field.Index);
+    }
+
+    public byte[]? Get(NullableProjection<DbBinary> field)
+    {
+        if (this.IsDBNull(field))
+            return null;
+        else
+            return (byte[])_reader.GetValue(field.Index);
+    }
+
     public int Get(NotNullProjection<DbInt> field)
     {
         return _reader.GetInt32(field.Index);

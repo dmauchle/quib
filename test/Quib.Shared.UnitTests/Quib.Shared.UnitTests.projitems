@@ -27,6 +27,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDateTimeExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbDateTimeNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbTextExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBinaryExpressionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpressionTests\DbBinaryNullableExpressionTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalTestConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DbTestBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\MySqlContainer.cs" />
@@ -61,6 +63,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\NullableColumnsTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\TextTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\VarCharTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\BinaryTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaTests\VarBinaryTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestCollections.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\DeleteFilterTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\DeleteCodeStyles.cs" />

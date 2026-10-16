@@ -31,6 +31,8 @@ public sealed class InsertQuery<TQuery> : IInsertQuery
 
     public InsertQuery<TQuery> AddRow(Action<IUpdateQueryBuilder, TQuery> run)
     {
+        ArgumentNullException.ThrowIfNull(run);
+
         run(_builder, _accessor);
         _builder.NextRow();
         return this;
@@ -38,6 +40,8 @@ public sealed class InsertQuery<TQuery> : IInsertQuery
 
     public InsertQuery<TQuery> AddRow<TObj>(Action<IUpdateQueryBuilder, TQuery, TObj> run, TObj obj)
     {
+        ArgumentNullException.ThrowIfNull(run);
+
         run(_builder, _accessor, obj);
         _builder.NextRow();
         return this;

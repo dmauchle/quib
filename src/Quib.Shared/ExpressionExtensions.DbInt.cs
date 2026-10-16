@@ -19,116 +19,171 @@ public static partial class ExpressionExtensions
 
         public NotNullExpression<DbLong> AsLong()
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             return new NotNullExpression<DbLong>(Cast.ToLong(value.SQL));
         }
 
         public NotNullExpression<DbDouble> AsDouble()
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             return new NotNullExpression<DbDouble>(Cast.ToDouble(value.SQL));
         }
 
         public NotNullExpression<DbDecimal> AsDecimal()
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             return new NotNullExpression<DbDecimal>(Cast.ToDecimal(value.SQL, 10));
         }
 
         public static NotNullExpression<DbInt> operator +(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbInt>(new BinaryOperator(left.SQL, "+", right.SQL));
         }
 
         public static NotNullExpression<DbInt> operator +(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left + SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbInt> operator -(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbInt>(new BinaryOperator(left.SQL, "-", right.SQL));
         }
 
         public static NotNullExpression<DbInt> operator -(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left - SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbInt> operator *(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbInt>(new BinaryOperator(left.SQL, "*", right.SQL));
         }
 
         public static NotNullExpression<DbInt> operator *(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left * SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbInt> operator /(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbInt>(new BinaryOperator(left.SQL, SqlSyntax.IntegerDivision(), right.SQL));
         }
 
         public static NotNullExpression<DbInt> operator /(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left / SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbInt> operator %(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbInt>(new BinaryOperator(left.SQL, "%", right.SQL));
         }
 
         public static NotNullExpression<DbInt> operator %(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left % SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbBool> operator ==(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter(right).SQL));
         }
 
         public static NotNullExpression<DbBool> operator !=(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter(right).SQL));
         }
 
         public static NotNullExpression<DbBool> operator <(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "<", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator <(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left < SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbBool> operator >(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, ">", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator >(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left > SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbBool> operator <=(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "<=", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator <=(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left <= SQL.Parameter(right);
         }
 
         public static NotNullExpression<DbBool> operator >=(NotNullExpression<DbInt> left, NotNullExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, ">=", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator >=(NotNullExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left >= SQL.Parameter(right);
         }
 
@@ -139,116 +194,171 @@ public static partial class ExpressionExtensions
 
         public NullableExpression<DbLong> AsLong()
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             return new NullableExpression<DbLong>(Cast.ToLong(value.SQL));
         }
 
         public NullableExpression<DbDouble> AsDouble()
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             return new NullableExpression<DbDouble>(Cast.ToDouble(value.SQL));
         }
 
         public NullableExpression<DbDecimal> AsDecimal()
         {
+            ArgumentNullException.ThrowIfNull(value);
+
             return new NullableExpression<DbDecimal>(Cast.ToDecimal(value.SQL, 10));
         }
 
         public static NullableExpression<DbInt> operator +(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbInt>(new BinaryOperator(left.SQL, "+", right.SQL));
         }
 
         public static NullableExpression<DbInt> operator +(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left + SQL.Parameter(right);
         }
 
         public static NullableExpression<DbInt> operator -(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbInt>(new BinaryOperator(left.SQL, "-", right.SQL));
         }
 
         public static NullableExpression<DbInt> operator -(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left - SQL.Parameter(right);
         }
 
         public static NullableExpression<DbInt> operator *(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbInt>(new BinaryOperator(left.SQL, "*", right.SQL));
         }
 
         public static NullableExpression<DbInt> operator *(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left * SQL.Parameter(right);
         }
 
         public static NullableExpression<DbInt> operator /(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbInt>(new BinaryOperator(left.SQL, SqlSyntax.IntegerDivision(), right.SQL));
         }
 
         public static NullableExpression<DbInt> operator /(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left / SQL.Parameter(right);
         }
 
         public static NullableExpression<DbInt> operator %(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbInt>(new BinaryOperator(left.SQL, "%", right.SQL));
         }
 
         public static NullableExpression<DbInt> operator %(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left % SQL.Parameter(right);
         }
 
         public static NullableExpression<DbBool> operator ==(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter(right).SQL));
         }
 
         public static NullableExpression<DbBool> operator !=(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter(right).SQL));
         }
 
         public static NullableExpression<DbBool> operator <(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "<", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator <(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left < SQL.Parameter(right);
         }
 
         public static NullableExpression<DbBool> operator >(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, ">", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator >(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left > SQL.Parameter(right);
         }
 
         public static NullableExpression<DbBool> operator <=(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "<=", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator <=(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left <= SQL.Parameter(right);
         }
 
         public static NullableExpression<DbBool> operator >=(NullableExpression<DbInt> left, NullableExpression<DbInt> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, ">=", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator >=(NullableExpression<DbInt> left, int right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left >= SQL.Parameter(right);
         }
 

@@ -12,12 +12,35 @@ namespace Quib.MySql84;
 namespace Quib.Postgres18;
 #endif
 
-public sealed class QueryFactory(DbConnection con)
+public sealed class QueryFactory
 {
 
-    public DbConnection Connection => con;
+    private readonly DbConnection _con;
+    private Action<string> _logger;
 
-    public Action<string> Logger { get; set; } = _ => { };
+    public QueryFactory(DbConnection con)
+    {
+        ArgumentNullException.ThrowIfNull(con);
+
+        _con = con;
+        _logger = _ => { };
+    }
+
+    public DbConnection Connection => _con;
+
+    public Action<string> Logger
+    {
+        get
+        {
+            return _logger;
+        }
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            _logger = value;
+        }
+    }
 
     internal void Log(DbCommand cmd)
     {
@@ -41,7 +64,7 @@ public sealed class QueryFactory(DbConnection con)
 
     internal int ExecuteNonQuery(string sql)
     {
-        using (var cmd = con.CreateCommand())
+        using (var cmd = _con.CreateCommand())
         {
             cmd.CommandText = sql;
             Log(cmd);
@@ -51,7 +74,7 @@ public sealed class QueryFactory(DbConnection con)
 
     internal Task<int> ExecuteNonQueryAsync(string sql, CancellationToken cancellationToken = default)
     {
-        using (var cmd = con.CreateCommand())
+        using (var cmd = _con.CreateCommand())
         {
             cmd.CommandText = sql;
             Log(cmd);
@@ -61,7 +84,7 @@ public sealed class QueryFactory(DbConnection con)
 
     internal Task<int> ExecuteNonQueryAsync(QueryWriter query, CancellationToken cancellationToken = default)
     {
-        using (var cmd = con.CreateCommand())
+        using (var cmd = _con.CreateCommand())
         {
             query.Build(cmd);
             Log(cmd);
@@ -71,7 +94,7 @@ public sealed class QueryFactory(DbConnection con)
 
     internal object? ExecuteScalar(string sql)
     {
-        using (var cmd = con.CreateCommand())
+        using (var cmd = _con.CreateCommand())
         {
             cmd.CommandText = sql;
             Log(cmd);
@@ -81,7 +104,7 @@ public sealed class QueryFactory(DbConnection con)
 
     internal Task<object?> ExecuteScalarAsync(string sql)
     {
-        using (var cmd = con.CreateCommand())
+        using (var cmd = _con.CreateCommand())
         {
             cmd.CommandText = sql;
             Log(cmd);
@@ -91,6 +114,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public SelectQuery<T> Select<T>(Func<SelectQueryBuilder, T> queryFactory)
     {
+        ArgumentNullException.ThrowIfNull(queryFactory);
+
         var builder = new SelectQueryBuilder();
         var accessor = queryFactory(builder);
         return new SelectQuery<T>(this, builder, accessor);
@@ -104,6 +129,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public SelectQuery<DbTable> SelectFromTable(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         return this.Select(query => query.FromTable(tablename));
     }
 
@@ -114,11 +141,15 @@ public sealed class QueryFactory(DbConnection con)
 
     public SelectQuery<T> SelectFrom<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         return this.Select(query => query.From(tableFactory));
     }
 
     public ProjectedQuery<T> SelectValues<T>(Func<ProjectionBuilder, T> factory)
     {
+        ArgumentNullException.ThrowIfNull(factory);
+
         var builder = new SelectQueryBuilder();
         var select = new SelectQuery<object>(this, builder, new object());
         return select.Project((rs, _) => factory(rs));
@@ -126,6 +157,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public InsertQuery<DbTable> InsertIntoTable(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new InsertQueryBuilder(table);
@@ -139,6 +172,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public InsertQuery<T> InsertInto<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         var table = new TableReference(T.TableName);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new InsertQueryBuilder(table);
@@ -147,6 +182,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public IUpdateQuery<DbTable> UpdateTable(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new UpdateQueryBuilder(table);
@@ -160,6 +197,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public IUpdateQuery<T> Update<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         var table = new TableReference(T.TableName);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new UpdateQueryBuilder(table);
@@ -168,6 +207,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public IDeleteQuery<DbTable> DeleteFromTable(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new DeleteQueryBuilder(table);
@@ -181,6 +222,8 @@ public sealed class QueryFactory(DbConnection con)
 
     public IDeleteQuery<T> DeleteFrom<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         var table = new TableReference(T.TableName);
         var accessor = new DbTable(new TableAlias(0));
         var builder = new DeleteQueryBuilder(table);

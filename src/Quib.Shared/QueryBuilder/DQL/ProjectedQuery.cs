@@ -30,6 +30,8 @@ public class ProjectedQuery<TProj> : IQueryPart
 
     public async IAsyncEnumerable<TObj> FetchStream<TObj>(Func<ResultReader, TProj, TObj> map, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(map);
+
         using (var cmd = _db.Connection.CreateCommand())
         {
             var query = new QueryWriter();
@@ -51,11 +53,15 @@ public class ProjectedQuery<TProj> : IQueryPart
 
     public async Task<TObj[]> FetchArray<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(map);
+
         return await FetchStream(map, cancellationToken).ToArrayAsync(cancellationToken);
     }
 
     public async Task<SingleQueryResult<TObj>> FetchOne<TObj>(Func<ResultReader, TProj, TObj> map, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(map);
+
         return await this.FetchStream(map, cancellationToken)
             .Select(x => new SingleQueryResult<TObj>(x))
             .FirstOrDefaultAsync(cancellationToken);

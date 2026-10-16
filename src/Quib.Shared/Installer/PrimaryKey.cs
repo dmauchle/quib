@@ -24,6 +24,9 @@ public sealed class PrimaryKey
 
     public PrimaryKey AddColumn(string columnName, ColumnType type)
     {
+        ArgumentNullException.ThrowIfNull(columnName);
+        ArgumentNullException.ThrowIfNull(type);
+
         _columns.Add(new Column(columnName, type.NotNull()));
         return this;
     }

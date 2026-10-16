@@ -58,6 +58,8 @@ internal sealed class DeleteQuery<TQuery> : IDeleteQuery<TQuery>, IDeleteFiltere
 
     public IDeleteFiltered<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate)
     {
+        ArgumentNullException.ThrowIfNull(predicate);
+
         _builder.AddFilter(predicate(_accessor).SQL);
         return this;
     }

@@ -31,6 +31,8 @@ public class JoinBuilder<TQuery>
 
     public TQuery On(Func<TQuery, NullableExpression<DbBool>> condition)
     {
+        ArgumentNullException.ThrowIfNull(condition);
+
         _join.On(condition(_accessor).SQL);
         return _accessor;
     }

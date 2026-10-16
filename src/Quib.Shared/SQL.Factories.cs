@@ -22,6 +22,8 @@ public static partial class SQL
     public static ISortExpression Sort<T>(NullableExpression<T> value, Sort direction)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         return new SortClause(value.SQL, direction);
     }
 
@@ -59,6 +61,8 @@ public static partial class SQL
 
     public static NotNullExpression<DbText> Parameter(string value)
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         return new NotNullExpression<DbText>(new QueryParameter(value));
     }
 
@@ -69,7 +73,6 @@ public static partial class SQL
 
     public static NotNullExpression<DbBinary> Parameter(byte[] value)
     {
-        // In case nullable compiler errors are turned off in the consuming project.
         ArgumentNullException.ThrowIfNull(value);
 
         return new NotNullExpression<DbBinary>(new QueryParameter(value));

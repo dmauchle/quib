@@ -52,7 +52,6 @@ public class NullableExpression<T> : IQueryExpression
 
     public static NullableExpression<DbBool> operator ==(NullableExpression<T> left, NullableExpression<T> right)
     {
-        // In case nullable compiler errors are turned off in the consuming project.
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
 
@@ -61,7 +60,6 @@ public class NullableExpression<T> : IQueryExpression
 
     public static NullableExpression<DbBool> operator !=(NullableExpression<T> left, NullableExpression<T> right)
     {
-        // In case nullable compiler errors are turned off in the consuming project.
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
 

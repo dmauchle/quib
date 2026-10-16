@@ -20,10 +20,6 @@ internal sealed class BinaryOperator : IQueryExpression
 
     public BinaryOperator(IQueryExpression left, string sqlOperator, IQueryExpression right)
     {
-        // In case nullable compiler errors are turned off in the consuming project.
-        ArgumentNullException.ThrowIfNull(left);
-        ArgumentNullException.ThrowIfNull(right);
-
         _left = left;
         _right = right;
         _sqlOperator = sqlOperator;

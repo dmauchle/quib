@@ -19,51 +19,75 @@ public static partial class ExpressionExtensions
 
         public static NotNullExpression<DbBool> operator ==(NotNullExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter<TTimeZone>(right).SQL));
         }
 
         public static NotNullExpression<DbBool> operator !=(NotNullExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter<TTimeZone>(right).SQL));
         }
 
         public static NotNullExpression<DbBool> operator <(NotNullExpression<DbDateTime<TTimeZone>> left, NotNullExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "<", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator <(NotNullExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left < SQL.Parameter<TTimeZone>(right);
         }
 
         public static NotNullExpression<DbBool> operator >(NotNullExpression<DbDateTime<TTimeZone>> left, NotNullExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, ">", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator >(NotNullExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left > SQL.Parameter<TTimeZone>(right);
         }
 
         public static NotNullExpression<DbBool> operator <=(NotNullExpression<DbDateTime<TTimeZone>> left, NotNullExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "<=", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator <=(NotNullExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left <= SQL.Parameter<TTimeZone>(right);
         }
 
         public static NotNullExpression<DbBool> operator >=(NotNullExpression<DbDateTime<TTimeZone>> left, NotNullExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, ">=", right.SQL));
         }
 
         public static NotNullExpression<DbBool> operator >=(NotNullExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left >= SQL.Parameter<TTimeZone>(right);
         }
 
@@ -74,51 +98,75 @@ public static partial class ExpressionExtensions
 
         public static NullableExpression<DbBool> operator ==(NullableExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter<TTimeZone>(right).SQL));
         }
 
         public static NullableExpression<DbBool> operator !=(NullableExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter<TTimeZone>(right).SQL));
         }
 
         public static NullableExpression<DbBool> operator <(NullableExpression<DbDateTime<TTimeZone>> left, NullableExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "<", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator <(NullableExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left < SQL.Parameter<TTimeZone>(right);
         }
 
         public static NullableExpression<DbBool> operator >(NullableExpression<DbDateTime<TTimeZone>> left, NullableExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, ">", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator >(NullableExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left > SQL.Parameter<TTimeZone>(right);
         }
 
         public static NullableExpression<DbBool> operator <=(NullableExpression<DbDateTime<TTimeZone>> left, NullableExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "<=", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator <=(NullableExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left <= SQL.Parameter<TTimeZone>(right);
         }
 
         public static NullableExpression<DbBool> operator >=(NullableExpression<DbDateTime<TTimeZone>> left, NullableExpression<DbDateTime<TTimeZone>> right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+            ArgumentNullException.ThrowIfNull(right);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, ">=", right.SQL));
         }
 
         public static NullableExpression<DbBool> operator >=(NullableExpression<DbDateTime<TTimeZone>> left, DateTime right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return left >= SQL.Parameter<TTimeZone>(right);
         }
 

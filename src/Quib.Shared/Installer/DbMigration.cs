@@ -19,6 +19,8 @@ public sealed class DbMigration
 
     public DbMigration(string versionsTableName)
     {
+        ArgumentNullException.ThrowIfNull(versionsTableName);
+
         this.VersionsTable = versionsTableName;
     }
 

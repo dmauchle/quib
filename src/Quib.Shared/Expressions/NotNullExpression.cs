@@ -33,7 +33,6 @@ public class NotNullExpression<T> : NullableExpression<T>
 
     public static NotNullExpression<DbBool> operator ==(NotNullExpression<T> left, NotNullExpression<T> right)
     {
-        // In case nullable compiler errors are turned off in the consuming project.
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
 
@@ -42,7 +41,6 @@ public class NotNullExpression<T> : NullableExpression<T>
 
     public static NotNullExpression<DbBool> operator !=(NotNullExpression<T> left, NotNullExpression<T> right)
     {
-        // In case nullable compiler errors are turned off in the consuming project.
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
 

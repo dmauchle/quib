@@ -56,6 +56,8 @@ public sealed class SelectQueryBuilder
 
     public DbTable FromTable(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var from = this.AddFromClause(table);
         var accessor = new DbTable(from.Alias);
@@ -69,12 +71,16 @@ public sealed class SelectQueryBuilder
 
     public T From<T>(Func<DbTable, T> tableFactory) where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         var table = this.FromTable(T.TableName);
         return tableFactory(table);
     }
 
     public JoinBuilder<DbTable> InnerJoin(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var join = this.AddJoinClause(table, "INNER JOIN");
         var accessor = new DbTable(join.Alias);
@@ -84,6 +90,8 @@ public sealed class SelectQueryBuilder
     public JoinBuilder<T> InnerJoin<T>(Func<DbTable, T> tableFactory)
         where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         return this.InnerJoin(T.TableName).Select(tableFactory);
     }
 
@@ -95,6 +103,8 @@ public sealed class SelectQueryBuilder
 
     public JoinBuilder<DbTable> LeftOuterJoin(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var join = this.AddJoinClause(table, "LEFT OUTER JOIN");
         var accessor = new DbTable(join.Alias);
@@ -104,6 +114,8 @@ public sealed class SelectQueryBuilder
     public JoinBuilder<T> LeftOuterJoin<T>(Func<DbTable, T> tableFactory)
         where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         return this.LeftOuterJoin(T.TableName).Select(tableFactory);
     }
 
@@ -115,6 +127,8 @@ public sealed class SelectQueryBuilder
 
     public JoinBuilder<DbTable> RightOuterJoin(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         var table = new TableReference(tablename);
         var join = this.AddJoinClause(table, "RIGHT OUTER JOIN");
         var accessor = new DbTable(join.Alias);
@@ -124,6 +138,8 @@ public sealed class SelectQueryBuilder
     public JoinBuilder<T> RightOuterJoin<T>(Func<DbTable, T> tableFactory)
         where T : IDbTable
     {
+        ArgumentNullException.ThrowIfNull(tableFactory);
+
         return this.RightOuterJoin(T.TableName).Select(tableFactory);
     }
 

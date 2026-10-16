@@ -32,6 +32,8 @@ public sealed class ProjectionBuilder : IProjectionBuilder
     public NotNullProjection<T> Get<T>(NotNullExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         var field = new NotNullProjection<T>(_projections.Count);
         _projections.Add(new ProjectionClause(value.SQL, field.Alias));
         return field;
@@ -41,6 +43,8 @@ public sealed class ProjectionBuilder : IProjectionBuilder
     public NullableProjection<T> Get<T>(NullableExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         var field = new NullableProjection<T>(_projections.Count);
         _projections.Add(new ProjectionClause(value.SQL, field.Alias));
         return field;

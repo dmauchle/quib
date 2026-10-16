@@ -56,6 +56,9 @@ public sealed class TableInstaller
     /// <param name="primaryKey"></param>
     public TableInstaller CreateWithPrimaryKey(string columnname, ColumnType type)
     {
+        ArgumentNullException.ThrowIfNull(columnname);
+        ArgumentNullException.ThrowIfNull(type);
+
         CreateWithPrimaryKey(new PrimaryKey().AddColumn(columnname, type));
         return this;
     }
@@ -66,6 +69,8 @@ public sealed class TableInstaller
     /// <param name="primaryKey"></param>
     public TableInstaller CreateWithPrimaryKey(PrimaryKey primaryKey)
     {
+        ArgumentNullException.ThrowIfNull(primaryKey);
+
 #if MYSQL
         var sql = $"CREATE TABLE `{_tablename}` ({primaryKey.ColumnDefinitionsToSql()}, PRIMARY KEY ({primaryKey.KeyDefinitionToSql()})) COLLATE {Collation.Default} ENGINE = InnoDB;";
 #elif POSTGRES
@@ -94,6 +99,8 @@ public sealed class TableInstaller
     /// <param name="newTableName"></param>
     public void RenameTo(string newTableName)
     {
+        ArgumentNullException.ThrowIfNull(newTableName);
+
 #if MYSQL
         var sql = $"ALTER TABLE `{_tablename}` RENAME `{newTableName}`;";
 #elif POSTGRES
@@ -104,19 +111,29 @@ public sealed class TableInstaller
 
     public TableInstaller CreateColumn(string columnname, IColumnType type)
     {
+        ArgumentNullException.ThrowIfNull(columnname);
+        ArgumentNullException.ThrowIfNull(type);
+
         this.Column(columnname).CreateWithType(type);
         return this;
     }
 
     public ColumnInstaller Column(string columnname)
     {
+        ArgumentNullException.ThrowIfNull(columnname);
+
         return new ColumnInstaller(_db, _tablename, columnname);
     }
 
     public TableInstaller CreateForeignKey(string keyname, string[] columns, string foreignTable, string[] foreignColumns)
     {
+        ArgumentNullException.ThrowIfNull(keyname);
+        ArgumentNullException.ThrowIfNull(columns);
+        ArgumentNullException.ThrowIfNull(foreignTable);
+        ArgumentNullException.ThrowIfNull(foreignColumns);
+
         if (columns.Length == 0)
-            throw new ArgumentException("Missing columns in primary key.", nameof(columns));
+            throw new ArgumentException("Missing columns in foreign key.", nameof(columns));
         if (foreignColumns.Length != columns.Length)
             throw new ArgumentException("Number of foreign key columns must match primary key columns.", nameof(foreignColumns));
 
@@ -133,6 +150,8 @@ public sealed class TableInstaller
 
     public TableInstaller DropForeignKey(string keyname)
     {
+        ArgumentNullException.ThrowIfNull(keyname);
+
 #if MYSQL
         var sql = $"ALTER TABLE `{_tablename}` DROP FOREIGN KEY `{keyname}`;";
 #elif POSTGRES
@@ -144,8 +163,11 @@ public sealed class TableInstaller
 
     public TableInstaller CreateIndex(string indexname, params string[] columns)
     {
-        if (columns == null || columns.Length == 0)
-            throw new ArgumentNullException(nameof(columns));
+        ArgumentNullException.ThrowIfNull(indexname);
+        ArgumentNullException.ThrowIfNull(columns);
+
+        if (columns.Length == 0)
+            throw new ArgumentException("Missing columns in index.", nameof(columns));
 
         var columnParameters = string.Join(", ", columns.Select(x => $"{SqlSyntax.Identifier(x)} ASC"));
 #if MYSQL
@@ -159,6 +181,8 @@ public sealed class TableInstaller
 
     public TableInstaller DropIndex(string indexname)
     {
+        ArgumentNullException.ThrowIfNull(indexname);
+
 #if MYSQL
         var sql = $"ALTER TABLE `{_tablename}` DROP INDEX `{indexname}`;";
 #elif POSTGRES

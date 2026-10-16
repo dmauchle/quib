@@ -17,12 +17,16 @@ public static partial class ExpressionExtensions
     public static NotNullExpression<DbBool> IsNull<T>(this NullableExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         return new NotNullExpression<DbBool>(new IsNull(value.SQL));
     }
 
     public static NotNullExpression<DbBool> IsNotNull<T>(this NullableExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         return new NotNullExpression<DbBool>(new IsNotNull(value.SQL));
     }
 

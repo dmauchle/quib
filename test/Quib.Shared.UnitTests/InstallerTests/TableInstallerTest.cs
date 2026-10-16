@@ -375,7 +375,7 @@ public class TableInstallerTest(DatabaseFixture env, ITestOutputHelper log) : Db
                 .CreateColumn("c1", ColumnType.VarChar(32).NotNull())
                 .CreateColumn("c2", ColumnType.VarChar(32).NotNull());
 
-            Assert.Throws<ArgumentNullException>(() => install.Table(name).CreateIndex("bad", []));
+            Assert.Throws<ArgumentException>(() => install.Table(name).CreateIndex("bad", []));
 
             install.Table(name).CreateIndex(idx, "c1", "c2");
 

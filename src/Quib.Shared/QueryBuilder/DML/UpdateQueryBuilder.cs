@@ -31,12 +31,18 @@ internal sealed class UpdateQueryBuilder : IUpdateQueryBuilder
     public void Set<T>(NotNullColumn<T> column, NotNullExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(column);
+        ArgumentNullException.ThrowIfNull(value);
+
         _values.Add((column.Writer, value.SQL));
     }
 
     public void Set<T>(NullableColumn<T> column, NullableExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(column);
+        ArgumentNullException.ThrowIfNull(value);
+
         _values.Add((column.Writer, value.SQL));
     }
 

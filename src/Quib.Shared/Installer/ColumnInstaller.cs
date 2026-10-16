@@ -31,6 +31,8 @@ public sealed class ColumnInstaller
     /// <returns></returns>
     public ColumnInstaller CreateWithType(IColumnType type)
     {
+        ArgumentNullException.ThrowIfNull(type);
+
         string sql;
 #if MYSQL
         sql = $"ALTER TABLE `{_tablename}` ADD COLUMN `{_columnname}` {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
@@ -64,6 +66,8 @@ public sealed class ColumnInstaller
     /// <returns></returns>
     public ColumnInstaller ChangeType(IColumnType type)
     {
+        ArgumentNullException.ThrowIfNull(type);
+
         string sql;
 #if MYSQL
         sql = $"ALTER TABLE `{_tablename}` MODIFY `{_columnname}` {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
@@ -82,6 +86,8 @@ public sealed class ColumnInstaller
     /// <returns></returns>
     public ColumnInstaller RenameTo(string newColumnName)
     {
+        ArgumentNullException.ThrowIfNull(newColumnName);
+
         string sql;
 #if MYSQL
         sql = $"ALTER TABLE `{_tablename}` RENAME COLUMN `{_columnname}` TO `{newColumnName}`";
@@ -101,6 +107,9 @@ public sealed class ColumnInstaller
     /// <returns></returns>
     public ColumnInstaller ChangeTo(string newColumnname, IColumnType type)
     {
+        ArgumentNullException.ThrowIfNull(newColumnname);
+        ArgumentNullException.ThrowIfNull(type);
+
 #if MYSQL
         var sql = $"ALTER TABLE `{_tablename}` CHANGE `{_columnname}` `{newColumnname}` {type.TypeWithOptions} {(type.IsNullable ? "NULL" : "NOT NULL")};";
         _db.ExecuteNonQuery(sql);

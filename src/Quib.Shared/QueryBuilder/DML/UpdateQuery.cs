@@ -65,18 +65,24 @@ internal sealed class UpdateQuery<TQuery> : IUpdateQuery<TQuery>, IUpdateFiltere
 
     public IUpdateFiltered<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate)
     {
+        ArgumentNullException.ThrowIfNull(predicate);
+
         _builder.AddFilter(predicate(_accessor).SQL);
         return this;
     }
 
     public IUpdateExecutable<TQuery> With(Action<IUpdateQueryBuilder, TQuery> run)
     {
+        ArgumentNullException.ThrowIfNull(run);
+
         run(_builder, _accessor);
         return this;
     }
 
     public IUpdateExecutable<TQuery> With<TObj>(Action<IUpdateQueryBuilder, TQuery, TObj> run, TObj obj)
     {
+        ArgumentNullException.ThrowIfNull(run);
+
         run(_builder, _accessor, obj);
         return this;
     }

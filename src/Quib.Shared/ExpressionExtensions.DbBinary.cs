@@ -21,11 +21,15 @@ public static partial class ExpressionExtensions
 
         public static NotNullExpression<DbBool> operator ==(NotNullExpression<DbBinary> left, byte[] right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter(right).SQL));
         }
 
         public static NotNullExpression<DbBool> operator !=(NotNullExpression<DbBinary> left, byte[] right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NotNullExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter(right).SQL));
         }
 
@@ -36,11 +40,15 @@ public static partial class ExpressionExtensions
 
         public static NullableExpression<DbBool> operator ==(NullableExpression<DbBinary> left, byte[] right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "=", SQL.Parameter(right).SQL));
         }
 
         public static NullableExpression<DbBool> operator !=(NullableExpression<DbBinary> left, byte[] right)
         {
+            ArgumentNullException.ThrowIfNull(left);
+
             return new NullableExpression<DbBool>(new BinaryOperator(left.SQL, "!=", SQL.Parameter(right).SQL));
         }
 

@@ -27,12 +27,18 @@ internal sealed class InsertQueryBuilder : IUpdateQueryBuilder
     public void Set<T>(NotNullColumn<T> column, NotNullExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(column);
+        ArgumentNullException.ThrowIfNull(value);
+
         Set(column.Writer, value.SQL);
     }
 
     public void Set<T>(NullableColumn<T> column, NullableExpression<T> value)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(column);
+        ArgumentNullException.ThrowIfNull(value);
+
         Set(column.Writer, value.SQL);
     }
 

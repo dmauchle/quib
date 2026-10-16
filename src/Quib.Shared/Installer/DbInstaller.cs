@@ -30,6 +30,8 @@ public sealed class DbInstaller : IDisposable
 
     public TableInstaller Table(string tablename)
     {
+        ArgumentNullException.ThrowIfNull(tablename);
+
         return new TableInstaller(_db, tablename);
     }
 
@@ -40,6 +42,8 @@ public sealed class DbInstaller : IDisposable
     /// <exception cref="MigrationException"></exception>
     public async Task RunMigration(DbMigration migration)
     {
+        ArgumentNullException.ThrowIfNull(migration);
+
         var versionsTable = new VersionsTable(this, _db, migration.VersionsTable);
         var initialVersions = await versionsTable.GetCurrentVersions();
 

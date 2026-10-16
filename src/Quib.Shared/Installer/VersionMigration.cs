@@ -35,6 +35,8 @@ public sealed class VersionMigration
 
     public void With(Action<DbInstaller, QueryFactory> installScript)
     {
+        ArgumentNullException.ThrowIfNull(installScript);
+
         With((install, db) =>
         {
             installScript(install, db);
@@ -44,6 +46,8 @@ public sealed class VersionMigration
 
     public void With(Func<DbInstaller, QueryFactory, ValueTask> installScript)
     {
+        ArgumentNullException.ThrowIfNull(installScript);
+
         _installScript = installScript;
     }
 

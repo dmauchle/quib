@@ -31,28 +31,43 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
 
     public SelectQuery<TResult> Select<TResult>(Func<TQuery, TResult> selector)
     {
+        ArgumentNullException.ThrowIfNull(selector);
+
         return new SelectQuery<TResult>(_con, _builder, selector(_accessor));
     }
 
     public SelectQuery<TResult> Select<TResult>(Func<SelectQueryBuilder, TQuery, TResult> selector)
     {
+        ArgumentNullException.ThrowIfNull(selector);
+
         return new SelectQuery<TResult>(_con, _builder, selector(_builder, _accessor));
     }
 
     public SelectQuery<TQuery> Where(Func<TQuery, NullableExpression<DbBool>> predicate)
     {
+        ArgumentNullException.ThrowIfNull(predicate);
+
         _builder.AddFilter(predicate(_accessor).SQL);
         return this;
     }
 
     public SelectQuery<TQuery> OrderBy(Func<TQuery, ISortExpression[]> sort)
     {
-        _builder.SetOrder(sort(_accessor));
+        ArgumentNullException.ThrowIfNull(sort);
+
+        var order = sort(_accessor);
+        // Otherwise the ORDER BY clause would silently be dropped (null array) or fail later when building the SQL
+        if (order == null || Array.Exists(order, x => x == null))
+            throw new ArgumentException("Sort expressions must not be null.", nameof(sort));
+
+        _builder.SetOrder(order);
         return this;
     }
 
     public ProjectedQuery<TProj> Project<TProj>(Func<ProjectionBuilder, TQuery, TProj> selector)
     {
+        ArgumentNullException.ThrowIfNull(selector);
+
         var rs = new ProjectionBuilder();
         var proj = selector(rs, _accessor);
         return new ProjectedQuery<TProj>(_con, proj, this, rs.Build());
@@ -61,12 +76,16 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     public ProjectedQuery<NotNullProjection<TProj>> Project<TProj>(Func<TQuery, NotNullExpression<TProj>> selector)
         where TProj : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(selector);
+
         return this.Project((rs, x) => rs.Get(selector(x)));
     }
 
     public ProjectedQuery<NullableProjection<TProj>> Project<TProj>(Func<TQuery, NullableExpression<TProj>> selector)
         where TProj : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(selector);
+
         return this.Project((rs, x) => rs.Get(selector(x)));
     }
 
@@ -82,6 +101,8 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
     public ProjectedMap<TQuery, TObj> Map<TObj>(Func<ProjectionBuilder, TQuery, IReaderMapping<TObj>> factory)
         where TObj : notnull
     {
+        ArgumentNullException.ThrowIfNull(factory);
+
         var rs = new ProjectionBuilder();
         var proj = this.Project(factory);
         return new ProjectedMap<TQuery, TObj>(proj);

@@ -26,6 +26,8 @@ public sealed class ResultReader
 
     public bool IsDBNull(IProjectionField field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.IsDBNull(field.Index);
     }
 
@@ -41,6 +43,8 @@ public sealed class ResultReader
     public TObj Map<TObj>(IReaderMapping<TObj> mapping)
         where TObj : notnull
     {
+        ArgumentNullException.ThrowIfNull(mapping);
+
         // If we don't have an object identity, we always map to new object.
         var id = mapping.ObjectIdentity;
         if (id.Length == 0)
@@ -61,6 +65,8 @@ public sealed class ResultReader
     public TObj? MapNullable<TObj>(IReaderMapping<TObj> mapping)
         where TObj : class
     {
+        ArgumentNullException.ThrowIfNull(mapping);
+
         // If we don't have an object identity, we always map to new object (because we wouldn't have the chance to check the identity fields for null).
         var id = mapping.ObjectIdentity;
         if (id.Length == 0)
@@ -82,6 +88,8 @@ public sealed class ResultReader
 
     public string Get(NotNullProjection<DbText> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetString(field.Index);
     }
 
@@ -92,6 +100,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public string? GetNullable(NotNullProjection<DbText> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -100,6 +110,8 @@ public sealed class ResultReader
 
     public string? Get(NullableProjection<DbText> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -108,6 +120,8 @@ public sealed class ResultReader
 
     public byte[] Get(NotNullProjection<DbBinary> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return (byte[])_reader.GetValue(field.Index);
     }
 
@@ -118,6 +132,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public byte[]? GetNullable(NotNullProjection<DbBinary> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -126,6 +142,8 @@ public sealed class ResultReader
 
     public byte[]? Get(NullableProjection<DbBinary> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -134,6 +152,8 @@ public sealed class ResultReader
 
     public int Get(NotNullProjection<DbInt> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetInt32(field.Index);
     }
 
@@ -144,6 +164,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public int? GetNullable(NotNullProjection<DbInt> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -152,6 +174,8 @@ public sealed class ResultReader
 
     public int? Get(NullableProjection<DbInt> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -160,6 +184,8 @@ public sealed class ResultReader
 
     public long Get(NotNullProjection<DbLong> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetInt64(field.Index);
     }
 
@@ -170,6 +196,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public long? GetNullable(NotNullProjection<DbLong> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -178,6 +206,8 @@ public sealed class ResultReader
 
     public long? Get(NullableProjection<DbLong> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -186,6 +216,8 @@ public sealed class ResultReader
 
     public bool Get(NotNullProjection<DbBool> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetBoolean(field.Index);
     }
 
@@ -196,6 +228,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public bool? GetNullable(NotNullProjection<DbBool> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -204,6 +238,8 @@ public sealed class ResultReader
 
     public bool? Get(NullableProjection<DbBool> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -212,6 +248,8 @@ public sealed class ResultReader
 
     public Guid Get(NotNullProjection<DbUuid> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetGuid(field.Index);
     }
 
@@ -222,6 +260,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public Guid? GetNullable(NotNullProjection<DbUuid> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -230,6 +270,8 @@ public sealed class ResultReader
 
     public Guid? Get(NullableProjection<DbUuid> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -238,6 +280,8 @@ public sealed class ResultReader
 
     public decimal Get(NotNullProjection<DbDecimal> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetDecimal(field.Index);
     }
 
@@ -248,6 +292,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public decimal? GetNullable(NotNullProjection<DbDecimal> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -256,6 +302,8 @@ public sealed class ResultReader
 
     public decimal? Get(NullableProjection<DbDecimal> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -264,6 +312,8 @@ public sealed class ResultReader
 
     public double Get(NotNullProjection<DbDouble> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return _reader.GetDouble(field.Index);
     }
 
@@ -274,6 +324,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public double? GetNullable(NotNullProjection<DbDouble> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -282,6 +334,8 @@ public sealed class ResultReader
 
     public double? Get(NullableProjection<DbDouble> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -292,6 +346,8 @@ public sealed class ResultReader
 
     public DateOnly Get(NotNullProjection<DbDateOnly> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return DateOnly.FromDateTime(_reader.GetDateTime(field.Index));
     }
 
@@ -302,6 +358,8 @@ public sealed class ResultReader
     /// <returns></returns>
     public DateOnly? GetNullable(NotNullProjection<DbDateOnly> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -310,6 +368,8 @@ public sealed class ResultReader
 
     public DateOnly? Get(NullableProjection<DbDateOnly> field)
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -319,6 +379,8 @@ public sealed class ResultReader
     public DateTime Get<TTimeZone>(NotNullProjection<DbDateTime<TTimeZone>> field)
         where TTimeZone : IDateTimeStorage
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         return TTimeZone.FromDatabase(_reader.GetDateTime(field.Index));
     }
 
@@ -330,6 +392,8 @@ public sealed class ResultReader
     public DateTime? GetNullable<TTimeZone>(NotNullProjection<DbDateTime<TTimeZone>> field)
         where TTimeZone : IDateTimeStorage
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else
@@ -339,6 +403,8 @@ public sealed class ResultReader
     public DateTime? Get<TTimeZone>(NullableProjection<DbDateTime<TTimeZone>> field)
         where TTimeZone : IDateTimeStorage
     {
+        ArgumentNullException.ThrowIfNull(field);
+
         if (this.IsDBNull(field))
             return null;
         else

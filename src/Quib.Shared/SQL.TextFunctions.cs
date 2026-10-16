@@ -17,21 +17,33 @@ public static partial class SQL
 
     public static NotNullExpression<DbText> Concat(NotNullExpression<DbText> left, NotNullExpression<DbText> right)
     {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
         return new NotNullExpression<DbText>(new ConcatOperator(left.SQL, right.SQL));
     }
 
     public static NotNullExpression<DbText> Concat(NotNullExpression<DbText> left, string right)
     {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
         return Concat(left, SQL.Parameter(right));
     }
 
     public static NullableExpression<DbText> Concat(NullableExpression<DbText> left, NullableExpression<DbText> right)
     {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
         return new NullableExpression<DbText>(new ConcatOperator(left.SQL, right.SQL));
     }
 
     public static NullableExpression<DbText> Concat(NullableExpression<DbText> left, string right)
     {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
         return Concat(left, SQL.Parameter(right));
     }
 

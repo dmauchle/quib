@@ -23,12 +23,16 @@ public readonly struct DbTable
     public NotNullColumn<T> Column<T>(string fieldName)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(fieldName);
+
         return new NotNullColumn<T>(_alias, fieldName);
     }
 
     public NullableColumn<T> NullableColumn<T>(string fieldName)
         where T : struct, IExpressionType
     {
+        ArgumentNullException.ThrowIfNull(fieldName);
+
         return new NullableColumn<T>(_alias, fieldName);
     }
 

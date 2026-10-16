@@ -74,6 +74,10 @@ provider (like MYSQL or POSTGRES).
 
 - Prefer nullable reference annotations and check for null where appropriate.
 - Use `ArgumentNullException.ThrowIfNull(argument);` for argument guards when targeting modern frameworks.
+- Nullable annotations are compile-time only: consuming projects may have them disabled or ignore the warnings. So 
+  every public member (incl. operators, extension members and their receiver, and public members of internal types 
+  implementing public interfaces) guards all non-nullable reference type arguments with `ThrowIfNull` at the start of 
+  the method, even if the argument is only passed on. Internal members don't need guards.
 
 ## Exceptions & Error Handling
 

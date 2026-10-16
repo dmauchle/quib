@@ -168,3 +168,17 @@ Columns explicitly configure the `en_US.utf8` collation by default. It's also ca
 
 Use `DbBinary` for `VarBinary()`, `ShortBinary()`, `MediumBinary()` and `LongBinary()` columns, the .NET type is 
 `byte[]`. Values are stored as is, without padding or trimming (e.g. trailing zero bytes are kept).
+
+
+## Unsupported Column Types
+
+Besides the column types listed above, we might add support for additional column types in the future. For the following
+column types, we currently recommend using alternative column types instead. It's not very likely that we'll add support
+for them.
+
+| Type | Reason |
+| --- | --- |
+| Unsigned integers (MySQL `INT UNSIGNED`, `BIGINT UNSIGNED`, ...) | Not available on Postgres. Use INT or LONG. |
+| Small integers (`SMALLINT`, `TINYINT`) | Use INT instead. |
+| Single-precision floating point (`FLOAT`, `REAL`) | Use DOUBLE instead. |
+| Date and time with time zone | Not available on MySQL. Use two columns instead (custom). |

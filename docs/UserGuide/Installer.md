@@ -21,7 +21,8 @@ installed versions won't be executed again on subsequent installations.
 **Modules for migrations:**
 
 Migrations can be divided into modules like "Catalog" or "Orders". Each module can have multiple versions (installer
-scripts). 
+scripts). Module names must not be empty and are limited to 128 characters. Otherwise adding the module to the
+migration throws a `MigrationException`.
 
 A module can also depend on other modules. For example, the "Orders" module may depend on the "Catalog" module because 
 it needs to create a foreign key to the products table. The installer will make sure that the scripts are executed in

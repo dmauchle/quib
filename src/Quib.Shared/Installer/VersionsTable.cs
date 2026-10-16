@@ -12,6 +12,9 @@ namespace Quib.Postgres18.Installer;
 
 internal sealed class VersionsTable
 {
+    // the module name is the primary key: keep it within the InnoDB index limit of 767 bytes (utf8mb4) on MySQL 5.6
+    public const int MAX_MODULE_NAME_LENGTH = 128;
+
     private readonly DbInstaller _installer;
     private readonly QueryFactory _db;
     private readonly string _tableName;
@@ -66,7 +69,7 @@ internal sealed class VersionsTable
         if (!TableExists())
         {
             _installer.Table(_tableName)
-                .CreateWithPrimaryKey("module", ColumnType.VarChar(36))
+                .CreateWithPrimaryKey("module", ColumnType.VarChar(MAX_MODULE_NAME_LENGTH))
                 .CreateColumn("version", ColumnType.Int().NotNull());
 
             _tableExists = true;
@@ -88,5 +91,5 @@ internal sealed class VersionsTable
                 .Execute();
         }
     }
-    
+
 }

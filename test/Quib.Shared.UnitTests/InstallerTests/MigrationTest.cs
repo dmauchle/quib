@@ -132,6 +132,77 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         }
     }
 
+    private class MaxLengthName : IModuleMigration
+    {
+        public static string ModuleName => new string('m', 128);
+
+        public static void Configure(ModuleMigration module)
+        {
+            module.AddVersion(1)
+                .With((_, _) => _record.AppendLine("max:1"));
+        }
+    }
+
+    [Fact]
+    public async Task Migration_ModuleNameWithMaxLength_Works()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            _record = new StringBuilder();
+            var migration = new DbMigration("dbversions");
+            migration.Add<MaxLengthName>();
+            await install.RunMigration(migration);
+
+            Assert.Contains("max:1", _record.ToString());
+
+            var registeredNames = await DB.SelectFromTable("dbversions")
+                .Project((rs, table) => rs.Get(table.Column<DbText>("module")))
+                .FetchArray();
+
+            Assert.Equal(new string('m', 128), Assert.Single(registeredNames));
+        }
+    }
+
+    private class TooLongName : IModuleMigration
+    {
+        public static string ModuleName => new string('m', 129);
+
+        public static void Configure(ModuleMigration module)
+        {
+            module.AddVersion(1)
+                .With((_, _) => _record.AppendLine("toolong:1"));
+        }
+    }
+
+    [Fact]
+    public void Migration_ModuleNameTooLong_Throws()
+    {
+        var migration = new DbMigration("dbversions");
+
+        var ex = Assert.Throws<MigrationException>(() => migration.Add<TooLongName>());
+        Assert.Equal($"Module name '{new string('m', 129)}' exceeds the maximum length of 128 characters.", ex.Message);
+    }
+
+    private class EmptyName : IModuleMigration
+    {
+        public static string ModuleName => " ";
+
+        public static void Configure(ModuleMigration module)
+        {
+            module.AddVersion(1)
+                .With((_, _) => _record.AppendLine("empty:1"));
+        }
+    }
+
+    [Fact]
+    public void Migration_EmptyModuleName_Throws()
+    {
+        var migration = new DbMigration("dbversions");
+
+        var ex = Assert.Throws<MigrationException>(() => migration.Add<EmptyName>());
+        Assert.Equal("Module name must not be empty.", ex.Message);
+    }
+
     private class Inventory : IModuleMigration
     {
         public static string ModuleName => "inventory";
@@ -181,7 +252,7 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         using (var install = new DbInstaller(DB.Connection))
         {
             // Create initial state: inventory at version 2, shipping at version 3
-            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(36))
+            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(128))
                 .CreateColumn("version", ColumnType.Int().NotNull());
 
             await DB.InsertIntoTable("dbversions")
@@ -283,7 +354,7 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         using (var install = new DbInstaller(DB.Connection))
         {
             // Create initial state: module A at version 2
-            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(36))
+            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(128))
                 .CreateColumn("version", ColumnType.Int().NotNull());
 
             await DB.InsertIntoTable("dbversions")
@@ -378,7 +449,7 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         using (var install = new DbInstaller(DB.Connection))
         {
             // Create initial state: module D at version 3
-            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(36))
+            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(128))
                 .CreateColumn("version", ColumnType.Int().NotNull());
 
             await DB.InsertIntoTable("dbversions")
@@ -434,7 +505,7 @@ public class MigrationTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         using (var install = new DbInstaller(DB.Connection))
         {
             // Create initial state: module E at version 2
-            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(36))
+            install.Table("dbversions").CreateWithPrimaryKey("module", ColumnType.VarChar(128))
                 .CreateColumn("version", ColumnType.Int().NotNull());
 
             await DB.InsertIntoTable("dbversions")

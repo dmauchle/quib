@@ -29,6 +29,12 @@ public sealed class DbMigration
 
     public void Add<T>() where T : IModuleMigration
     {
+        if (string.IsNullOrWhiteSpace(T.ModuleName))
+            throw new MigrationException("Module name must not be empty.");
+
+        if (T.ModuleName.Length > Installer.VersionsTable.MAX_MODULE_NAME_LENGTH)
+            throw new MigrationException($"Module name '{T.ModuleName}' exceeds the maximum length of {Installer.VersionsTable.MAX_MODULE_NAME_LENGTH} characters.");
+
         var module = new ModuleMigration(T.ModuleName);
         _modules.Add(module);
         T.Configure(module);

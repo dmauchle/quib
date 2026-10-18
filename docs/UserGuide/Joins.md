@@ -103,7 +103,7 @@ public class EmployeeMapping(IProjectionBuilder query, EmployeesQuery row) : IRe
         return new Employee
         {
             Name = rs.Get(Name),
-            Company = rs.MapNullable(Company)  // Map via CompanyMapping
+            Company = rs.MapNullable(Company)  // Map via CompanyMapping, may be null due to outer join
         };
     }
 }

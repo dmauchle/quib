@@ -69,6 +69,19 @@ var users = await db.SelectFrom<UsersTable>().Map<UserReader, User>().FetchArray
 ```
 
 
+## Object identity
+
+`ObjectIdentity` returns the projections that uniquely identify an object, typically the primary key (multiple 
+fields for composite keys). Within one query execution, rows with equal identity values map to the same object 
+instance: `Map` is only called for the first row, later rows get the cached instance. This deduplicates objects 
+repeated by joins, e.g. the company of each employee row (see [Joins.md](Joins.md)).
+
+- Identity is tracked per query execution and per domain type.
+- Return `[]` to disable it: every row is mapped to a new object.
+- `rs.MapNullable(...)` detects a missing object (outer join) by all identity fields being `NULL`. With an empty 
+  identity it never returns `null` (see [NULL with outer-joins](Joins.md#null-with-outer-joins)).
+
+
 ## Mapping to anonymous types
 
 You need to explicitly perform the projection and mapping step using two functions: 

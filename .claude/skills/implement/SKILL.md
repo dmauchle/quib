@@ -44,5 +44,11 @@ to stick to the existing coding style and naming conventions. Use the existing c
 
 - Compile the code and try to fix errors. Keep in mind that we are designing an API here. So if you have compilation errors I might also need to change the API.
 - Only compile once. If you cannot fix errors in the first try, ask me for help. Do not try to fix errors in multiple iterations.
-- If compilation is successful, run all unit tests and ensure they pass. If any test fails, investigate the cause and fix the issue.
+- If compilation is successful, run only the unit tests affected by the current implementation (not the full suite, it 
+  takes too long) and ensure they pass. Affected tests are the new/changed test classes plus existing test classes 
+  covering the changed code. Use a filter, for all providers when shared code changed: 
+  `dotnet test Quib.slnx --filter "FullyQualifiedName~Quib.UnitTests.QueryTests.LimitTest|FullyQualifiedName~Quib.UnitTests.QueryTests.OrderTest"`.
+- If any test fails, investigate the cause and fix the issue.
 - Again, if you cannot fix the issue in the first try, ask me for help. Do not try to fix issues in multiple iterations.
+- Run `dotnet format` only on the files you changed or added, never on the whole solution: 
+  `dotnet format Quib.slnx --include <file1> <file2> ...`.

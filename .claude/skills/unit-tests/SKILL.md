@@ -101,7 +101,8 @@ await Assert.ThrowsAnyAsync<DbException>(async () =>
 After test changes:
 
 1. Build once.
-2. Run the full test suite.
+2. Run only the affected tests (new/changed test classes), not the full suite. Use `--filter`, see the `implement` 
+   skill.
 3. If failures occur, fix root cause in one pass; otherwise ask for clarification.
 
 Do not skip verification.

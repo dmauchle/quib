@@ -29,11 +29,13 @@ Type-safe fluent SQL query builder for .NET. One NuGet package per DB/version.
 - Build: `dotnet build Quib.slnx`
 - Test all: `dotnet test Quib.slnx`
 - Test one provider: `dotnet test test/Quib.Postgres18.UnitTests`
-- Format: `dotnet format Quib.slnx`
+- Test affected classes: `dotnet test Quib.slnx --filter "FullyQualifiedName~Quib.UnitTests.QueryTests.LimitTest"`
+- Format changed files only: `dotnet format Quib.slnx --include <files>`
 - Provider tests need Docker service running; they spin up their DB containers automatically.
 
 
 ## Workflow
 
-- Change in shared code → run tests for all providers, not just one.
+- Change in shared code → run affected tests for all providers, not just one. Full suite only when asked.
+- Never `dotnet format` the whole solution, only changed files.
 - Use the skills in .claude/skills.

@@ -46,7 +46,7 @@ internal sealed class QueryWriter
     {
         if (!_parameters.TryGetValue(parameter, out var parameterIndex))
         {
-            parameterIndex = _parameters.Count+1;
+            parameterIndex = _parameters.Count + 1;
             _parameters.Add(parameter, parameterIndex);
         }
         _sb.Append("@p");

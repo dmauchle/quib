@@ -4,7 +4,7 @@ namespace CheatSheet.Migrations;
 
 internal sealed class CatalogModule : IModuleMigration
 {
-    
+
     public static string ModuleName => "catalog";
 
     public static void Configure(ModuleMigration module)

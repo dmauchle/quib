@@ -197,7 +197,7 @@ public class ObjectIdentityTest(DatabaseFixture env, ITestOutputHelper log) : Db
             .FetchArray();
 
         Assert.Equal(4, rs.Length);
-        
+
         var id1 = rs.Select(x => x.Company).Where(x => x?.CompanyName == "Microsoft").ToArray();
         Assert.Equal(2, id1.Length);
         Assert.True(id1[0] == id1[1], "Object identity failed");

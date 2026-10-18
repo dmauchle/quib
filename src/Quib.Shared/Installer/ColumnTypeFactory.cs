@@ -13,7 +13,7 @@ namespace Quib.Postgres18.Installer;
 
 public interface IColumnTypeFactory
 {
-   
+
 }
 
 

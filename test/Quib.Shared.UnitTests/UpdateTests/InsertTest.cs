@@ -49,7 +49,7 @@ public class InsertTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBase
         var insert = await DB.InsertInto<UsersTable>()
             .AddRow((query, table) =>
             {
-                query.Set(table.Username,  SQL.Parameter("asmith"));
+                query.Set(table.Username, SQL.Parameter("asmith"));
                 query.Set(table.Firstname, SQL.Parameter("Alice"));
                 query.Set(table.Lastname, SQL.Parameter("Smith"));
             })

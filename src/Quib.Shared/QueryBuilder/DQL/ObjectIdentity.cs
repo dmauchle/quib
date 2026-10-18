@@ -35,7 +35,7 @@ internal class ObjectIdentity
                 if (!Equals(_identity[i], other._identity[i]))
                     return false;
             }
-            
+
             return true;
         }
         else
@@ -49,7 +49,7 @@ internal class ObjectIdentity
     {
         if (_identity.Length == 0)
             return 0;
-        
+
         if (_identity.Length == 1)
             return _identity[0]?.GetHashCode() ?? 0;
 

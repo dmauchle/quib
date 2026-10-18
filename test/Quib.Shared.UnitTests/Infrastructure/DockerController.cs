@@ -1,6 +1,6 @@
-﻿using Docker.DotNet;
+﻿using System.Runtime.InteropServices;
+using Docker.DotNet;
 using Docker.DotNet.Models;
-using System.Runtime.InteropServices;
 
 namespace Quib.UnitTests.Infrastructure;
 

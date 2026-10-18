@@ -60,5 +60,5 @@ public sealed class DbInstaller : IDisposable
 
     }
 
-    
+
 }

@@ -1,6 +1,6 @@
 ﻿using Quib.Postgres18.Installer;
-using Quib.Postgres18.Types;
 using Quib.Postgres18.ORMapper;
+using Quib.Postgres18.Types;
 
 namespace CheatSheet.Migrations;
 

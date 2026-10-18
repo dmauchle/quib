@@ -47,7 +47,7 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
 
         public static string TableName => "users";
         public static UsersTable CreateFrom(DbTable table) => new UsersTable(table);
-    
+
 
         public static UsersTable CreateQuery(DbTable table)
         {
@@ -55,7 +55,7 @@ public class MapCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTestB
         }
 
         public NotNullColumn<DbText> Name => table.Column<DbText>("name");
-     
+
     }
 
     private class UsersQuery(UsersTable user) : ISelectContext<UsersQuery>

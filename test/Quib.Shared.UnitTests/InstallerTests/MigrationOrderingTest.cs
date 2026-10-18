@@ -87,8 +87,8 @@ public class MigrationOrderingTest(DatabaseFixture env, ITestOutputHelper log) :
             Assert.Contains("orders:2", output);
 
             // Verify dependency ordering: dependencies must precede dependents
-            var lines = output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var indexOf = (string s) => System.Array.IndexOf(lines, s);
+            var lines = output.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            int indexOf(string s) => System.Array.IndexOf(lines, s);
 
             // catalog:2 requires users:1
             Assert.True(indexOf("users:1") < indexOf("catalog:2"), "users:1 must come before catalog:2");
@@ -310,8 +310,8 @@ public class MigrationOrderingTest(DatabaseFixture env, ITestOutputHelper log) :
             Assert.Contains("reversed:3", output);
 
             // Verify correct execution order (ascending, not reversed)
-            var lines = output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var indexOf = (string s) => System.Array.IndexOf(lines, s);
+            var lines = output.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            int indexOf(string s) => System.Array.IndexOf(lines, s);
 
             Assert.True(indexOf("reversed:1") < indexOf("reversed:2"), "reversed:1 must come before reversed:2");
             Assert.True(indexOf("reversed:2") < indexOf("reversed:3"), "reversed:2 must come before reversed:3");
@@ -359,10 +359,10 @@ public class MigrationOrderingTest(DatabaseFixture env, ITestOutputHelper log) :
 
             // Verify correct execution order: dependency must execute before dependent,
             // regardless of the order modules were added
-            var lines = output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var indexOf = (string s) => System.Array.IndexOf(lines, s);
+            var lines = output.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+            int indexOf(string s) => System.Array.IndexOf(lines, s);
 
-            Assert.True(indexOf("moduleO:1") < indexOf("moduleN:1"), 
+            Assert.True(indexOf("moduleO:1") < indexOf("moduleN:1"),
                 "moduleO:1 (dependency) must execute before moduleN:1 (dependent), even though ModuleN was added first");
         }
     }

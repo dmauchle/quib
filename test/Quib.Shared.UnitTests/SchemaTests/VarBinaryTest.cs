@@ -44,7 +44,7 @@ public class VarBinaryTest(DatabaseFixture env, ITestOutputHelper log) : DbTestB
     // Column type tests
 
 #if POSTGRES
-    [Fact(Skip = "VarBinary is not available on Postgres")]
+    [Fact(Skip = SKIP_REASON)]
     public async Task VarBinary_WithMaxLength_Succeeds()
     {
     }

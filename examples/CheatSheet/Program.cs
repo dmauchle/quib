@@ -3,8 +3,8 @@ using CheatSheet.Schema;
 using Npgsql;
 using Quib.Postgres18;
 using Quib.Postgres18.Installer;
-using Migrations = CheatSheet.Migrations;
 using static Quib.Postgres18.QueryBuilder.Sort;
+using Migrations = CheatSheet.Migrations;
 
 
 using var connection = new NpgsqlConnection("...");

@@ -14,7 +14,7 @@ internal class ProductsReader(IProjectionBuilder query, ProductsTable product) :
     private readonly NotNullProjection<DbInt> _categoryId = query.Get(product.CategoryId);
     private readonly NotNullProjection<DbInt> _price = query.Get(product.Price);
 
-    IProjectionField[] IReaderMapping<Product>.ObjectIdentity => [ _id ];
+    IProjectionField[] IReaderMapping<Product>.ObjectIdentity => [_id];
 
     Product IReaderMapping<Product>.Map(ResultReader rs)
     {

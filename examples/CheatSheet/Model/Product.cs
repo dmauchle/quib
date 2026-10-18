@@ -4,8 +4,8 @@ internal record ProductId(int Value);
 
 internal class Product
 {
-    public ProductId ID { get; set; }
-    public string ProductName { get; set; }
-    public CategoryId CategoryId { get; set; }
-    public int Price { get; set; }
+    public required ProductId ID { get; set; }
+    public required string ProductName { get; set; }
+    public required CategoryId CategoryId { get; set; }
+    public required int Price { get; set; }
 }

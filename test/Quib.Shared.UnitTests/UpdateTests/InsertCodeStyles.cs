@@ -112,7 +112,7 @@ public class InsertCodeStyles(DatabaseFixture env, ITestOutputHelper log) : DbTe
         public static void Write(IUpdateQueryBuilder query, UsersTable table, User user)
         {
             query.Set(table.Name, user.Name);
-            
+
         }
 
     }

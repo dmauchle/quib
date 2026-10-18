@@ -1,5 +1,5 @@
-﻿using Xunit.Abstractions;
-using Quib.UnitTests.Infrastructure;
+﻿using Quib.UnitTests.Infrastructure;
+using Xunit.Abstractions;
 
 namespace Quib.UnitTests.ExpressionTests;
 

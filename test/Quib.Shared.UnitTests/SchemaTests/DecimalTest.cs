@@ -1,6 +1,6 @@
-﻿using Quib.UnitTests.Infrastructure;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Globalization;
+using Quib.UnitTests.Infrastructure;
 using Xunit.Abstractions;
 
 namespace Quib.UnitTests.SchemaTests;

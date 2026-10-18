@@ -69,6 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\DeleteFilterTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\DeleteCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QueryTests\OrderTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests\LimitTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\UpdateFilterTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\UpdateCodeStyles.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UpdateTests\InsertCodeStyles.cs" />

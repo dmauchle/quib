@@ -31,6 +31,11 @@ internal sealed class QueryWriter
         _sb.Append(num);
     }
 
+    public void Write(long num)
+    {
+        _sb.Append(num);
+    }
+
     public void Write<T>(T part)
         where T : IQueryPart
     {

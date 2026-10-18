@@ -65,6 +65,14 @@ Of course, you may use any [expression](Expressions.md) for the sorting.
 > Postgres NULLS FIRST and NULLS LAST clauses. MySQL doesn't support them anyway.
 
 
+## Paging (LIMIT clause)
+
+```csharp
+db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname, x.Id ]).Limit(20);              // first 20 rows
+db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname, x.Id ]).Limit(20, offset: 40);  // rows 41 to 60
+```
+
+
 ## Dynamic queries
 
 You don't necessarily need a schema definition or domain model to build a query. You can also use the dynamic API:

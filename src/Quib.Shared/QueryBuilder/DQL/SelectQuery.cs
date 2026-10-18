@@ -12,7 +12,7 @@ namespace Quib.Postgres18.QueryBuilder;
 
 internal interface ISelectQuery : IQueryPart
 {
-   
+
 }
 
 public sealed class SelectQuery<TQuery> : ISelectQuery
@@ -61,6 +61,19 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
             throw new ArgumentException("Sort expressions must not be null.", nameof(sort));
 
         _builder.SetOrder(order);
+        return this;
+    }
+
+    /// <summary>
+    /// Limits the number of returned rows (LIMIT clause), optionally skipping the first <paramref name="offset"/> rows.
+    /// Use together with <see cref="OrderBy"/>, otherwise the returned rows are unpredictable.
+    /// </summary>
+    public SelectQuery<TQuery> Limit(int limit, long offset = 0)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(limit);
+        ArgumentOutOfRangeException.ThrowIfNegative(offset);
+
+        _builder.SetLimit(limit, offset);
         return this;
     }
 
@@ -113,5 +126,5 @@ public sealed class SelectQuery<TQuery> : ISelectQuery
         _builder.ToSql(query);
     }
 
-    
+
 }

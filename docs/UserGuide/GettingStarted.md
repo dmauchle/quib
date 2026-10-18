@@ -140,7 +140,8 @@ Then use it to query the database and map the results into our domain object:
 var rs1 = await db.SelectFrom<ProductsTable>()
     .Where(x => x.CategoryId == 1 | x.CategoryId == 2)
     .Where(x => x.Price < 1000)
-    .OrderBy(x => [SQL.Sort(x.ProductName, ASC)])
+    .OrderBy(x => [SQL.Sort(x.ProductName, ASC), x.ID])
+    .Limit(10, offset: 20)
     .Map((query, x) => new ProductsReader(query, x))
     .FetchArray();
 ```

@@ -18,6 +18,8 @@ public sealed class SelectQueryBuilder
     private List<JoinClause>? _joins;
     private List<IQueryExpression>? _filters;
     private ISortExpression[]? _sort;
+    private int? _limit;
+    private long _offset;
 
     internal SelectQueryBuilder()
     {
@@ -52,6 +54,12 @@ public sealed class SelectQueryBuilder
     internal void SetOrder(ISortExpression[] sort)
     {
         _sort = sort;
+    }
+
+    internal void SetLimit(int limit, long offset)
+    {
+        _limit = limit;
+        _offset = offset;
     }
 
     public DbTable FromTable(string tablename)
@@ -199,6 +207,18 @@ public sealed class SelectQueryBuilder
                     query.Write(", ");
                 query.Write(sort);
                 first = false;
+            }
+        }
+
+        if (_limit != null)
+        {
+            query.Write(" LIMIT ");
+            query.Write(_limit.Value);
+
+            if (_offset != 0)
+            {
+                query.Write(" OFFSET ");
+                query.Write(_offset);
             }
         }
     }

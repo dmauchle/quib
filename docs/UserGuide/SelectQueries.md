@@ -61,8 +61,9 @@ db.SelectFrom<UsersTable>().OrderBy(x => [ x.Lastname, x.Firstname ]);
 
 Of course, you may use any [expression](Expressions.md) for the sorting.
 
-> Note: sort order depends on the database and collation (also with NULL ordering). Currently, there's no support for 
-> Postgres NULLS FIRST and NULLS LAST clauses. MySQL doesn't support them anyway.
+> Note: Sort order depends on the database and collation (also with NULL ordering). See [ColumnTypes.md](ColumnTypes.md)
+> for details. Currently, there's no support for Postgres NULLS FIRST and NULLS LAST clauses. MySQL doesn't support them 
+> anyway.
 
 
 ## Paging (LIMIT clause)

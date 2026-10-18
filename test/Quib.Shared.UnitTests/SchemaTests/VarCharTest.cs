@@ -749,4 +749,148 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         Assert.Null(rs.Result);
     }
 
+    // Comparison and sorting (collation)
+    // MySQL 8+ and Postgres: case- and accent-sensitive, linguistic sort order.
+    // MySQL 5.x: case-sensitive by default (sorted by code point), case-insensitive by option (TextCollation).
+
+    [Fact]
+    public async Task Where_Equal_DifferentCase_NoMatch()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "hello", null), (2, "HELLO", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value") == "HELLO")
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([2], rs);
+    }
+
+    [Fact]
+    public async Task Where_Equal_DifferentCaseNonAscii_NoMatch()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "über", null), (2, "ÜBER", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value") == "ÜBER")
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([2], rs);
+    }
+
+    [Fact]
+    public async Task Where_Equal_DifferentAccent_NoMatch()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "uber", null), (2, "über", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value") == "über")
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([2], rs);
+    }
+
+    [Fact]
+    public async Task Where_EqualNullable_DifferentCase_NoMatch()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "a", "hello"), (2, "b", "HELLO"));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.NullableColumn<DbText>("value_nullable") == "HELLO")
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([2], rs);
+    }
+
+    [Fact]
+    public async Task OrderBy_SortOrder()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "b", null), (2, "B", null), (3, "a", null), (4, "A", null), (5, "ü", null), (6, "z", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .OrderBy(x => [x.Column<DbText>("value")])
+            .Project(x => x.Column<DbText>("value"))
+            .FetchArray();
+
+#if MYSQL56 || MYSQL57
+        // Sorted by code point (utf8mb4_bin)
+        Assert.Equal(["A", "B", "a", "b", "z", "ü"], rs);
+#else
+        // Linguistic sort order
+        Assert.Equal(["a", "A", "b", "B", "ü", "z"], rs);
+#endif
+    }
+
+#if MYSQL56 || MYSQL57
+    private void CreateCaseInsensitiveTable()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+        {
+            install.Table("ci_test")
+                .CreateWithPrimaryKey("id", ColumnType.Int())
+                .CreateColumn("value", ColumnType.VarChar(50, TextCollation.CaseInsensitive).NotNull());
+        }
+    }
+
+    private async Task InsertCaseInsensitive(params (int id, string value)[] rows)
+    {
+        foreach (var (id, value) in rows)
+        {
+            await DB.InsertIntoTable("ci_test")
+                .AddRow((query, table) =>
+                {
+                    query.Set(table.Column<DbInt>("id"), id);
+                    query.Set(table.Column<DbText>("value"), value);
+                })
+                .Execute();
+        }
+    }
+
+    [Fact]
+    public async Task CaseInsensitive_Where_Equal_DifferentCase_Matches()
+    {
+        CreateCaseInsensitiveTable();
+        await InsertCaseInsensitive((1, "hello"), (2, "world"));
+
+        var rs = await DB.SelectFromTable("ci_test")
+            .Where(x => x.Column<DbText>("value") == "HELLO")
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task CaseInsensitive_OrderBy_SortsLinguistically()
+    {
+        CreateCaseInsensitiveTable();
+        await InsertCaseInsensitive((1, "b"), (2, "C"), (3, "a"), (4, "ü"), (5, "z"));
+
+        var rs = await DB.SelectFromTable("ci_test")
+            .OrderBy(x => [x.Column<DbText>("value")])
+            .Project(x => x.Column<DbText>("value"))
+            .FetchArray();
+
+        Assert.Equal(["a", "b", "C", "ü", "z"], rs);
+    }
+#else
+    [Fact(Skip = "TextCollation is only available on MySQL 5.x (MySQL 8+ and Postgres are always case-sensitive).")]
+    public async Task CaseInsensitive_Where_Equal_DifferentCase_Matches()
+    {
+    }
+
+    [Fact(Skip = "TextCollation is only available on MySQL 5.x (MySQL 8+ and Postgres are always case-sensitive).")]
+    public async Task CaseInsensitive_OrderBy_SortsLinguistically()
+    {
+    }
+#endif
+
 }

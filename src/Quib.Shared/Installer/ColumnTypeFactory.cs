@@ -140,7 +140,72 @@ public static class ColumnTypeFactory
 
 #endif
 
-#if MYSQL
+#if MYSQL56 || MYSQL57
+
+        private static string GetCharset() => "utf8mb4";
+
+        private static string GetCollation(TextCollation collation)
+        {
+            // utf8mb4_bin: case- and accent-sensitive, code point sort order. utf8mb4_unicode_ci: case- and
+            // accent-insensitive, linguistic sort order. Both ignore trailing spaces (PAD SPACE).
+            return collation switch
+            {
+                TextCollation.CaseInsensitive => "utf8mb4_unicode_ci",
+                TextCollation.CaseSensitive => "utf8mb4_bin",
+                _ => throw new NotImplementedException()
+            };
+        }
+
+        /// <summary>
+        /// You must not exceed 65,535-byte row size limit (all columns), one character takes 4 bytes (MySQL).
+        /// </summary>
+        /// <param name="length"></param>
+        /// <param name="collation">MySQL 5.x has no collation that is case-sensitive and sorts linguistically, see <see cref="TextCollation"/>.</param>
+        /// <returns></returns>
+        public static ColumnType VarChar(int length, TextCollation collation = TextCollation.CaseSensitive)
+        {
+            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation(collation)}");
+        }
+
+        /// <summary>
+        /// Stores up to 65,535 bytes of text data. Separate from row size limit (MySQL).
+        /// </summary>
+        /// <param name="collation">MySQL 5.x has no collation that is case-sensitive and sorts linguistically, see <see cref="TextCollation"/>.</param>
+        /// <returns></returns>
+        public static ColumnType ShortText(TextCollation collation = TextCollation.CaseSensitive)
+        {
+            return new ColumnType($"TEXT", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation(collation)}");
+        }
+
+        /// <summary>
+        /// Stores up to 16 MB of text data (MySQL).
+        /// </summary>
+        /// <param name="collation">MySQL 5.x has no collation that is case-sensitive and sorts linguistically, see
+        /// <see cref="TextCollation"/>.</param>
+        /// <returns></returns>
+        public static ColumnType MediumText(TextCollation collation = TextCollation.CaseSensitive)
+        {
+            return new ColumnType($"MEDIUMTEXT", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation(collation)}");
+        }
+
+        /// <summary>
+        /// Stores up to 4 GB of text data (MySQL).
+        /// </summary>
+        /// <param name="collation">MySQL 5.x has no collation that is case-sensitive and sorts linguistically, see
+        /// <see cref="TextCollation"/>.</param>
+        /// <returns></returns>
+        public static ColumnType LongText(TextCollation collation = TextCollation.CaseSensitive)
+        {
+            return new ColumnType($"LONGTEXT", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation(collation)}");
+        }
+
+#elif MYSQL
+
+        // Explicitly set, independent of server/database defaults. Case- and accent-sensitive, linguistic sort order,
+        // trailing spaces are significant (NO PAD). Consistent with Postgres.
+
+        private static string GetCharset() => "utf8mb4";
+        private static string GetCollation() => "utf8mb4_0900_as_cs";
 
         /// <summary>
         /// You must not exceed 65,535-byte row size limit (all columns), one character takes 4 bytes (MySQL).
@@ -149,39 +214,16 @@ public static class ColumnTypeFactory
         /// <returns></returns>
         public static ColumnType VarChar(int length)
         {
-            // Explicitly set UTF-8 charset and collation for MySQL to ensure full Unicode support
-            // and case-insensitive comparison regardless of server/database default configuration
-            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation()}");
         }
 
-#elif POSTGRES
-
-        /// <summary>
-        /// You must not exceed 1GB size limit for values, one character takes 4 bytes (Postgres).
-        /// </summary>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        public static ColumnType VarChar(int length)
-        {
-            // Explicitly set UTF-8 collation for PostgreSQL to ensure case-insensitive comparison
-            // consistent with MySQL's utf8mb4_unicode_ci behavior
-            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: "COLLATE \"en_US.utf8\"");
-
-        }
-
-#endif
-
-
-#if MYSQL
         /// <summary>
         /// Stores up to 65,535 bytes of text data. Separate from row size limit (MySQL).
         /// </summary>
         /// <returns></returns>
         public static ColumnType ShortText()
         {
-            // Explicitly set UTF-8 charset and collation for MySQL to ensure full Unicode support
-            // and case-insensitive comparison
-            return new ColumnType($"TEXT", defaultValue: "''", options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            return new ColumnType($"TEXT", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation()} ");
         }
 
         /// <summary>
@@ -190,8 +232,7 @@ public static class ColumnTypeFactory
         /// <returns></returns>
         public static ColumnType MediumText()
         {
-            // Explicitly set UTF-8 charset and collation for MySQL
-            return new ColumnType($"MEDIUMTEXT", defaultValue: "''", options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            return new ColumnType($"MEDIUMTEXT", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation()}");
         }
 
         /// <summary>
@@ -200,11 +241,24 @@ public static class ColumnTypeFactory
         /// <returns></returns>
         public static ColumnType LongText()
         {
-            // Explicitly set UTF-8 charset and collation for MySQL
-            return new ColumnType($"LONGTEXT", defaultValue: "''", options: "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            return new ColumnType($"LONGTEXT", defaultValue: "''", options: $"CHARACTER SET {GetCharset()} COLLATE {GetCollation()}");
         }
 
 #elif POSTGRES
+
+        // Explicitly set UTF-8 collation for PostgreSQL to ensure case-insensitive comparison
+        // consistent with MySQL's utf8mb4_unicode_ci behavior
+        private static string GetCollation() => "en_US.utf8";
+
+        /// <summary>
+        /// You must not exceed 1GB size limit for values, one character takes 4 bytes.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static ColumnType VarChar(int length)
+        {
+            return new ColumnType($"VARCHAR({length})", defaultValue: "''", options: $"COLLATE \"{GetCollation()}\"");
+        }
 
         /// <summary>
         /// Alias for <see cref="LongText"/> (1 GB, Postgres doesn't have a short text type).
@@ -230,8 +284,7 @@ public static class ColumnTypeFactory
         /// <returns></returns>
         public static ColumnType LongText()
         {
-            // Explicitly set UTF-8 collation for PostgreSQL to ensure case-insensitive comparison
-            return new ColumnType($"text", defaultValue: "''", options: "COLLATE \"en_US.utf8\"");
+            return new ColumnType($"text", defaultValue: "''", options: $"COLLATE \"{GetCollation()}\"");
         }
 
 #endif

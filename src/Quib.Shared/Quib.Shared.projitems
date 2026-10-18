@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\DbNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\ColumnInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\ColumnTypeFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Installer\TextCollation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\DbInstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\ColumnType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\PrimaryKey.cs" />

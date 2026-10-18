@@ -141,14 +141,28 @@ Values written by others that don't fit into `DateOnly` / `DateTime` at all can'
 ## Character Set and Collation
 
 When creating tables through the Quib library, all text-based columns always support UTF-8 (full character support, 
-including emojis). A case-insensitive collation is used by default for string comparisons. This means that when you 
-perform string comparisons, the comparison will ignore case differences (e.g., "abc" will be considered equal to "ABC").
+including emojis). Charset and collation are set explicitly per column, independent of the server and database 
+defaults.
+
+Text comparisons if possible are case- and accent-sensitive: `"abc"` is not equal to `"ABC"`, `"u"` is 
+not equal to `"ü"`. Trailing spaces are significant (`"abc"` is not equal to `"abc "`). Sorting is linguistic, e.g. 
+`a A b B ... u ü ... z Z`. Both databases behave the same.
+
+**Attention:** MySQL 5.x has no collation that is case-sensitive and sorts linguistically, so you have to choose. Pass 
+the collation to the text column types, e.g. `ColumnType.VarChar(50, TextCollation.CaseInsensitive)` or 
+`ColumnType.ShortText(TextCollation.CaseInsensitive)`. On MySQL 5.x, trailing spaces are ignored in comparisons with 
+both collations.
+
+| Database | Collation | Comparison | Sort order |
+| --- | --- | --- | --- |
+| MySQL 8+ | `utf8mb4_0900_as_cs` | case- and accent-sensitive | linguistic |
+| Postgres | `en_US.utf8` | case- and accent-sensitive | linguistic |
+| MySQL 5.x, `TextCollation.CaseSensitive` (default) | `utf8mb4_bin` | case- and accent-sensitive | by code point (`A B ... Z a b ... z ü`) |
+| MySQL 5.x, `TextCollation.CaseInsensitive` | `utf8mb4_unicode_ci` | case- and accent-insensitive | linguistic |
 
 To ensure full compatibility and proper character collation, database-specific configuration is required:
 
 **MySQL**
-
-Columns explicitly configure the `utf8mb4` character set and `utf8mb4_unicode_ci` collation by default.
 
 To ensure full UTF-8 support in MySQL, you **must** configure your connection string with the `utf8mb4` charset. This is 
 essential for proper character handling:
@@ -161,7 +175,7 @@ using var connection = new MySqlConnection(connectionString);
 
 **Postgres**
 
-Columns explicitly configure the `en_US.utf8` collation by default. It's also case-insensitive for string comparisons. 
+The `en_US.utf8` collation must be available on the server (it is in the official Docker images).
 
 
 ## Binary data

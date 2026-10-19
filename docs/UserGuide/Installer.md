@@ -192,6 +192,19 @@ install.Table("users").DropIndex("idx_users_username");
 ```
 
 
+## Text search
+
+Case- and accent-insensitive text functions (`TextMatch.IgnoreCaseAndAccents`, see [Expressions](Expressions.md)) require 
+a collation on Postgres. Create it once per database, e.g. in your first migration (it could be called multiple times,
+nothing happens if the collation already exists):
+
+```csharp
+install.InstallTextSearchExtensions();  // Postgres only
+```
+
+MySQL doesn't need it (the collations are built in), so the method only exists in the Postgres package.
+
+
 ## See also
 
 - [ColumnTypes.md](ColumnTypes.md) — overview of the available column/database types

@@ -35,6 +35,17 @@ public sealed class DbInstaller : IDisposable
         return new TableInstaller(_db, tablename);
     }
 
+#if POSTGRES
+    /// <summary>
+    /// Creates the database objects required for <see cref="TextMatch.IgnoreCaseAndAccents"/>, if they don't exist yet.
+    /// Can be called multiple times.
+    /// </summary>
+    public void InstallTextSearchExtensions()
+    {
+        _db.ExecuteNonQuery("CREATE COLLATION IF NOT EXISTS quib_ignore_case_accents (provider = icu, locale = 'und-u-ks-level1', deterministic = false);");
+    }
+#endif
+
     /// <summary>
     /// 
     /// </summary>

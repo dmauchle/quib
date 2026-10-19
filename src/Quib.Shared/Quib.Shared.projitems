@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextMatch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbInt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbLong.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExpressionExtensions.DbText.cs" />
@@ -50,6 +51,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\QueryParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\BinaryOperator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\Cast.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\Collate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Expressions\Like.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\Constant.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Expressions\DbNull.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Installer\ColumnInstaller.cs" />

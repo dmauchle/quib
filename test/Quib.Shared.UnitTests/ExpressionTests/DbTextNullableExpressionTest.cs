@@ -256,4 +256,84 @@ public class DbTextNullableExpressionTest(DatabaseFixture env, ITestOutputHelper
         Assert.Null(rs.Result);
     }
 
+
+    // Text functions (Contains, StartsWith, EndsWith, Equals)
+
+#if POSTGRES
+    protected override ValueTask InitializeTestDatabase()
+    {
+        using (var install = new DbInstaller(DB.Connection))
+            install.InstallTextSearchExtensions();
+        return ValueTask.CompletedTask;
+    }
+#endif
+
+    [Fact]
+    public async Task Contains_WithValue_True()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter("Café Müller").Contains("MULLER", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.Result);
+    }
+
+    [Fact]
+    public async Task Contains_OnNull_Null()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbText>().Contains("a", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task Contains_OnNullParameter_Null()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter((string?)null).Contains("a", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task StartsWith_WithValue_True()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter("Éclair").StartsWith("ecl", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.Result);
+    }
+
+    [Fact]
+    public async Task StartsWith_OnNull_Null()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbText>().StartsWith("a", TextMatch.Exact))).FetchOne();
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task EndsWith_WithValue_True()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter("Crème Brûlée").EndsWith("BRULEE", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.Result);
+    }
+
+    [Fact]
+    public async Task EndsWith_OnNull_Null()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbText>().EndsWith("a", TextMatch.Exact))).FetchOne();
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
+    [Fact]
+    public async Task Equals_WithValue_True()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.NullableParameter("Müller").Equals("MULLER", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.Result);
+    }
+
+    [Fact]
+    public async Task Equals_OnNull_Null()
+    {
+        var rs = await DB.SelectValues(x => x.Get(SQL.Null<DbText>().Equals("a", TextMatch.IgnoreCaseAndAccents))).FetchOne();
+        Assert.True(rs.HasResult);
+        Assert.Null(rs.Result);
+    }
+
 }

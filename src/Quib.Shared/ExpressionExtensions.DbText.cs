@@ -17,6 +17,47 @@ public static partial class ExpressionExtensions
     extension(NotNullExpression<DbText> value)
     {
 
+        /// <summary>
+        /// Text contains the search term (using a LIKE expression). Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NotNullExpression<DbBool> Contains(string term, TextMatch match = TextMatch.ColumnDefault)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NotNullExpression<DbBool>(Like.Contains(value.SQL, term, match));
+        }
+
+        /// <summary>
+        /// Text starts with the search term (using a LIKE expression). Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NotNullExpression<DbBool> StartsWith(string term, TextMatch match = TextMatch.ColumnDefault)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NotNullExpression<DbBool>(Like.StartsWith(value.SQL, term, match));
+        }
+
+        /// <summary>
+        /// Text ends with the search term (using a LIKE expression). Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NotNullExpression<DbBool> EndsWith(string term, TextMatch match = TextMatch.ColumnDefault)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NotNullExpression<DbBool>(Like.EndsWith(value.SQL, term, match));
+        }
+
+        /// <summary>
+        /// Text equals the other text. Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NotNullExpression<DbBool> Equals(string text, TextMatch match)
+        {
+            // Match is required, as Equals(object) would be called otherwise.
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NotNullExpression<DbBool>(new BinaryOperator(Collate.Apply(value.SQL, match), "=", SQL.Parameter(text).SQL));
+        }
+
         public static NotNullExpression<DbBool> operator ==(NotNullExpression<DbText> left, string right)
         {
             ArgumentNullException.ThrowIfNull(left);
@@ -101,6 +142,47 @@ public static partial class ExpressionExtensions
 
     extension(NullableExpression<DbText> value)
     {
+
+        /// <summary>
+        /// Text contains the search term (using a LIKE expression). Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NullableExpression<DbBool> Contains(string term, TextMatch match = TextMatch.ColumnDefault)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NullableExpression<DbBool>(Like.Contains(value.SQL, term, match));
+        }
+
+        /// <summary>
+        /// Text starts with the search term (using a LIKE expression). Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NullableExpression<DbBool> StartsWith(string term, TextMatch match = TextMatch.ColumnDefault)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NullableExpression<DbBool>(Like.StartsWith(value.SQL, term, match));
+        }
+
+        /// <summary>
+        /// Text ends with the search term (using a LIKE expression). Define the match type to control case and accent sensitivity.
+        /// </summary>
+        public NullableExpression<DbBool> EndsWith(string term, TextMatch match = TextMatch.ColumnDefault)
+        {
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NullableExpression<DbBool>(Like.EndsWith(value.SQL, term, match));
+        }
+
+        /// <summary>
+        /// Text equals the other text.
+        /// </summary>
+        public NullableExpression<DbBool> Equals(string text, TextMatch match)
+        {
+            // Match is required, as Equals(object) would be called otherwise. Define the match type to control case and accent sensitivity.
+            ArgumentNullException.ThrowIfNull(value);
+
+            return new NullableExpression<DbBool>(new BinaryOperator(Collate.Apply(value.SQL, match), "=", SQL.Parameter(text).SQL));
+        }
 
         public static NullableExpression<DbBool> operator ==(NullableExpression<DbText> left, string right)
         {

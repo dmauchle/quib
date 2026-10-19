@@ -579,6 +579,10 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
     {
         using (var install = new DbInstaller(DB.Connection))
         {
+#if POSTGRES
+            install.InstallTextSearchExtensions();
+#endif
+
             install.Table("values_test")
                 .CreateWithPrimaryKey("id", ColumnType.Int())
                 .CreateColumn("value", ColumnType.VarChar(50).NotNull())
@@ -809,6 +813,137 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
         Assert.Equal([2], rs);
     }
 
+    // Text functions on columns (Contains, StartsWith, EndsWith, Equals)
+
+    [Fact]
+    public async Task Where_Contains_Exact_CaseSensitive()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Café Müller", null), (2, "café müller", null), (3, "Cafe Muller", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").Contains("Müller", TextMatch.Exact))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task Where_Contains_ColumnCollation_CaseSensitive()
+    {
+        // Columns created by Quib are case- and accent-sensitive
+        CreateValuesTable();
+        await InsertValues((1, "Café Müller", null), (2, "café müller", null), (3, "Cafe Muller", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").Contains("Müller", TextMatch.ColumnDefault))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task Where_Equals_ColumnCollation_CaseSensitive()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Müller", null), (2, "MÜLLER", null), (3, "Muller", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").Equals("Müller", TextMatch.ColumnDefault))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task Where_Contains_IgnoreCaseAndAccents_Matches()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Café Müller", null), (2, "café müller", null), (3, "Cafe Muller", null), (4, "Other", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").Contains("MULLER", TextMatch.IgnoreCaseAndAccents))
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1, 2, 3], rs);
+    }
+
+    [Fact]
+    public async Task Where_StartsWith_IgnoreCaseAndAccents_Matches()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Éclair", null), (2, "Chocolate éclair", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").StartsWith("ecl", TextMatch.IgnoreCaseAndAccents))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task Where_EndsWith_IgnoreCaseAndAccents_Matches()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Crème Brûlée", null), (2, "Brûlée crème", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").EndsWith("brulee", TextMatch.IgnoreCaseAndAccents))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task Where_Equals_Exact_CaseSensitive()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Müller", null), (2, "MÜLLER", null), (3, "Muller", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").Equals("Müller", TextMatch.Exact))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task Where_Equals_IgnoreCaseAndAccents_Matches()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "Müller", null), (2, "MÜLLER", null), (3, "Muller", null), (4, "Muller AG", null));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.Column<DbText>("value").Equals("muller", TextMatch.IgnoreCaseAndAccents))
+            .OrderBy(x => [x.Column<DbInt>("id")])
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1, 2, 3], rs);
+    }
+
+    [Fact]
+    public async Task Where_ContainsNullable_IgnoreCaseAndAccents_Matches()
+    {
+        CreateValuesTable();
+        await InsertValues((1, "a", "Café Müller"), (2, "b", null), (3, "c", "Other"));
+
+        var rs = await DB.SelectFromTable("values_test")
+            .Where(x => x.NullableColumn<DbText>("value_nullable").Contains("muller", TextMatch.IgnoreCaseAndAccents))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
     [Fact]
     public async Task OrderBy_SortOrder()
     {
@@ -881,6 +1016,36 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
 
         Assert.Equal(["a", "b", "C", "ü", "z"], rs);
     }
+
+    [Fact]
+    public async Task CaseInsensitive_Where_Contains_ColumnCollation_Matches()
+    {
+        // ColumnCollation follows the case-insensitive collation of the column
+        CreateCaseInsensitiveTable();
+        await InsertCaseInsensitive((1, "Hello World"), (2, "Other"));
+
+        var rs = await DB.SelectFromTable("ci_test")
+            .Where(x => x.Column<DbText>("value").Contains("hello", TextMatch.ColumnDefault))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([1], rs);
+    }
+
+    [Fact]
+    public async Task CaseInsensitive_Where_Contains_Exact_NoMatch()
+    {
+        // Exact is case-sensitive, no matter the collation of the column
+        CreateCaseInsensitiveTable();
+        await InsertCaseInsensitive((1, "Hello World"), (2, "hello world"));
+
+        var rs = await DB.SelectFromTable("ci_test")
+            .Where(x => x.Column<DbText>("value").Contains("hello", TextMatch.Exact))
+            .Project(x => x.Column<DbInt>("id"))
+            .FetchArray();
+
+        Assert.Equal([2], rs);
+    }
 #else
     [Fact(Skip = "TextCollation is only available on MySQL 5.x (MySQL 8+ and Postgres are always case-sensitive).")]
     public async Task CaseInsensitive_Where_Equal_DifferentCase_Matches()
@@ -889,6 +1054,16 @@ public class VarCharTest(DatabaseFixture env, ITestOutputHelper log) : DbTestBas
 
     [Fact(Skip = "TextCollation is only available on MySQL 5.x (MySQL 8+ and Postgres are always case-sensitive).")]
     public async Task CaseInsensitive_OrderBy_SortsLinguistically()
+    {
+    }
+
+    [Fact(Skip = "TextCollation is only available on MySQL 5.x (MySQL 8+ and Postgres are always case-sensitive).")]
+    public async Task CaseInsensitive_Where_Contains_ColumnCollation_Matches()
+    {
+    }
+
+    [Fact(Skip = "TextCollation is only available on MySQL 5.x (MySQL 8+ and Postgres are always case-sensitive).")]
+    public async Task CaseInsensitive_Where_Contains_Exact_NoMatch()
     {
     }
 #endif

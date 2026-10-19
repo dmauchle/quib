@@ -23,6 +23,13 @@ db.Update<UsersTable>().AllRows().With((row, x) => row.Set(x.Credits, x.Credits 
 ```
 
 
+## Null Checks
+
+```csharp
+db.SelectFrom<UsersTable>().Where(x => x.Email.IsNull());
+db.SelectFrom<UsersTable>().Where(x => x.Email.IsNotNull());
+```
+
 ## Comparison operators
 
 You can use the standard comparison operators in your expressions: `==`, `!=`, `<`, `>`, `<=`, `>=`.
@@ -97,9 +104,37 @@ Use cases:
   integer division (`x.Quantity.AsDouble() / 2` = `3.5` instead of `3`).
 
 
-## Null Checks
+## Text functions
+
+Text expressions (on `DbText`) support searching and comparing with `Contains()`, `StartsWith()`, `EndsWith()` and 
+`Equals()`:
 
 ```csharp
-db.SelectFrom<UsersTable>().Where(x => x.Email.IsNull());
-db.SelectFrom<UsersTable>().Where(x => x.Email.IsNotNull());
+db.SelectFrom<UsersTable>().Where(x => x.Lastname.Contains("Mül", TextMatch.Exact));  // case- and accent-sensitive
+db.SelectFrom<UsersTable>().Where(x => x.Lastname.Contains("muller", TextMatch.IgnoreCaseAndAccents)); // finds "Müller"
+db.SelectFrom<UsersTable>().Where(x => x.Lastname.StartsWith("Mü", TextMatch.ColumnCollation));
+db.SelectFrom<UsersTable>().Where(x => x.Lastname.EndsWith("ller", TextMatch.Exact));
+db.SelectFrom<UsersTable>().Where(x => x.Lastname.Equals("MULLER", TextMatch.IgnoreCaseAndAccents));
 ```
+
+The `TextMatch` parameter defines how text is compared:
+
+- `TextMatch.ColumnCollation`: with the collation of the column. For columns created by Quib, it's case- 
+  and accent-sensitive (except MySQL 5.x columns with special settings. Without a column (e.g. only 
+  parameters), the collation of the connection is used (MySQL: case-insensitive, Postgres: case-sensitive). Indexes can
+  be used in some cases (`Equals()` and `StartsWith()`).
+- `TextMatch.Exact`: always case- and accent-sensitive, no matter the collation of the column or connection. On MySQL, 
+  indexes can't be used.
+- `TextMatch.IgnoreCaseAndAccents`: case- and accent-insensitive, e.g. `"muller"` matches `"Müller"` and `"MULLER"`.
+  Indexes can't be used.
+
+Notes:
+
+- Wildcards in the search term (`%` and `_`) are matched literally, so user input can be passed as is.
+- **Postgres** requires a collation for `TextMatch.IgnoreCaseAndAccents`, created once per database by 
+  `installer.InstallTextSearchExtensions()` (e.g. in a migration, see [Installer](Installer.md)). Otherwise the query 
+  fails. MySQL doesn't need it (the collations are built in), so the method only exists in the Postgres package.
+- Some special characters behave differently: `"ß"` matches `"ss"` (and ligatures like `"æ"` match `"ae"`) on Postgres, 
+  but not on MySQL. Umlauts and accents behave the same on all databases.
+- `Contains()` and `EndsWith()` can't use indexes, so the whole table is scanned. That's fine for small and medium 
+  tables. `Equals()` and `StartsWith()` may use indexes, depending on the `TextMatch` setting.
